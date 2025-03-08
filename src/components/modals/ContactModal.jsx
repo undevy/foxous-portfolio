@@ -1,7 +1,11 @@
 import React from 'react';
 import { contactInfo } from '../../data/contacts';
+import { companyData } from '../../data/companies';
 
-const ContactModal = ({ showContactModal, setShowContactModal }) => {
+const ContactModal = ({ showContactModal, setShowContactModal, activeCompany }) => {
+  // Получаем название компании, если она активна
+  const companyName = activeCompany && companyData[activeCompany] ? companyData[activeCompany].name : "";
+  
   return (
     showContactModal && (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={() => setShowContactModal(false)}>
@@ -17,7 +21,9 @@ const ContactModal = ({ showContactModal, setShowContactModal }) => {
           </div>
           
           <p className="text-gray-600 mb-8">
-            If you'd like to learn more about my work at GMX or discuss other aspects of the project, please feel free to reach out through any of the following channels:
+            {activeCompany ? 
+              `If you'd like to learn more about my work at ${companyName} or discuss other aspects of the project, please feel free to reach out through any of the following channels:` : 
+              "If you'd like to discuss my work or opportunities for collaboration, please feel free to reach out through any of the following channels:"}
           </p>
           
           <div className="flex flex-col space-y-4">

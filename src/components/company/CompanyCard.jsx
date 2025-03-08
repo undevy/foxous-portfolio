@@ -1,8 +1,10 @@
 import React from 'react';
 import { companyData } from '../../data/companies';
+import { projectsByCompany } from '../../data/projects';
 
 const CompanyCard = ({ company, activeCase, setActiveCase, handleCloseSidebar, setShowContactModal }) => {
   const companyInfo = companyData[company];
+  const companyProjects = projectsByCompany[company] || [];
   
   return (
     <div className="w-96 bg-white rounded-3xl p-6 shadow-sm border border-gray-200 relative">
@@ -28,46 +30,19 @@ const CompanyCard = ({ company, activeCase, setActiveCase, handleCloseSidebar, s
       <div className="mb-6">
         <h3 className="text-sm font-medium text-gray-500 mb-2">Key Projects</h3>
         <div className="flex flex-wrap gap-2">
-          <button 
-            onClick={() => setActiveCase('tradepage')}
-            className={`px-3 py-1 text-sm rounded-full ${
-              activeCase === 'tradepage' 
-                ? 'bg-blue-100 text-blue-700' 
-                : 'bg-gray-100 hover:bg-gray-200 text-gray-600'
-            }`}
-          >
-            Trade Page
-          </button>
-          <button 
-            onClick={() => setActiveCase('gasless')}
-            className={`px-3 py-1 text-sm rounded-full ${
-              activeCase === 'gasless' 
-                ? 'bg-blue-100 text-blue-700' 
-                : 'bg-gray-100 hover:bg-gray-200 text-gray-600'
-            }`}
-          >
-            Gasless & 1CT
-          </button>
-          <button 
-            onClick={() => setActiveCase('pools')}
-            className={`px-3 py-1 text-sm rounded-full ${
-              activeCase === 'pools' 
-                ? 'bg-blue-100 text-blue-700' 
-                : 'bg-gray-100 hover:bg-gray-200 text-gray-600'
-            }`}
-          >
-            Pools
-          </button>
-          <button 
-            onClick={() => setActiveCase('multichain')}
-            className={`px-3 py-1 text-sm rounded-full ${
-              activeCase === 'multichain' 
-                ? 'bg-blue-100 text-blue-700' 
-                : 'bg-gray-100 hover:bg-gray-200 text-gray-600'
-            }`}
-          >
-            Multichain
-          </button>
+          {companyProjects.map(project => (
+            <button 
+              key={project.id || project.title}
+              onClick={() => setActiveCase(project.id || project.title.toLowerCase().replace(/\s+/g, ''))}
+              className={`px-3 py-1 text-sm rounded-full ${
+                activeCase === (project.id || project.title.toLowerCase().replace(/\s+/g, '')) 
+                  ? 'bg-blue-100 text-blue-700' 
+                  : 'bg-gray-100 hover:bg-gray-200 text-gray-600'
+              }`}
+            >
+              {project.title.split(' ')[0]}
+            </button>
+          ))}
           <button 
             onClick={() => setShowContactModal(true)}
             className="px-3 py-1 text-sm rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600"
