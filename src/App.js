@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import PortfolioLayout from './components/PortfolioLayout';
+import PortfolioLayout from './components/layout/PortfolioLayout';
 
 function App() {
   return (
