@@ -3,6 +3,7 @@ import CompanyCard from '../company/CompanyCard';
 import ProjectDetails from '../company/ProjectDetails';
 import ContactModal from '../modals/ContactModal';
 import Footer from '../common/Footer';
+import AnimatedBackground from '../common/AnimatedBackground'; // Импортируем наш новый компонент
 import usePortfolio from '../../hooks/usePortfolio';
 
 const PortfolioLayout = () => {
@@ -19,7 +20,10 @@ const PortfolioLayout = () => {
   } = usePortfolio();
 
   return (
-    <div className="flex flex-col h-screen w-full bg-blue-50 p-8 gap-6">
+    <div className="flex flex-col h-screen w-full p-8 gap-6">
+      {/* Добавляем анимированный фон */}
+      <AnimatedBackground />
+      
       <div className="flex-1 flex gap-6">
         {isOpen && activeCompany && (
           /* Карточка обзора компании */
