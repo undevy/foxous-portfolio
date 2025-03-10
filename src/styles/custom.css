@@ -1,0 +1,66 @@
+/* src/styles/custom.css */
+
+/* Fix viewport issues on iOS */
+@supports (-webkit-touch-callout: none) {
+  .min-h-screen {
+    min-height: -webkit-fill-available;
+  }
+  .h-screen {
+    height: -webkit-fill-available;
+  }
+}
+
+/* Ensure consistent layout and spacing across all screen sizes */
+.container-wrapper {
+  padding-left: 24px;
+  padding-right: 24px;
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+}
+
+@media (max-width: 640px) {
+  .container-wrapper {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+/* Card stacking effect for mobile */
+.mobile-card-stack {
+  position: relative;
+}
+
+.mobile-card-stack .bottom-card {
+  z-index: 10;
+  position: relative;
+}
+
+.mobile-card-stack .top-card {
+  margin-top: -24px;
+  border-top-left-radius: 24px;
+  border-top-right-radius: 24px;
+  z-index: 20;
+  box-shadow: 0 -10px 15px -5px rgba(0, 0, 0, 0.1);
+  padding-top: 32px;
+}
+
+/* Better scrolling experience */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}

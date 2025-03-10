@@ -1,61 +1,42 @@
-import React from 'react';
-import CompanyCard from '../company/CompanyCard';
-import ProjectDetails from '../company/ProjectDetails';
+// src/components/layout/PortfolioLayout.jsx
+import React, { useEffect, useState } from 'react';
+import MobileLayout from './MobileLayout';
+import DesktopLayout from './DesktopLayout';
+import AnimatedBackground from '../common/AnimatedBackground';
 import ContactModal from '../modals/ContactModal';
-import Footer from '../common/Footer';
-import AnimatedBackground from '../common/AnimatedBackground'; // Импортируем наш новый компонент
 import usePortfolio from '../../hooks/usePortfolio';
 
 const PortfolioLayout = () => {
-  const {
-    activeCompany,
-    activeCase,
-    isOpen,
-    showContactModal,
-    setShowContactModal,
-    toggleCompany,
-    selectCase,
-    closeSidebar,
-    closeProjectDetails
-  } = usePortfolio();
+  const [isMobile, setIsMobile] = useState(false);
+  const portfolioState = usePortfolio();
+  
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkIfMobile();
+    window.addEventListener('resize', checkIfMobile);
+    
+    return () => {
+      window.removeEventListener('resize', checkIfMobile);
+    };
+  }, []);
 
   return (
-    <div className="flex flex-col h-screen w-full p-8 gap-6">
-      {/* Добавляем анимированный фон */}
+    <div className="min-h-screen w-full overflow-hidden relative">
       <AnimatedBackground />
       
-      <div className="flex-1 flex gap-6">
-        {isOpen && activeCompany && (
-          /* Карточка обзора компании */
-          <CompanyCard 
-            company={activeCompany}
-            activeCase={activeCase}
-            setActiveCase={selectCase}
-            handleCloseSidebar={closeSidebar}
-            setShowContactModal={setShowContactModal}
-          />
-        )}
-
-        {isOpen && activeCompany && activeCase && (
-          /* Карточка с деталями кейса */
-          <ProjectDetails 
-            activeCase={activeCase}
-            handleCloseDetail={closeProjectDetails}
-          />
-        )}
-      </div>
-
-      {/* Модальное окно контактов */}
+      {isMobile ? (
+        <MobileLayout {...portfolioState} />
+      ) : (
+        <DesktopLayout {...portfolioState} />
+      )}
+      
       <ContactModal 
-        showContactModal={showContactModal}
-        setShowContactModal={setShowContactModal}
-        activeCompany={activeCompany}
-      />
-
-      {/* Футер в стиле Mac OS dock */}
-      <Footer 
-        activeCompany={activeCompany}
-        toggleCompany={toggleCompany}
+        showContactModal={portfolioState.showContactModal}
+        setShowContactModal={portfolioState.setShowContactModal}
+        activeCompany={portfolioState.activeCompany}
       />
     </div>
   );

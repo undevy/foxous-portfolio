@@ -1,3 +1,19 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+html, body {
+    min-height: -webkit-fill-available;
+    overflow: hidden;
+  }
+  
+  body {
+    height: 100vh;
+    height: -webkit-fill-available;
+  }
+  
+  @supports (-webkit-touch-callout: none) {
+    .min-h-screen {
+      min-height: -webkit-fill-available;
+    }
+  }
