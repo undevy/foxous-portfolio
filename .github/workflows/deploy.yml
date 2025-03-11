@@ -11,26 +11,12 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
-
-    - name: Install build dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y build-essential libssl-dev
-
-    - name: Build and install git-crypt
-      run: |
-        curl -L -o git-crypt.tar.gz https://www.agwa.name/projects/git-crypt/downloads/git-crypt-0.7.0.tar.gz
-        tar -xzvf git-crypt.tar.gz
-        cd git-crypt-0.7.0
-        make
-        sudo cp git-crypt /usr/local/bin/
-    
+      
     - name: Unlock git-crypt
-      run: |
-        echo "${{ secrets.GIT_CRYPT_KEY }}" | base64 -d > git-crypt-key
-        git-crypt unlock git-crypt-key
-        rm git-crypt-key
-    
+      uses: sliteteam/github-action-git-crypt-unlock@1.2.0
+      env:
+        GIT_CRYPT_KEY: ${{ secrets.GIT_CRYPT_KEY }}
+      
     - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
