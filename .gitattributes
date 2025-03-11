@@ -1,0 +1,5 @@
+# Файлы, которые будут зашифрованы
+src/data/companies.js filter=git-crypt diff=git-crypt
+src/data/projects.js filter=git-crypt diff=git-crypt
+# Следующую строку НЕ шифровать - это просто маркер
+.gitattributes !filter !diff
