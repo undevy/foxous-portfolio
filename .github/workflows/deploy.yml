@@ -12,11 +12,17 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Setup git-crypt
-      uses: crazy-max/ghaction-git-crypt@v2
-      with:
-        key: ${{ secrets.GIT_CRYPT_KEY }}
-    
+    - name: Install git-crypt
+      run: |
+        curl -L -o git-crypt https://www.agwa.name/projects/git-crypt/downloads/git-crypt-0.7.0.tar.gz
+        chmod +x git-crypt
+        sudo mv git-crypt /usr/local/bin/
+
+    - name: Unlock git-crypt
+      run: |
+        echo "${{ secrets.GIT_CRYPT_KEY }}" | base64 -d > git-crypt-key
+        git-crypt unlock git-crypt-key
+        rm git-crypt-key
     
     - name: Setup Node.js
       uses: actions/setup-node@v3
