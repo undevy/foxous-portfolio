@@ -12,6 +12,13 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
       
+    - name: Setup Git Crypt
+      run: |
+        apt-get update && apt-get install -y git-crypt
+        echo "${{ secrets.GIT_CRYPT_KEY }}" | base64 -d > git-crypt-key
+        git-crypt unlock git-crypt-key
+        rm git-crypt-key
+    
     - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
