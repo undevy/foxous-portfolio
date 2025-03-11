@@ -64,3 +64,83 @@
   background-color: rgba(0, 0, 0, 0.2);
   border-radius: 3px;
 }
+
+/* Glassmorphism effect for footer */
+.glassmorphism {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+/* Base icon styling with opacity */
+.nav-icon {
+  opacity: 0.9;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+/* Active state for all devices */
+.icon-active {
+  opacity: 1;
+}
+
+/* Hover effects only for desktop */
+@media (min-width: 768px) {
+  .nav-icon:hover {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+}
+
+/* Tooltip styles */
+.tooltip {
+  position: absolute;
+  visibility: hidden;
+  opacity: 0;
+  background-color: white;
+  color: black;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  white-space: nowrap;
+  z-index: 50;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+  transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+  transform: translateY(5px);
+}
+
+.tooltip-top {
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-5px);
+  margin-bottom: 10px;
+}
+
+.tooltip-top-left {
+  bottom: 100%;
+  left: 0;
+  transform: translateY(-5px);
+  margin-bottom: 10px;
+}
+
+/* Show tooltips on hover - desktop only */
+@media (min-width: 768px) {
+  .icon-container:hover .tooltip {
+    visibility: visible;
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  
+  .icon-container:hover .tooltip-top-left {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Connect button width for desktop */
+@media (min-width: 768px) {
+  .connect-button-desktop {
+    min-width: 120px;
+  }
+}
