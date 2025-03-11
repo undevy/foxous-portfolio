@@ -12,7 +12,8 @@ const Footer = ({ activeCompany, toggleCompany, isMobile }) => {
   };
   
   return (
-    <div className="glassmorphism rounded-3xl shadow-sm">
+    // Remove any padding or margin from the container itself
+    <div className="glassmorphism rounded-3xl shadow-sm w-full">
       {/* Один flex-контейнер с padding и space-between - как в Figma */}
       <div className="flex items-center justify-between py-3 px-4">
         {/* Меню */}

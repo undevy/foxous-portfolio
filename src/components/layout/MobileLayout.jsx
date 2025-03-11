@@ -1,4 +1,3 @@
-// src/components/layout/MobileLayout.jsx
 import React from 'react';
 import Footer from '../common/Footer';
 import CompanyCard from '../company/CompanyCard';
@@ -17,7 +16,7 @@ const MobileLayout = ({
     <>
       {/* Header at the top */}
       <div className="fixed top-0 left-0 right-0 z-50 px-4 py-2">
-        <div className="max-w-[1000px] mx-auto">
+        <div className="mx-auto" style={{ maxWidth: "1048px" }}>
           <Footer 
             activeCompany={activeCompany}
             toggleCompany={toggleCompany}
@@ -30,8 +29,8 @@ const MobileLayout = ({
       <div className="pt-20 px-4 pb-4">
         {isOpen && activeCompany && (
           <div className="relative">
-            {/* Company Card */}
-            <div className="w-full mb-4">
+            {/* CompanyCard with reduced height when project is open */}
+            <div className="w-full" style={{ maxHeight: activeCase ? "35vh" : "auto" }}>
               <CompanyCard 
                 company={activeCompany}
                 activeCase={activeCase}
@@ -39,17 +38,20 @@ const MobileLayout = ({
                 handleCloseSidebar={closeSidebar}
                 setShowContactModal={() => {}}
                 isMobile={true}
+                // When project is open, make company card shorter
+                maxHeight={activeCase ? "35vh" : "calc(100vh - 140px)"}
               />
             </div>
             
-            {/* Project Details with overlay effect */}
+            {/* ProjectDetails with aggressive overlay - positioning for better overlap */}
             {activeCase && (
               <div 
                 className="w-full"
                 style={{
-                  marginTop: '-30px',
-                  position: 'relative',
-                  zIndex: 20
+                  marginTop: "-80px", // Aggressive overlay for mobile
+                  position: "relative",
+                  zIndex: 20,
+                  paddingBottom: "4px" // Small padding at bottom
                 }}
               >
                 <ProjectDetails 

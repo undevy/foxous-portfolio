@@ -1,4 +1,3 @@
-// src/components/company/ProjectDetails.jsx
 import React, { useState, useEffect } from 'react';
 import { caseStudies } from '../../data/projects';
 
@@ -42,69 +41,76 @@ const ProjectDetails = ({ activeCase, handleCloseDetail, isMobile, maxHeight }) 
     );
   }
 
-  // Styles for mobile version
+  // Mobile styles with better height calculation - fixed bottom space issue
   const mobileStyles = isMobile ? {
-    boxShadow: '0 -10px 15px -5px rgba(0, 0, 0, 0.1)',
+    boxShadow: '0 -8px 20px -5px rgba(0, 0, 0, 0.15)',
     borderTopLeftRadius: '24px',
     borderTopRightRadius: '24px',
+    borderBottomLeftRadius: '16px',
+    borderBottomRightRadius: '16px',
     zIndex: 20,
-    marginTop: '-24px',
-    paddingTop: '32px'
+    // Make sure card is tall enough but doesn't extend beyond screen
+    maxHeight: 'calc(85vh - 120px)',
+    // Removed marginBottom to allow card to extend lower
   } : {};
 
-  // Use either maxHeight from props or calculate based on device type
-  const calculatedMaxHeight = maxHeight || (isMobile ? 'calc(100vh - 160px)' : cardHeight);
+  // Use maxHeight from props or calculated value
+  const calculatedMaxHeight = maxHeight || (isMobile ? 'calc(85vh - 120px)' : cardHeight);
+  
+  // Calculate content height (area below the header)
+  const contentHeight = `calc(${typeof calculatedMaxHeight === 'string' ? calculatedMaxHeight : calculatedMaxHeight + 'px'} - 80px)`;
 
   return (
     <div 
-      className="bg-white rounded-3xl shadow-sm border border-gray-200 relative"
+      className="bg-white rounded-3xl shadow-sm border border-gray-200 relative overflow-hidden"
       style={{
         height: '100%',
         maxHeight: calculatedMaxHeight,
-        overflowY: 'auto',
-        padding: '24px',
         ...mobileStyles
       }}
     >
-      <button 
-        onClick={handleCloseDetail} 
-        className="absolute top-3 right-3 h-6 w-6 rounded-full bg-gray-100 flex items-center justify-center"
-        style={{ zIndex: 30 }}
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <line x1="18" y1="6" x2="6" y2="18"></line>
-          <line x1="6" y1="6" x2="18" y2="18"></line>
-        </svg>
-      </button>
-      
-      <div className="h-full custom-scrollbar">
-        <div className="max-w-3xl mx-auto">
-          <h1 className="text-2xl font-semibold mb-6">{project.title}</h1>
-          
+      {/* Fixed header */}
+      <div className="sticky top-0 z-30 bg-white p-6 pb-4 border-b border-gray-50">
+        <button 
+          onClick={handleCloseDetail} 
+          className="absolute top-3 right-3 h-6 w-6 rounded-full bg-gray-100 flex items-center justify-center z-40"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+        
+        <h1 className="text-2xl font-semibold text-left">{project.title}</h1>
+      </div>
+
+      {/* Scrollable content - using maxHeight for proper scrolling */}
+      <div className="p-6 pt-2 overflow-y-auto custom-scrollbar" style={{ maxHeight: contentHeight }}>
+        <div className="max-w-3xl">
           <div className="mb-6">
-            <h2 className="text-xl font-medium mb-3">Challenge</h2>
-            <p className="text-base text-gray-600">
+            <h2 className="text-xl font-medium mb-3 text-left">Challenge</h2>
+            <p className="text-base text-gray-600 text-left">
               {project.challenge}
             </p>
           </div>
 
           <div className="mb-6">
-            <h2 className="text-xl font-medium mb-3">Solution</h2>
-            <p className="text-base text-gray-600">
+            <h2 className="text-xl font-medium mb-3 text-left">Solution</h2>
+            <p className="text-base text-gray-600 text-left">
               {project.solution}
             </p>
           </div>
 
           <div>
-            <h2 className="text-xl font-medium mb-3">Impact</h2>
+            <h2 className="text-xl font-medium mb-3 text-left">Impact</h2>
             {Array.isArray(project.impact) ? (
-              <ul className="list-disc list-inside text-base text-gray-600">
+              <ul className="list-disc list-inside text-base text-gray-600 text-left">
                 {project.impact.map((item, index) => (
                   <li key={index} className="mb-1">{item}</li>
                 ))}
               </ul>
             ) : (
-              <p className="text-base text-gray-600">{project.impact}</p>
+              <p className="text-base text-gray-600 text-left">{project.impact}</p>
             )}
           </div>
         </div>
