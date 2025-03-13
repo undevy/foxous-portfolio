@@ -3,61 +3,62 @@ import Footer from '../common/Footer';
 import CompanyCard from '../company/CompanyCard';
 import ProjectDetails from '../company/ProjectDetails';
 
-const MobileLayout = ({ 
-  activeCompany, 
-  activeCase, 
-  isOpen, 
-  toggleCompany, 
-  selectCase, 
-  closeSidebar, 
-  closeProjectDetails 
+const MobileLayout = ({
+  activeCompany,
+  activeCase,
+  isOpen,
+  toggleCompany,
+  selectCase,
+  closeSidebar,
+  closeProjectDetails,
 }) => {
   return (
     <>
-      {/* Header at the top */}
+      {/* Заголовок вверху */}
       <div className="fixed top-0 left-0 right-0 z-50 px-4 py-2">
-        <div className="mx-auto" style={{ maxWidth: "1048px" }}>
-          <Footer 
-            activeCompany={activeCompany}
-            toggleCompany={toggleCompany}
-            isMobile={true}
-          />
+        <div className="mx-auto" style={{ maxWidth: '1048px' }}>
+          <Footer activeCompany={activeCompany} toggleCompany={toggleCompany} isMobile={true} />
         </div>
       </div>
-      
-      {/* Content area with top padding to account for header */}
+
+      {/* Контент */}
       <div className="pt-20 px-4 pb-4">
         {isOpen && activeCompany && (
           <div className="relative">
-            {/* CompanyCard with reduced height when project is open */}
-            <div className="w-full" style={{ maxHeight: activeCase ? "35vh" : "auto" }}>
-              <CompanyCard 
+            {/* Карточка компании с адаптивной высотой */}
+            <div
+              className="w-full"
+              style={{
+                maxHeight: activeCase ? 'min(40dvh, 300px)' : 'calc(100dvh - 160px)',
+              }}
+            >
+              <CompanyCard
                 company={activeCompany}
                 activeCase={activeCase}
                 setActiveCase={selectCase}
                 handleCloseSidebar={closeSidebar}
                 setShowContactModal={() => {}}
                 isMobile={true}
-                // When project is open, make company card shorter
-                maxHeight={activeCase ? "35vh" : "calc(100vh - 140px)"}
+                maxHeight={activeCase ? 'min(40dvh, 300px)' : 'calc(100dvh - 160px)'}
               />
             </div>
-            
-            {/* ProjectDetails with aggressive overlay - positioning for better overlap */}
+
+            {/* Карточка проекта с увеличенным отступом снизу */}
             {activeCase && (
-              <div 
+              <div
                 className="w-full"
                 style={{
-                  marginTop: "-80px", // Aggressive overlay for mobile
-                  position: "relative",
+                  marginTop: '-70px',
+                  position: 'relative',
                   zIndex: 20,
-                  paddingBottom: "4px" // Small padding at bottom
+                  paddingBottom: '20px' // добавлен дополнительный отступ снизу
                 }}
               >
-                <ProjectDetails 
+                <ProjectDetails
                   activeCase={activeCase}
                   handleCloseDetail={closeProjectDetails}
                   isMobile={true}
+                  maxHeight="min(60dvh, calc(100dvh - 260px))"
                 />
               </div>
             )}
