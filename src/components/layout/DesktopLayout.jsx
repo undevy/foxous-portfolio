@@ -11,6 +11,7 @@ const DesktopLayout = ({
   selectCase,
   closeSidebar,
   closeProjectDetails,
+  setShowContactModal,
 }) => {
   const footerRef = useRef(null);
   const [contentHeight, setContentHeight] = useState('auto');
@@ -48,7 +49,7 @@ const DesktopLayout = ({
                   activeCase={activeCase}
                   setActiveCase={selectCase}
                   handleCloseSidebar={closeSidebar}
-                  setShowContactModal={() => {}}
+                  setShowContactModal={setShowContactModal}
                   isMobile={false}
                   maxHeight={contentHeight}
                   onHeightChange={setCardHeight}
@@ -66,7 +67,7 @@ const DesktopLayout = ({
                   activeCase={activeCase}
                   setActiveCase={selectCase}
                   handleCloseSidebar={closeSidebar}
-                  setShowContactModal={() => {}}
+                  setShowContactModal={setShowContactModal}
                   isMobile={false}
                   maxHeight={contentHeight}
                   onHeightChange={setCardHeight}

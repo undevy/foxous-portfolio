@@ -2,7 +2,18 @@ import React from 'react';
 
 const AnimatedBackground = () => {
   return (
-    <div className="fixed inset-0 w-full h-full overflow-hidden z-[-1]">
+    <div className="fixed inset-0 w-full h-full overflow-hidden z-[-1]" style={{
+      // Расширяем фон, чтобы он заполнял и безопасные зоны
+      top: 'env(safe-area-inset-top, 0)',
+      right: 'env(safe-area-inset-right, 0)',
+      bottom: 'env(safe-area-inset-bottom, 0)',
+      left: 'env(safe-area-inset-left, 0)',
+      // Обеспечиваем полное покрытие, убирая отступы
+      marginTop: 'calc(-1 * env(safe-area-inset-top, 0))',
+      marginRight: 'calc(-1 * env(safe-area-inset-right, 0))',
+      marginBottom: 'calc(-1 * env(safe-area-inset-bottom, 0))',
+      marginLeft: 'calc(-1 * env(safe-area-inset-left, 0))'
+    }}>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         className="absolute inset-0 w-full h-full"

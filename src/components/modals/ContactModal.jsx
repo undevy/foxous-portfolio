@@ -6,6 +6,38 @@ const ContactModal = ({ showContactModal, setShowContactModal, activeCompany }) 
   // Получаем название компании, если она активна
   const companyName = activeCompany && companyData[activeCompany] ? companyData[activeCompany].name : "";
   
+  // Функция для получения текста модального окна
+  const getModalText = () => {
+    if (activeCompany === 'nexus') {
+      return (
+        <>
+          <p className="text-gray-600 mb-4">
+            <strong>Note:</strong> Due to a Non-Disclosure Agreement, I cannot reveal the actual name of this company. 
+            I'd be happy to share more details during a personal conversation.
+          </p>
+          <p className="text-gray-600 mb-4">
+            If you'd like to learn more about my work at {companyName} or discuss other aspects of the project, 
+            please feel free to reach out through any of the following channels:
+          </p>
+        </>
+      );
+    } else if (activeCompany) {
+      return (
+        <p className="text-gray-600 mb-8">
+          If you'd like to learn more about my work at {companyName} or discuss other aspects of the project, 
+          please feel free to reach out through any of the following channels:
+        </p>
+      );
+    } else {
+      return (
+        <p className="text-gray-600 mb-8">
+          If you'd like to discuss my work or opportunities for collaboration, 
+          please feel free to reach out through any of the following channels:
+        </p>
+      );
+    }
+  };
+  
   return (
     showContactModal && (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={() => setShowContactModal(false)}>
@@ -20,11 +52,7 @@ const ContactModal = ({ showContactModal, setShowContactModal, activeCompany }) 
             </button>
           </div>
           
-          <p className="text-gray-600 mb-8">
-            {activeCompany ? 
-              `If you'd like to learn more about my work at ${companyName} or discuss other aspects of the project, please feel free to reach out through any of the following channels:` : 
-              "If you'd like to discuss my work or opportunities for collaboration, please feel free to reach out through any of the following channels:"}
-          </p>
+          {getModalText()}
           
           <div className="flex flex-col space-y-4">
             <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">

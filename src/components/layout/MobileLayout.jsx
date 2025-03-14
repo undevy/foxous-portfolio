@@ -11,6 +11,7 @@ const MobileLayout = ({
   selectCase,
   closeSidebar,
   closeProjectDetails,
+  setShowContactModal,
 }) => {
   return (
     <>
@@ -37,7 +38,7 @@ const MobileLayout = ({
                 activeCase={activeCase}
                 setActiveCase={selectCase}
                 handleCloseSidebar={closeSidebar}
-                setShowContactModal={() => {}}
+                setShowContactModal={setShowContactModal}
                 isMobile={true}
                 maxHeight={activeCase ? 'min(40dvh, 300px)' : 'calc(100dvh - 160px)'}
               />

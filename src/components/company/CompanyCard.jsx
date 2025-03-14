@@ -10,7 +10,7 @@ const CompanyCard = ({
   setShowContactModal,
   isMobile,
   maxHeight,
-  onHeightChange, // callback для передачи высоты родителю
+  onHeightChange,
 }) => {
   const companyInfo = companyData[company];
   const companyProjects = projectsByCompany[company] || [];
@@ -32,6 +32,15 @@ const CompanyCard = ({
   const contentHeight = maxHeight
     ? `calc(${typeof maxHeight === 'string' ? maxHeight : maxHeight + 'px'} - 260px)`
     : `calc(100vh - 260px)`;
+
+  // Функция для открытия модального окна контактов
+  const openContactModal = () => {
+    if (typeof setShowContactModal === 'function') {
+      setShowContactModal(true);
+    } else {
+      console.error('setShowContactModal is not a function');
+    }
+  };
 
   // Используем ResizeObserver для уведомления родителя об изменении высоты
   useEffect(() => {
@@ -115,7 +124,7 @@ const CompanyCard = ({
               </button>
             ))}
             <button
-              onClick={() => setShowContactModal(true)}
+              onClick={openContactModal}
               className="px-3 py-1 text-sm rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600"
             >
               Other
@@ -135,29 +144,55 @@ const CompanyCard = ({
         </div>
 
         <div className="pt-4 border-t border-gray-100 flex flex-col space-y-2">
-          <a
-            href={companyInfo.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sm text-blue-600 hover:text-blue-800 flex items-center"
-          >
-            <span>Visit {companyInfo.name}</span>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="ml-1"
+          {company === 'nexus' ? (
+            // Специальная логика для Nexus Network
+            <button
+              onClick={openContactModal}
+              className="text-sm text-blue-600 hover:text-blue-800 flex items-center"
             >
-              <line x1="7" y1="17" x2="17" y2="7"></line>
-              <polyline points="7 7 17 7 17 17"></polyline>
-            </svg>
-          </a>
+              <span>Contact about {companyInfo.name}</span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="ml-1"
+              >
+                <line x1="7" y1="17" x2="17" y2="7"></line>
+                <polyline points="7 7 17 7 17 17"></polyline>
+              </svg>
+            </button>
+          ) : (
+            // Для остальных компаний - обычная ссылка
+            <a
+              href={companyInfo.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-blue-600 hover:text-blue-800 flex items-center"
+            >
+              <span>Visit {companyInfo.name}</span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="ml-1"
+              >
+                <line x1="7" y1="17" x2="17" y2="7"></line>
+                <polyline points="7 7 17 7 17 17"></polyline>
+              </svg>
+            </a>
+          )}
 
           {companyInfo.keyAppUrl && (
             <a

@@ -68,6 +68,11 @@ const usePortfolio = () => {
     setActiveCase(null);
   };
 
+  // Функция для открытия модального окна контактов
+  const openContactModal = () => {
+    setShowContactModal(true);
+  };
+
   return {
     activeCompany,
     activeCase,
@@ -77,7 +82,8 @@ const usePortfolio = () => {
     toggleCompany,
     selectCase,
     closeSidebar,
-    closeProjectDetails
+    closeProjectDetails,
+    openContactModal
   };
 };
 
