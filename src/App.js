@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import './App.css';
 import PortfolioLayout from './components/layout/PortfolioLayout';
+import Loader from './components/common/Loader';
 
 // Список всех изображений для предзагрузки
 const imagesToPreload = [
@@ -16,6 +17,9 @@ const imagesToPreload = [
 ];
 
 function App() {
+  // Состояние загрузки приложения
+  const [isLoading, setIsLoading] = useState(true);
+
   // Предзагружаем изображения при монтировании компонента
   useEffect(() => {
     // Функция для предзагрузки изображения
@@ -33,17 +37,37 @@ function App() {
       try {
         await Promise.all(imagesToPreload.map(src => preloadImage(src)));
         console.log('All images preloaded successfully');
+        
+        // Устанавливаем минимальное время отображения лоадера (2 секунды)
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 2000);
       } catch (err) {
         console.error('Error preloading images:', err);
+        // Даже при ошибке скрываем лоадер через 2 секунды
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 2000);
       }
     };
 
     preloadAll();
+    
+    // Резервное скрытие лоадера через 5 секунд (если что-то пойдет не так)
+    const fallbackTimer = setTimeout(() => {
+      setIsLoading(false);
+    }, 5000);
+
+    return () => clearTimeout(fallbackTimer);
   }, []);
 
   return (
     <div className="App">
-      <PortfolioLayout />
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <PortfolioLayout />
+      )}
     </div>
   );
 }

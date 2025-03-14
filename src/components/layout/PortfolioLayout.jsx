@@ -1,5 +1,5 @@
 // src/components/layout/PortfolioLayout.jsx
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import MobileLayout from './MobileLayout';
 import DesktopLayout from './DesktopLayout';
 import AnimatedBackground from '../common/AnimatedBackground';
@@ -7,8 +7,9 @@ import ContactModal from '../modals/ContactModal';
 import usePortfolio from '../../hooks/usePortfolio';
 
 const PortfolioLayout = () => {
-  // Оптимизируем определение мобильного устройства используя useState и useCallback
-  const [isMobile, setIsMobile] = useState(false);
+  // Сразу определяем тип устройства при первом рендере
+  const initialIsMobile = window.innerWidth < 768;
+  const [isMobile, setIsMobile] = useState(initialIsMobile);
   const portfolioState = usePortfolio();
   
   // Оптимизируем функцию проверки мобильного устройства
@@ -17,9 +18,6 @@ const PortfolioLayout = () => {
   }, []);
   
   useEffect(() => {
-    // Вызываем один раз при монтировании
-    checkIfMobile();
-    
     // Добавляем слушатель изменения размера
     window.addEventListener('resize', checkIfMobile);
     
@@ -30,10 +28,10 @@ const PortfolioLayout = () => {
   }, [checkIfMobile]);
 
   // Используем React.memo для AnimatedBackground (уже сделано)
-  const backgroundComponent = React.useMemo(() => <AnimatedBackground />, []);
+  const backgroundComponent = useMemo(() => <AnimatedBackground />, []);
   
   // Используем React.memo для ContactModal
-  const contactModalComponent = React.useMemo(() => (
+  const contactModalComponent = useMemo(() => (
     <ContactModal 
       showContactModal={portfolioState.showContactModal}
       setShowContactModal={portfolioState.setShowContactModal}

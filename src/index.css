@@ -2,19 +2,28 @@
 @tailwind components;
 @tailwind utilities;
 
-html, body {
-    min-height: -webkit-fill-available;
-    overflow: hidden;
-    padding-top: env(safe-area-inset-top, 0);
-    padding-bottom: env(safe-area-inset-bottom, 0);
-    padding-left: env(safe-area-inset-left, 0);
-    padding-right: env(safe-area-inset-right, 0);
-  }
-  
-  body {
-    height: 100vh;
-    height: -webkit-fill-available;
-  }
+html {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100svh; /* Использование современного svh вместо vh */
+  margin: 0;
+  padding: 0;
+  padding-top: env(safe-area-inset-top, 0);
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  padding-left: env(safe-area-inset-left, 0);
+  padding-right: env(safe-area-inset-right, 0);
+  overflow: hidden;
+}
+
+#root {
+  height: 100%;
+  position: relative;
+  z-index: 1;
+}
   
   @supports (-webkit-touch-callout: none) {
     .min-h-screen {
