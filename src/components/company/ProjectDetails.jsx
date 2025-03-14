@@ -1,14 +1,44 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { caseStudies } from '../../data/projects';
 
 const ProjectDetails = ({ activeCase, handleCloseDetail, isMobile, maxHeight }) => {
   // Поиск проекта по id или ключу
-  const project = Object.values(caseStudies).find(
-    (p) =>
-      p.id === activeCase ||
-      p.title.toLowerCase().replace(/\s+/g, '') === activeCase
-  );
+  const project = useMemo(() => {
+    return Object.values(caseStudies).find(
+      (p) =>
+        p.id === activeCase ||
+        p.title.toLowerCase().replace(/\s+/g, '') === activeCase
+    );
+  }, [activeCase]);
 
+  // Используем useMemo для вычисления стилей - всегда, независимо от наличия проекта
+  const mobileStyles = useMemo(() => {
+    if (!isMobile) return {};
+    
+    return {
+      boxShadow: '0 -8px 20px -5px rgba(0, 0, 0, 0.15)',
+      borderTopLeftRadius: '24px',
+      borderTopRightRadius: '24px',
+      borderBottomLeftRadius: '16px',
+      borderBottomRightRadius: '16px',
+      zIndex: 20,
+      maxHeight: 'calc(85vh - 120px)',
+    };
+  }, [isMobile]);
+
+  // Используем useMemo для вычисления высоты контента - всегда, независимо от наличия проекта
+  const { calculatedMaxHeight, contentHeight } = useMemo(() => {
+    const calculatedMaxHeight = maxHeight || (isMobile ? 'calc(85vh - 120px)' : 'auto');
+    const contentHeight = `calc(${
+      typeof calculatedMaxHeight === 'string'
+        ? calculatedMaxHeight
+        : calculatedMaxHeight + 'px'
+    } - 80px)`;
+
+    return { calculatedMaxHeight, contentHeight };
+  }, [maxHeight, isMobile]);
+
+  // После вызова всех хуков можем использовать условный рендеринг
   if (!project) {
     return (
       <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-200 relative">
@@ -39,27 +69,6 @@ const ProjectDetails = ({ activeCase, handleCloseDetail, isMobile, maxHeight }) 
       </div>
     );
   }
-
-  // Стили для мобильной версии
-  const mobileStyles = isMobile
-    ? {
-        boxShadow: '0 -8px 20px -5px rgba(0, 0, 0, 0.15)',
-        borderTopLeftRadius: '24px',
-        borderTopRightRadius: '24px',
-        borderBottomLeftRadius: '16px',
-        borderBottomRightRadius: '16px',
-        zIndex: 20,
-        maxHeight: 'calc(85vh - 120px)',
-      }
-    : {};
-
-  // Используем переданный maxHeight или значение по умолчанию для мобильной версии
-  const calculatedMaxHeight = maxHeight || (isMobile ? 'calc(85vh - 120px)' : 'auto');
-  const contentHeight = `calc(${
-    typeof calculatedMaxHeight === 'string'
-      ? calculatedMaxHeight
-      : calculatedMaxHeight + 'px'
-  } - 80px)`;
 
   return (
     <div
@@ -128,4 +137,11 @@ const ProjectDetails = ({ activeCase, handleCloseDetail, isMobile, maxHeight }) 
   );
 };
 
-export default ProjectDetails;
+// Оборачиваем в React.memo с кастомным сравнением пропсов
+export default React.memo(ProjectDetails, (prevProps, nextProps) => {
+  return (
+    prevProps.activeCase === nextProps.activeCase &&
+    prevProps.isMobile === nextProps.isMobile &&
+    prevProps.maxHeight === nextProps.maxHeight
+  );
+});

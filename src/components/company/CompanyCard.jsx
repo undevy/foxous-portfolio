@@ -19,10 +19,10 @@ const CompanyCard = ({
   // Функция для получения изображения компании
   const getCompanyImage = (companyId) => {
     const imageMap = {
-      'gmx': '/assets/images/GMX.png',
-      'nexus': '/assets/images/Nexus.png',
-      'p2p': '/assets/images/KeyApp.png',
-      'wildberries': '/assets/images/Wb.png'
+      'gmx': '/assets/images/GMX.webp',
+      'nexus': '/assets/images/Nexus.webp',
+      'p2p': '/assets/images/KeyApp.webp',
+      'wildberries': '/assets/images/Wb.webp'
     };
     
     return imageMap[companyId] || '/api/placeholder/400/250'; // Используем заглушку, если изображение не найдено
@@ -225,4 +225,13 @@ const CompanyCard = ({
   );
 };
 
-export default CompanyCard;
+// Добавляем мемоизацию с пользовательским сравнением пропсов
+export default React.memo(CompanyCard, (prevProps, nextProps) => {
+  // Сравниваем только те пропсы, которые действительно влияют на рендеринг
+  return (
+    prevProps.company === nextProps.company &&
+    prevProps.activeCase === nextProps.activeCase &&
+    prevProps.isMobile === nextProps.isMobile &&
+    prevProps.maxHeight === nextProps.maxHeight
+  );
+});

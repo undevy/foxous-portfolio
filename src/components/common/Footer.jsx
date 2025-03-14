@@ -75,4 +75,10 @@ const Footer = ({ activeCompany, toggleCompany, isMobile }) => {
   );
 };
 
-export default Footer;
+// Добавляем мемоизацию с пользовательским сравнением пропсов
+export default React.memo(Footer, (prevProps, nextProps) => {
+  return (
+    prevProps.activeCompany === nextProps.activeCompany &&
+    prevProps.isMobile === nextProps.isMobile
+  );
+});

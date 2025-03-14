@@ -216,4 +216,6 @@ const AnimatedBackground = () => {
   );
 };
 
-export default AnimatedBackground;
+// Добавляем мемоизацию - для этого компонента достаточно простого React.memo,
+// так как он не имеет пропсов
+export default React.memo(AnimatedBackground);

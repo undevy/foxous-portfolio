@@ -108,4 +108,10 @@ const ContactModal = ({ showContactModal, setShowContactModal, activeCompany }) 
   );
 };
 
-export default ContactModal;
+// Добавляем мемоизацию с пользовательским сравнением пропсов
+export default React.memo(ContactModal, (prevProps, nextProps) => {
+  return (
+    prevProps.showContactModal === nextProps.showContactModal &&
+    prevProps.activeCompany === nextProps.activeCompany
+  );
+});
