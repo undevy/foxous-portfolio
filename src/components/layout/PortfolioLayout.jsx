@@ -48,7 +48,12 @@ const PortfolioLayout = () => {
       {backgroundComponent}
       
       {isMobile ? (
-        <MobileLayout {...portfolioState} />
+        <MobileLayout 
+          {...portfolioState} 
+          // Явно передаем новые пропсы для ясности (хотя они уже включены в ...portfolioState)
+          isCompanyCardTransformed={portfolioState.isCompanyCardTransformed}
+          backToCompanyCard={portfolioState.backToCompanyCard}
+        />
       ) : (
         <DesktopLayout {...portfolioState} />
       )}

@@ -1,5 +1,9 @@
 /* src/styles/custom.css */
 
+/***************************************
+ * ОСНОВНЫЕ ИСПРАВЛЕНИЯ И ОБЩИЕ СТИЛИ
+ ***************************************/
+
 /* Fix viewport issues on iOS */
 @supports (-webkit-touch-callout: none) {
   .min-h-screen {
@@ -9,6 +13,10 @@
     height: -webkit-fill-available;
   }
 }
+
+/***************************************
+ * КОНТЕЙНЕРЫ И МАКЕТЫ
+ ***************************************/
 
 /* Ensure consistent layout and spacing across all screen sizes */
 .container-wrapper {
@@ -26,6 +34,17 @@
     padding-right: 16px;
   }
 }
+
+/* Connect button width for desktop */
+@media (min-width: 768px) {
+  .connect-button-desktop {
+    min-width: 120px;
+  }
+}
+
+/***************************************
+ * КАРТОЧКИ И СТЕКИНГ ЭФФЕКТЫ
+ ***************************************/
 
 /* Card stacking effect for mobile */
 .mobile-card-stack {
@@ -46,24 +65,90 @@
   padding-top: 32px;
 }
 
-/* Better scrolling experience */
+/* Стиль для прямых верхних углов карточки проекта на мобильных устройствах */
+@media (max-width: 767px) {
+  .mobile-project-details {
+    border-radius: 0 0 16px 16px !important;
+    box-shadow: none !important;
+  }
+  
+  .mobile-project-company-stack {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .mobile-project-company-stack > div:first-child {
+    margin-bottom: 2px;
+  }
+  
+  .mobile-project-company-stack > div:last-child {
+    border-top-left-radius: 0 !important;
+    border-top-right-radius: 0 !important;
+  }
+}
+
+/***************************************
+ * СКРОЛЛБАРЫ И ПРОКРУТКА
+ ***************************************/
+
+/* Вертикальный скроллбар - всегда видимый */
 .custom-scrollbar {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: rgba(0, 0, 0, 0.3) rgba(0, 0, 0, 0.1); /* Firefox */
+  overflow-y: scroll !important; /* Всегда показывать вертикальный скроллбар */
 }
 
 .custom-scrollbar::-webkit-scrollbar {
   width: 6px;
+  background-color: rgba(0, 0, 0, 0.1); /* Светлый фон трека */
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
+  background-color: rgba(0, 0, 0, 0.1); /* Светлый фон трека */
+  border-radius: 3px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: rgba(0, 0, 0, 0.3); /* Более контрастный ползунок */
   border-radius: 3px;
 }
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.4); /* Темнее при наведении */
+}
+
+/* Скрытие горизонтальных скроллбаров */
+.scrollbar-hide, 
+.horizontal-scroll,
+.project-tabs,
+.project-tabs-container {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE и Edge */
+}
+
+.scrollbar-hide::-webkit-scrollbar,
+.horizontal-scroll::-webkit-scrollbar,
+.project-tabs::-webkit-scrollbar,
+.project-tabs-container::-webkit-scrollbar {
+  display: none; /* Chrome, Safari и Opera */
+}
+
+/* Улучшение плавности скролла на iOS */
+.ios-scrolling,
+.horizontal-scroll {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Горизонтальная прокрутка */
+.horizontal-scroll {
+  overflow-x: auto;
+  white-space: nowrap;
+  scroll-behavior: smooth;
+}
+
+/***************************************
+ * ФУТЕР И ЭФФЕКТЫ СТЕКЛА
+ ***************************************/
 
 /* Glassmorphism effect for footer */
 .glassmorphism {
@@ -72,6 +157,10 @@
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.6);
 }
+
+/***************************************
+ * ИКОНКИ И СОСТОЯНИЯ
+ ***************************************/
 
 /* Base icon styling with opacity */
 .nav-icon {
@@ -92,7 +181,10 @@
   }
 }
 
-/* Tooltip styles */
+/***************************************
+ * ВСПЛЫВАЮЩИЕ ПОДСКАЗКИ (TOOLTIP)
+ ***************************************/
+
 .tooltip {
   position: absolute;
   visibility: hidden;
@@ -138,9 +230,63 @@
   }
 }
 
-/* Connect button width for desktop */
-@media (min-width: 768px) {
-  .connect-button-desktop {
-    min-width: 120px;
-  }
+/***************************************
+ * ТРАНСФОРМИРУЮЩАЯСЯ КАРТОЧКА
+ ***************************************/
+
+/* Анимация для трансформации карточки */
+.transform-card,
+.transform-card-transition {
+  transition: all 0.25s ease-in-out;
+}
+
+/* Улучшенные стили для компактной карточки компании */
+.compact-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 56px;
+  border-bottom: 1px solid rgba(229, 231, 235, 0.5);
+}
+
+/***************************************
+ * ПРОЕКТНЫЕ ВКЛАДКИ И ТАБЫ
+ ***************************************/
+
+/* Контейнер для вкладок проектов */
+.project-tabs,
+.project-tabs-container {
+  display: flex;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  padding: 8px 16px 12px;
+}
+
+.project-tabs {
+  scroll-padding: 0 16px;
+  gap: 8px;
+  padding: 0 16px 12px 16px;
+}
+
+/* Стили для отдельных вкладок */
+.project-tab {
+  flex-shrink: 0;
+  padding: 6px 12px;
+  border-radius: 9999px;
+  margin-right: 8px;
+  font-size: 14px;
+  transition: background-color 0.2s, color 0.2s;
+  white-space: nowrap;
+}
+
+/* Состояния вкладок */
+.project-tab-active {
+  background-color: #DBEAFE;
+  color: #2563EB;
+}
+
+.project-tab-inactive {
+  background-color: #F3F4F6;
+  color: #4B5563;
 }

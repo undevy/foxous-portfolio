@@ -1,89 +1,29 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Footer from '../common/Footer';
-import CompanyCard from '../company/CompanyCard';
 import ProjectDetails from '../company/ProjectDetails';
+import TransformingCompanyHeader from '../common/TransformingCompanyHeader';
 
-// Подкомпонент для отображения только карточки компании
-const MobileCompanyOnly = React.memo(({ 
-  activeCompany, 
-  activeCase, 
-  selectCase, 
-  closeSidebar, 
-  setShowContactModal 
-}) => (
-  <div
-    className="w-full"
-    style={{ maxHeight: 'calc(100dvh - 160px)' }}
-  >
-    <CompanyCard
-      company={activeCompany}
-      activeCase={activeCase}
-      setActiveCase={selectCase}
-      handleCloseSidebar={closeSidebar}
-      setShowContactModal={setShowContactModal}
-      isMobile={true}
-      maxHeight={'calc(100dvh - 160px)'}
-    />
-  </div>
-));
-
-// Подкомпонент для отображения карточки компании и проекта
-const MobileCompanyAndProject = React.memo(({ 
-  activeCompany, 
-  activeCase, 
-  selectCase, 
-  closeSidebar, 
-  setShowContactModal,
-  closeProjectDetails
-}) => (
-  <div className="relative">
-    {/* Карточка компании с адаптивной высотой */}
-    <div
-      className="w-full"
-      style={{ maxHeight: 'min(40dvh, 300px)' }}
-    >
-      <CompanyCard
-        company={activeCompany}
-        activeCase={activeCase}
-        setActiveCase={selectCase}
-        handleCloseSidebar={closeSidebar}
-        setShowContactModal={setShowContactModal}
-        isMobile={true}
-        maxHeight={'min(40dvh, 300px)'}
-      />
-    </div>
-
-    {/* Карточка проекта с увеличенным отступом снизу */}
-    <div
-      className="w-full"
-      style={{
-        marginTop: '-70px',
-        position: 'relative',
-        zIndex: 20,
-        paddingBottom: '20px' // добавлен дополнительный отступ снизу
-      }}
-    >
-      <ProjectDetails
-        activeCase={activeCase}
-        handleCloseDetail={closeProjectDetails}
-        isMobile={true}
-        maxHeight="min(60dvh, calc(100dvh - 260px))"
-      />
-    </div>
-  </div>
-));
-
-// Основной компонент
 const MobileLayout = ({
   activeCompany,
   activeCase,
   isOpen,
+  isCompanyCardTransformed,
   toggleCompany,
   selectCase,
   closeSidebar,
+  backToCompanyCard,
   closeProjectDetails,
   setShowContactModal,
 }) => {
+  // Добавим логи для отладки
+  useEffect(() => {
+    console.log("🔍 MobileLayout рендерится со следующими пропсами:");
+    console.log("🔍 activeCompany:", activeCompany);
+    console.log("🔍 activeCase:", activeCase);
+    console.log("🔍 isOpen:", isOpen);
+    console.log("🔍 isCompanyCardTransformed:", isCompanyCardTransformed);
+  }, [activeCompany, activeCase, isOpen, isCompanyCardTransformed]);
+
   // Используем useMemo для запоминания вычисляемых значений
   const footerComponent = React.useMemo(() => (
     <Footer activeCompany={activeCompany} toggleCompany={toggleCompany} isMobile={true} />
@@ -91,7 +31,7 @@ const MobileLayout = ({
 
   return (
     <>
-      {/* Заголовок вверху */}
+      {/* Футер вверху (шапка в мобильной версии) */}
       <div className="fixed top-0 left-0 right-0 z-50 px-4 py-2">
         <div className="mx-auto" style={{ maxWidth: '1048px' }}>
           {footerComponent}
@@ -101,24 +41,49 @@ const MobileLayout = ({
       {/* Контент */}
       <div className="pt-20 px-4 pb-4">
         {isOpen && activeCompany && (
-          activeCase ? (
-            <MobileCompanyAndProject 
-              activeCompany={activeCompany}
-              activeCase={activeCase}
-              selectCase={selectCase}
-              closeSidebar={closeSidebar}
-              closeProjectDetails={closeProjectDetails}
-              setShowContactModal={setShowContactModal}
-            />
-          ) : (
-            <MobileCompanyOnly
-              activeCompany={activeCompany}
-              activeCase={activeCase}
-              selectCase={selectCase}
-              closeSidebar={closeSidebar}
-              setShowContactModal={setShowContactModal}
-            />
-          )
+          <div className="relative">
+            {/* Контейнер для TransformingCompanyHeader */}
+            <div 
+              className="relative z-30" 
+              style={{ 
+                marginBottom: isCompanyCardTransformed ? '2px' : '0'
+              }}
+            >
+              <TransformingCompanyHeader
+                company={activeCompany}
+                activeCase={activeCase}
+                selectCase={selectCase}
+                closeSidebar={closeSidebar}
+                backToCompanyCard={backToCompanyCard}
+                setShowContactModal={setShowContactModal}
+                isTransformed={isCompanyCardTransformed}
+                isMobile={true}
+                maxHeight={'calc(100dvh - 160px)'}
+                onHeightChange={() => {
+                  console.log("🔍 onHeightChange вызван в TransformingCompanyHeader");
+                }}
+              />
+            </div>
+
+            {/* Контейнер для ProjectDetails */}
+            {activeCase && (
+              <div
+                className="relative z-20"
+                style={{
+                  boxShadow: 'none', // Убираем тень
+                }}
+              >
+                <ProjectDetails
+                  activeCase={activeCase}
+                  handleCloseDetail={backToCompanyCard}
+                  isMobile={true}
+                  maxHeight="min(60dvh, calc(100dvh - 260px))"
+                  hideCloseButton={true} // Скрываем кнопку закрытия
+                  squareTopCorners={true} // Прямые верхние углы
+                />
+              </div>
+            )}
+          </div>
         )}
       </div>
     </>
