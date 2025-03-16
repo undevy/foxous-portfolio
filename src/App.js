@@ -31,36 +31,36 @@ function App() {
     const preloadImage = (src) => {
       return new Promise((resolve, reject) => {
         const img = new Image();
-        img.src = src;
         img.onload = resolve;
         img.onerror = reject;
+        img.src = src;
       });
     };
-
+  
     // Предзагружаем все изображения параллельно
     const preloadAll = async () => {
       try {
         await Promise.all(imagesToPreload.map(src => preloadImage(src)));
         
-        // Устанавливаем минимальное время отображения лоадера (2 секунды)
+        // Минимальное время отображения лоадера
         setTimeout(() => {
           setIsLoading(false);
         }, 2000);
       } catch (err) {
-        // Даже при ошибке скрываем лоадер через 2 секунды
+        console.error('Error preloading images:', err);
         setTimeout(() => {
           setIsLoading(false);
         }, 2000);
       }
     };
-
+  
     preloadAll();
     
-    // Резервное скрытие лоадера через 5 секунд (если что-то пойдет не так)
+    // Резервный таймер
     const fallbackTimer = setTimeout(() => {
       setIsLoading(false);
     }, 5000);
-
+  
     return () => clearTimeout(fallbackTimer);
   }, []);
 

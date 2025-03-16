@@ -1,24 +1,10 @@
 /* src/styles/custom.css */
 
 /***************************************
- * ОСНОВНЫЕ ИСПРАВЛЕНИЯ И ОБЩИЕ СТИЛИ
+ * CONTAINER LAYOUTS
  ***************************************/
 
-/* Fix viewport issues on iOS */
-@supports (-webkit-touch-callout: none) {
-  .min-h-screen {
-    min-height: -webkit-fill-available;
-  }
-  .h-screen {
-    height: -webkit-fill-available;
-  }
-}
-
-/***************************************
- * КОНТЕЙНЕРЫ И МАКЕТЫ
- ***************************************/
-
-/* Ensure consistent layout and spacing across all screen sizes */
+/* Container for wrapping content */
 .container-wrapper {
   padding-left: 24px;
   padding-right: 24px;
@@ -35,122 +21,10 @@
   }
 }
 
-/* Connect button width for desktop */
-@media (min-width: 768px) {
-  .connect-button-desktop {
-    min-width: 120px;
-  }
-}
-
 /***************************************
- * КАРТОЧКИ И СТЕКИНГ ЭФФЕКТЫ
+ * GLASSMORPHISM EFFECTS
  ***************************************/
 
-/* Card stacking effect for mobile */
-.mobile-card-stack {
-  position: relative;
-}
-
-.mobile-card-stack .bottom-card {
-  z-index: 10;
-  position: relative;
-}
-
-.mobile-card-stack .top-card {
-  margin-top: -24px;
-  border-top-left-radius: 24px;
-  border-top-right-radius: 24px;
-  z-index: 20;
-  box-shadow: 0 -10px 15px -5px rgba(0, 0, 0, 0.1);
-  padding-top: 32px;
-}
-
-/* Стиль для прямых верхних углов карточки проекта на мобильных устройствах */
-@media (max-width: 767px) {
-  .mobile-project-details {
-    border-radius: 0 0 16px 16px !important;
-    box-shadow: none !important;
-  }
-  
-  .mobile-project-company-stack {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .mobile-project-company-stack > div:first-child {
-    margin-bottom: 2px;
-  }
-  
-  .mobile-project-company-stack > div:last-child {
-    border-top-left-radius: 0 !important;
-    border-top-right-radius: 0 !important;
-  }
-}
-
-/***************************************
- * СКРОЛЛБАРЫ И ПРОКРУТКА
- ***************************************/
-
-/* Вертикальный скроллбар - всегда видимый */
-.custom-scrollbar {
-  scrollbar-width: thin; /* Firefox */
-  scrollbar-color: rgba(0, 0, 0, 0.3) rgba(0, 0, 0, 0.1); /* Firefox */
-  overflow-y: scroll !important; /* Всегда показывать вертикальный скроллбар */
-}
-
-.custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
-  background-color: rgba(0, 0, 0, 0.1); /* Светлый фон трека */
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
-  background-color: rgba(0, 0, 0, 0.1); /* Светлый фон трека */
-  border-radius: 3px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: rgba(0, 0, 0, 0.3); /* Более контрастный ползунок */
-  border-radius: 3px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(0, 0, 0, 0.4); /* Темнее при наведении */
-}
-
-/* Скрытие горизонтальных скроллбаров */
-.scrollbar-hide, 
-.horizontal-scroll,
-.project-tabs,
-.project-tabs-container {
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE и Edge */
-}
-
-.scrollbar-hide::-webkit-scrollbar,
-.horizontal-scroll::-webkit-scrollbar,
-.project-tabs::-webkit-scrollbar,
-.project-tabs-container::-webkit-scrollbar {
-  display: none; /* Chrome, Safari и Opera */
-}
-
-/* Улучшение плавности скролла на iOS */
-.ios-scrolling,
-.horizontal-scroll {
-  -webkit-overflow-scrolling: touch;
-}
-
-/* Горизонтальная прокрутка */
-.horizontal-scroll {
-  overflow-x: auto;
-  white-space: nowrap;
-  scroll-behavior: smooth;
-}
-
-/***************************************
- * ФУТЕР И ЭФФЕКТЫ СТЕКЛА
- ***************************************/
-
-/* Glassmorphism effect for footer */
 .glassmorphism {
   background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(10px);
@@ -159,21 +33,60 @@
 }
 
 /***************************************
- * ИКОНКИ И СОСТОЯНИЯ
+ * SCROLLBAR UTILITIES
  ***************************************/
 
-/* Base icon styling with opacity */
+/* Custom scrollbar for vertical content */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.3) rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+}
+
+/* Hide scrollbar for horizontal scrolling */
+.scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Smooth scrolling for iOS */
+.ios-scrolling {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Horizontal scrolling container */
+.horizontal-scroll {
+  overflow-x: auto;
+  white-space: nowrap;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.horizontal-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/***************************************
+ * ICON STYLES
+ ***************************************/
+
+/* Base icon styling */
 .nav-icon {
   opacity: 0.9;
   transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
-/* Active state for all devices */
 .icon-active {
   opacity: 1;
 }
 
-/* Hover effects only for desktop */
+/* Hover effects for desktop only */
 @media (min-width: 768px) {
   .nav-icon:hover {
     transform: scale(1.2);
@@ -181,8 +94,13 @@
   }
 }
 
+/* Icon transition animations */
+.icon-transition {
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
 /***************************************
- * ВСПЛЫВАЮЩИЕ ПОДСКАЗКИ (TOOLTIP)
+ * TOOLTIP STYLES
  ***************************************/
 
 .tooltip {
@@ -231,71 +149,241 @@
 }
 
 /***************************************
- * ТРАНСФОРМИРУЮЩАЯСЯ КАРТОЧКА
+ * MENU & ANIMATION STYLES
  ***************************************/
 
-/* Анимация для трансформации карточки */
-.transform-card,
+/* Menu animation keyframes */
+@keyframes menuDesktopEnter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes menuDesktopExit {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes menuMobileEnter {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes menuMobileExit {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+/* Menu animation classes */
+.menu-desktop-enter {
+  animation: menuDesktopEnter 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.menu-desktop-exit {
+  animation: menuDesktopExit 0.2s cubic-bezier(0.36, 0.07, 0.19, 0.97) forwards;
+}
+
+.menu-mobile-enter {
+  animation: menuMobileEnter 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.menu-mobile-exit {
+  animation: menuMobileExit 0.2s cubic-bezier(0.36, 0.07, 0.19, 0.97) forwards;
+}
+
+/* Menu item styling */
+.menu-item {
+  border-radius: 0.5rem;
+  transition: background-color 0.2s ease;
+}
+
+.menu-item-hover:hover {
+  background-color: rgba(243, 244, 246, 0.7);
+}
+
+/***************************************
+ * LOADER STYLES
+ ***************************************/
+
+/* Loader container - fullscreen overlay */
+.loader-container {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #E3F2FD;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  /* Fix for iOS safe areas */
+  padding-top: env(safe-area-inset-top, 0);
+  padding-right: env(safe-area-inset-right, 0);
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  padding-left: env(safe-area-inset-left, 0);
+}
+
+/* Loader icon container */
+.loader-icon {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  margin-bottom: 16px;
+}
+
+/* Fox icon with pulse animation */
+.loader-icon img {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  display: block;
+  position: relative;
+  z-index: 2;
+}
+
+/* Animation for loader icon */
+.loader-pulse {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(74, 222, 128, 0);
+  }
+  
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 10px rgba(74, 222, 128, 0);
+  }
+  
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(74, 222, 128, 0);
+  }
+}
+
+/* Outer ring animation */
+.loader-ring {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 4px solid #3b82f6;
+  border-radius: 50%;
+  opacity: 0.7;
+  animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes ping {
+  75%, 100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+/* Loader text styling */
+.loader-container p {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #4b5563;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  font-weight: 500;
+  text-align: center;
+  animation: blink 1.5s infinite;
+  border: none;
+  outline: none;
+}
+
+@keyframes blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/***************************************
+ * CARD STYLES
+ ***************************************/
+
+/* Card transformations */
 .transform-card-transition {
   transition: all 0.25s ease-in-out;
 }
 
-/* Улучшенные стили для компактной карточки компании */
-.compact-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  min-height: 56px;
-  border-bottom: 1px solid rgba(229, 231, 235, 0.5);
+/* Mobile card stacking */
+.mobile-card-stack .bottom-card {
+  z-index: 10;
+  position: relative;
+}
+
+.mobile-card-stack .top-card {
+  margin-top: -24px;
+  border-top-left-radius: 24px;
+  border-top-right-radius: 24px;
+  z-index: 20;
+  box-shadow: 0 -10px 15px -5px rgba(0, 0, 0, 0.1);
+  padding-top: 32px;
+}
+
+/* Mobile-specific project card styles */
+@media (max-width: 767px) {
+  .mobile-project-details {
+    border-radius: 0 0 16px 16px !important;
+    box-shadow: none !important;
+  }
+  
+  .mobile-project-company-stack {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .mobile-project-company-stack > div:first-child {
+    margin-bottom: 2px;
+  }
+  
+  .mobile-project-company-stack > div:last-child {
+    border-top-left-radius: 0 !important;
+    border-top-right-radius: 0 !important;
+  }
 }
 
 /***************************************
- * ПРОЕКТНЫЕ ВКЛАДКИ И ТАБЫ
+ * CIRCULAR MENU STYLES
  ***************************************/
 
-/* Контейнер для вкладок проектов */
-.project-tabs,
-.project-tabs-container {
-  display: flex;
-  overflow-x: auto;
-  overflow-y: hidden;
-  white-space: nowrap;
-  padding: 8px 16px 12px;
-}
-
-.project-tabs {
-  scroll-padding: 0 16px;
-  gap: 8px;
-  padding: 0 16px 12px 16px;
-}
-
-/* Стили для отдельных вкладок */
-.project-tab {
-  flex-shrink: 0;
-  padding: 6px 12px;
-  border-radius: 9999px;
-  margin-right: 8px;
-  font-size: 14px;
-  transition: background-color 0.2s, color 0.2s;
-  white-space: nowrap;
-}
-
-/* Состояния вкладок */
-.project-tab-active {
-  background-color: #DBEAFE;
-  color: #2563EB;
-}
-
-.project-tab-inactive {
-  background-color: #F3F4F6;
-  color: #4B5563;
-}
-
-/***************************************
- * СТИЛИ ДЛЯ КРУГОВОГО МЕНЮ
- ***************************************/
-
- .circular-menu-container {
+.circular-menu-container {
   position: fixed;
   inset: 0;
   display: flex;
@@ -328,7 +416,6 @@
   opacity: 1;
 }
 
-/* Кнопка закрытия в центре кругового меню */
 .circular-menu-close {
   position: absolute;
   top: 50%;
@@ -350,7 +437,6 @@
   opacity: 1;
 }
 
-/* Анимация для иконок компаний */
 .circular-menu-icon {
   position: absolute;
   opacity: 0;
@@ -363,7 +449,6 @@
   transform: translate(0, 0) scale(1);
 }
 
-/* Задержка для последовательного появления иконок */
 .circular-menu.active .circular-menu-icon:nth-child(1) {
   transition-delay: 0ms;
 }
@@ -380,7 +465,7 @@
   transition-delay: 150ms;
 }
 
-/* Компактная сетка иконок */
+/* Compact icon grid styles */
 .compact-icon-grid {
   display: grid;
   grid-template-columns: repeat(2, 18px);
@@ -400,46 +485,22 @@
   transition: opacity 200ms ease-out;
 }
 
-/* Эффект наведения курсора на компактную сетку */
+/* Hover effect for compact grid */
 @media (hover: hover) {
   .compact-icon-grid:hover .compact-icon-grid-item {
     opacity: 0.9;
   }
 }
 
-/* Стили для меню */
-.menu-item {
-  border-radius: 0.5rem;
-  transition: background-color 0.2s ease;
+/***************************************
+ * STATUS INDICATOR
+ ***************************************/
+
+.status-pulse {
+  animation: status-pulse 2s infinite;
 }
 
-.menu-item:hover {
-  background-color: rgba(243, 244, 246, 0.7);
-}
-
-/* Эффект стекла для меню (если еще не определен для glassmorphism) */
-.glassmorphism {
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.6);
-}
-
-/* Анимации для переключателя темы */
-.theme-toggle-switch {
-  transition: transform 0.3s ease;
-}
-
-.theme-toggle-bg {
-  transition: background-color 0.3s ease;
-}
-
-/* Пульсирующий статус */
-.pulse-animation {
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
+@keyframes status-pulse {
   0% {
     transform: scale(0.95);
     box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7);
@@ -456,214 +517,23 @@
   }
 }
 
-/* Анимации для открытия и закрытия меню */
-.menu-enter {
-  opacity: 0;
-  transform: translateY(-10px);
+/***************************************
+ * UTILITY CLASSES
+ ***************************************/
+
+.no-select {
+  user-select: none;
+  -webkit-user-select: none;
 }
 
-.menu-enter-active {
-  opacity: 1;
-  transform: translateY(0);
-  transition: opacity 200ms, transform 200ms;
+.no-tap-highlight {
+  -webkit-tap-highlight-color: transparent;
 }
 
-.menu-exit {
-  opacity: 1;
+.no-outline {
+  outline: none !important;
 }
 
-.menu-exit-active {
-  opacity: 0;
-  transform: translateY(-10px);
-  transition: opacity 200ms, transform 200ms;
-}
-
-/* Добавьте эти стили в конец файла src/styles/custom.css */
-
-/* Исправление для зеленых прямоугольников на экране загрузки */
-.App {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-}
-
-/* Удаляем ненужные стили, которые могли вызывать проблемы */
-.icon-container-40 {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Более специфичные стили для меню и его компонентов */
-.menu-animation {
-  animation: menuFadeIn 0.2s ease-out forwards;
-}
-
-@keyframes menuFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Улучшенные анимации для аккордеона YouTube */
-.accordion-animation {
-  transition: all 0.5s ease-in-out;
-}
-
-/* Стили для фоновых контейнеров */
-.bg-status {
-  background-color: #E3FFEE;
-}
-
-.bg-youtube {
-  background-color: rgba(255, 0, 0, 0.1);
-}
-
-.bg-github {
-  background-color: rgba(0, 0, 0, 0.05);
-}
-
-.bg-theme-light {
-  background-color: rgba(255, 170, 0, 0.1);
-}
-
-.bg-theme-dark {
-  background-color: rgba(0, 0, 0, 0.08);
-}
-
-/* Анимации для разных типов устройств */
-
-/* Десктопная версия - появление снизу вверх */
-@keyframes menuDesktopEnter {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Десктопная версия - исчезновение сверху вниз */
-@keyframes menuDesktopExit {
-  from {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  to {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-}
-
-/* Мобильная версия - появление сверху вниз */
-@keyframes menuMobileEnter {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Мобильная версия - исчезновение снизу вверх */
-@keyframes menuMobileExit {
-  from {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  to {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-}
-
-/* Классы для меню */
-.menu-desktop-enter {
-  animation: menuDesktopEnter 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-}
-
-.menu-desktop-exit {
-  animation: menuDesktopExit 0.2s cubic-bezier(0.36, 0.07, 0.19, 0.97) forwards;
-}
-
-.menu-mobile-enter {
-  animation: menuMobileEnter 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-}
-
-.menu-mobile-exit {
-  animation: menuMobileExit 0.2s cubic-bezier(0.36, 0.07, 0.19, 0.97) forwards;
-}
-
-/* Анимация переключения между иконками */
-.icon-transition {
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-/* Фиксы для лоадера */
-.loader-container {
-  position: fixed;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(8px);
-  z-index: 9999;
-}
-
-.loader-icon {
-  width: 64px;
-  height: 64px;
-  margin-bottom: 16px;
-  position: relative;
-}
-
-.loader-pulse {
-  animation: pulse 2s infinite;
-}
-
-.loader-ring {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border: 4px solid #3b82f6;
-  border-radius: 50%;
-  opacity: 0.7;
-  animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
-}
-
-@keyframes ping {
-  75%, 100% {
-    transform: scale(2);
-    opacity: 0;
-  }
-}
-
-/* Дополнительные стили для корректной работы меню */
-.no-hover {
-  pointer-events: none !important;
-}
-
-.menu-item {
-  border-radius: 0.5rem;
-  transition: background-color 0.2s ease;
-}
-
-.menu-item-hover:hover {
-  background-color: rgba(243, 244, 246, 0.7);
+.no-border {
+  border: none !important;
 }
