@@ -1,5 +1,5 @@
 // src/components/layout/MobileLayout.jsx
-import React, { useEffect } from 'react';
+import React from 'react'; // Удалил useEffect из импорта, так как он не используется
 import Footer from '../common/Footer';
 import ProjectDetails from '../company/ProjectDetails';
 import TransformingCompanyHeader from '../common/TransformingCompanyHeader';
