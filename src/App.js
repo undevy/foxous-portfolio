@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
 import PortfolioLayout from './components/layout/PortfolioLayout';
-import Loader from './components/common/Loader';
+import Loader from './components/ui/Loader';
 
 // Список всех изображений для предзагрузки
 const imagesToPreload = [
@@ -27,7 +27,6 @@ function App() {
 
   // Предзагружаем изображения при монтировании компонента
   useEffect(() => {
-    // Функция для предзагрузки изображения
     const preloadImage = (src) => {
       return new Promise((resolve, reject) => {
         const img = new Image();
@@ -37,7 +36,6 @@ function App() {
       });
     };
   
-    // Предзагружаем все изображения параллельно
     const preloadAll = async () => {
       try {
         await Promise.all(imagesToPreload.map(src => preloadImage(src)));

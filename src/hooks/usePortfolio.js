@@ -1,8 +1,11 @@
-// src/hooks/usePortfolio.js
 import { useState, useRef } from 'react';
 
+/**
+ * Хук управления состоянием портфолио
+ * @returns {Object} Объект с состояниями и функциями управления портфолио
+ */
 const usePortfolio = () => {
-  // Existing states
+  // Основные состояния
   const [activeCompany, setActiveCompany] = useState(null);
   const [activeCase, setActiveCase] = useState(null);
   const [savedProjects, setSavedProjects] = useState({});
@@ -10,37 +13,40 @@ const usePortfolio = () => {
   const [showContactModal, setShowContactModal] = useState(false);
   const [isCompanyCardTransformed, setIsCompanyCardTransformed] = useState(false);
   
-  // Menu states
+  // Состояния для меню
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [menuPosition, setMenuPosition] = useState(null);
   const foxIconRef = useRef(null);
 
-  // Function to toggle company visibility
+  /**
+   * Переключает видимость компании
+   * @param {string} companyId - ID компании
+   */
   const toggleCompany = (companyId) => {
-    // Handle menu separately
+    // Обрабатываем меню отдельно
     if (companyId === 'menu') {
       toggleMenu();
       return;
     }
     
-    // Handle contact modal
+    // Обрабатываем модальное окно контактов
     if (companyId === 'contact') {
       setShowContactModal(true);
       return;
     }
     
-    // Toggle active company
+    // Переключаем активную компанию
     if (activeCompany === companyId) {
-      // Close current company
+      // Закрываем текущую компанию
       setActiveCompany(null);
       setActiveCase(null);
       setIsOpen(false);
       setIsCompanyCardTransformed(false);
     } else {
-      // Open new company
+      // Открываем новую компанию
       setActiveCompany(companyId);
       
-      // Restore saved project or default state
+      // Восстанавливаем сохраненный проект или сбрасываем
       const savedCase = savedProjects[companyId];
       if (savedCase) {
         setActiveCase(savedCase);
@@ -54,25 +60,32 @@ const usePortfolio = () => {
     }
   };
 
-  // Function to select a project case
+  /**
+   * Выбирает проект
+   * @param {string} caseId - ID проекта
+   */
   const selectCase = (caseId) => {
     setActiveCase(caseId);
     setIsCompanyCardTransformed(true);
     
-    // Save project selection for this company
+    // Сохраняем выбор проекта для этой компании
     setSavedProjects({
       ...savedProjects,
       [activeCompany]: caseId
     });
   };
 
-  // Function to return to full company card
+  /**
+   * Возвращает к полной карточке компании
+   */
   const backToCompanyCard = () => {
     setActiveCase(null);
     setIsCompanyCardTransformed(false);
   };
 
-  // Function to close sidebar (all windows)
+  /**
+   * Закрывает сайдбар (все окна)
+   */
   const closeSidebar = () => {
     setIsOpen(false);
     setActiveCompany(null);
@@ -80,26 +93,32 @@ const usePortfolio = () => {
     setIsCompanyCardTransformed(false);
   };
 
-  // Function to close only project details
+  /**
+   * Закрывает только детали проекта
+   */
   const closeProjectDetails = () => {
     setActiveCase(null);
     setIsCompanyCardTransformed(false);
   };
 
-  // Function to open contact modal
+  /**
+   * Открывает модальное окно контактов
+   */
   const openContactModal = () => {
     setShowContactModal(true);
   };
   
-  // Function to toggle menu
+  /**
+   * Переключает состояние меню
+   */
   const toggleMenu = () => {
-    // If menu is open, close it
+    // Если меню открыто, закрываем его
     if (isMenuOpen) {
       setIsMenuOpen(false);
       return;
     }
     
-    // Get position for menu placement
+    // Получаем позицию для размещения меню
     if (foxIconRef.current) {
       const rect = foxIconRef.current.getBoundingClientRect();
       const position = {
@@ -111,11 +130,13 @@ const usePortfolio = () => {
       setMenuPosition(position);
     }
     
-    // Open menu
+    // Открываем меню
     setIsMenuOpen(true);
   };
   
-  // Function to close menu
+  /**
+   * Закрывает меню
+   */
   const closeMenu = () => {
     setIsMenuOpen(false);
   };
