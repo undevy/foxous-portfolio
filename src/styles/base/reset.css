@@ -1,0 +1,60 @@
+/* src/styles/base/reset.css */
+
+/* Base HTML elements - extracted from index.css */
+html {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+  
+  body {
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  /* iOS height fixes */
+  @supports (-webkit-touch-callout: none) {
+    body, 
+    html, 
+    #root {
+      height: -webkit-fill-available;
+    }
+    
+    .min-h-screen {
+      min-height: -webkit-fill-available;
+    }
+    
+    .h-screen {
+      height: -webkit-fill-available;
+    }
+  }
+  
+  /* Root element settings */
+  #root {
+    height: 100%;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  /* Fix for SVG and image rendering */
+  img, 
+  svg {
+    display: inline-block;
+    vertical-align: middle;
+    max-width: 100%;
+    height: auto;
+  }
+  
+  /* Ensure proper box-sizing for all elements */
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }

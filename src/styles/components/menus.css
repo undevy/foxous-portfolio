@@ -1,0 +1,190 @@
+/* src/styles/components/menus.css */
+
+/***************************************
+ * MENU & ANIMATION STYLES
+ ***************************************/
+
+/* Menu animation keyframes */
+@keyframes menuDesktopEnter {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes menuDesktopExit {
+    from {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+  }
+  
+  @keyframes menuMobileEnter {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes menuMobileExit {
+    from {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+  }
+  
+  /* Menu animation classes */
+  .menu-desktop-enter {
+    animation: menuDesktopEnter 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+  
+  .menu-desktop-exit {
+    animation: menuDesktopExit 0.2s cubic-bezier(0.36, 0.07, 0.19, 0.97) forwards;
+  }
+  
+  .menu-mobile-enter {
+    animation: menuMobileEnter 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+  
+  .menu-mobile-exit {
+    animation: menuMobileExit 0.2s cubic-bezier(0.36, 0.07, 0.19, 0.97) forwards;
+  }
+  
+  /* Menu item styling */
+  .menu-item {
+    border-radius: 0.5rem;
+    transition: background-color 0.2s ease;
+  }
+  
+  .menu-item-hover:hover {
+    background-color: rgba(243, 244, 246, 0.7);
+  }
+  
+  /***************************************
+   * CIRCULAR MENU STYLES
+   ***************************************/
+  
+  .circular-menu-container {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+    pointer-events: none;
+  }
+  
+  .circular-menu-container.active {
+    pointer-events: auto;
+  }
+  
+  .circular-menu {
+    position: relative;
+    width: 176px;
+    height: 176px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    transition: all 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    transform: scale(0);
+    opacity: 0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    top: -56px;
+  }
+  
+  .circular-menu.active {
+    transform: scale(1);
+    opacity: 1;
+  }
+  
+  .circular-menu-close {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 40px;
+    height: 40px;
+    background-color: white;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 300ms ease-out, transform 300ms ease-out;
+    opacity: 0;
+    cursor: pointer;
+  }
+  
+  .circular-menu.active .circular-menu-close {
+    opacity: 1;
+  }
+  
+  .circular-menu-icon {
+    position: absolute;
+    opacity: 0;
+    transform: translate(0, 30px) scale(0.5);
+    transition: all 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  
+  .circular-menu.active .circular-menu-icon {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+  
+  .circular-menu.active .circular-menu-icon:nth-child(1) {
+    transition-delay: 0ms;
+  }
+  
+  .circular-menu.active .circular-menu-icon:nth-child(2) {
+    transition-delay: 50ms;
+  }
+  
+  .circular-menu.active .circular-menu-icon:nth-child(3) {
+    transition-delay: 100ms;
+  }
+  
+  .circular-menu.active .circular-menu-icon:nth-child(4) {
+    transition-delay: 150ms;
+  }
+  
+  /* Compact icon grid styles */
+  .compact-icon-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 18px);
+    grid-template-rows: repeat(2, 18px);
+    gap: 2px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 0.5rem;
+    width: 40px;
+    height: 40px;
+    padding: 1px;
+    cursor: pointer;
+    position: relative;
+  }
+  
+  .compact-icon-grid-item {
+    border-radius: 0.125rem;
+    transition: opacity 200ms ease-out;
+  }
+  
+  /* Hover effect for compact grid */
+  @media (hover: hover) {
+    .compact-icon-grid:hover .compact-icon-grid-item {
+      opacity: 0.9;
+    }
+  }

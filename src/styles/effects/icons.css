@@ -1,0 +1,36 @@
+/* src/styles/effects/icons.css */
+
+/***************************************
+ * ICON STYLES
+ ***************************************/
+
+/* Base icon styling */
+.nav-icon {
+    opacity: 0.9;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+  
+  .icon-active {
+    opacity: 1;
+  }
+  
+  /* Hover effects for desktop only */
+  @media (min-width: 768px) {
+    .nav-icon:hover {
+      transform: scale(1.2);
+      opacity: 1;
+    }
+  }
+  
+  /* Container for icons with tooltips */
+  .icon-container {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* No hover state for menu open */
+  .no-hover {
+    pointer-events: none;
+  }

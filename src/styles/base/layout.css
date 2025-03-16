@@ -1,0 +1,22 @@
+/* src/styles/base/layout.css */
+
+/***************************************
+ * CONTAINER LAYOUTS
+ ***************************************/
+
+/* Container for wrapping content */
+.container-wrapper {
+    padding-left: 24px;
+    padding-right: 24px;
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+  }
+  
+  @media (max-width: 640px) {
+    .container-wrapper {
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+  }

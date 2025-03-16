@@ -1,0 +1,56 @@
+/* src/styles/utils/utilities.css */
+
+/***************************************
+ * UTILITY CLASSES
+ ***************************************/
+
+ .no-select {
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  
+  .no-tap-highlight {
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  .no-outline {
+    outline: none !important;
+  }
+  
+  .no-border {
+    border: none !important;
+  }
+  
+  /* Flex utilities */
+  .flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .flex-between {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .flex-column {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Position utilities */
+  .fixed-full {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+  }
+  
+  .position-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }

@@ -1,0 +1,46 @@
+/* src/styles/responsive/desktop.css */
+
+/***************************************
+ * DESKTOP SPECIFIC STYLES
+ ***************************************/
+
+ @media (min-width: 768px) {
+    /* Desktop layout */
+    .desktop-flex-row {
+      display: flex;
+      flex-direction: row;
+    }
+    
+    .desktop-gap-6 {
+      gap: 1.5rem;
+    }
+    
+    /* Desktop company card width */
+    .desktop-card-width {
+      width: 384px;
+      flex-shrink: 0;
+    }
+    
+    /* Desktop fixed footer */
+    .desktop-fixed-footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 40;
+      padding: 0 1.5rem 1.5rem;
+    }
+    
+    /* Max width containers */
+    .desktop-container-xl {
+      max-width: 1048px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    .desktop-container-lg {
+      max-width: 1000px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }

@@ -1,0 +1,31 @@
+/* src/styles/components/footer.css */
+
+/* Footer container */
+.footer-container {
+    width: 100%;
+    position: relative;
+  }
+  
+  /* Footer glassmorphism background */
+  .footer-glassmorphism {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 1.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+  
+  /* Footer inner layout */
+  .footer-inner {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+  }
+  
+  /* Footer mobile specific styles */
+  @media (max-width: 767px) {
+    .footer-container {
+      padding-top: env(safe-area-inset-top, 0);
+    }
+  }

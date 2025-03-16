@@ -1,0 +1,47 @@
+/* src/styles/components/cards.css */
+
+/***************************************
+ * CARD STYLES
+ ***************************************/
+
+/* Card transformations */
+.transform-card-transition {
+    transition: all 0.25s ease-in-out;
+  }
+  
+  /* Mobile card stacking */
+  .mobile-card-stack .bottom-card {
+    z-index: 10;
+    position: relative;
+  }
+  
+  .mobile-card-stack .top-card {
+    margin-top: -24px;
+    border-top-left-radius: 24px;
+    border-top-right-radius: 24px;
+    z-index: 20;
+    box-shadow: 0 -10px 15px -5px rgba(0, 0, 0, 0.1);
+    padding-top: 32px;
+  }
+  
+  /* Mobile-specific project card styles */
+  @media (max-width: 767px) {
+    .mobile-project-details {
+      border-radius: 0 0 16px 16px !important;
+      box-shadow: none !important;
+    }
+    
+    .mobile-project-company-stack {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .mobile-project-company-stack > div:first-child {
+      margin-bottom: 2px;
+    }
+    
+    .mobile-project-company-stack > div:last-child {
+      border-top-left-radius: 0 !important;
+      border-top-right-radius: 0 !important;
+    }
+  }

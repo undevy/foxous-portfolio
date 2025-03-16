@@ -1,0 +1,39 @@
+/* src/styles/responsive/mobile.css */
+
+/***************************************
+ * MOBILE SPECIFIC STYLES
+ ***************************************/
+
+ @media (max-width: 767px) {
+    /* Safe area handling */
+    .mobile-safe-top {
+      padding-top: env(safe-area-inset-top, 0);
+    }
+    
+    .mobile-safe-bottom {
+      padding-bottom: env(safe-area-inset-bottom, 0);
+    }
+    
+    /* Mobile layout adjustments */
+    .mobile-pt-20 {
+      padding-top: 5rem;
+    }
+    
+    .mobile-pb-4 {
+      padding-bottom: 1rem;
+    }
+    
+    .mobile-px-4 {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+    
+    /* Fixed mobile header */
+    .mobile-fixed-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 50;
+    }
+  }

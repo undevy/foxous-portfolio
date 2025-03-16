@@ -5,84 +5,27 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Base HTML elements */
-html {
-  height: 100%;
-  width: 100%;
-  margin: 0;
-  padding: 0;
-}
+/* Base styles */
+@import './styles/base/variables.css';
+@import './styles/base/reset.css';
+@import './styles/base/layout.css';
 
-body {
-  min-height: 100%;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-tap-highlight-color: transparent;
-}
+/* Component styles */
+@import './styles/components/cards.css';
+@import './styles/components/menus.css';
+@import './styles/components/tooltips.css';
+@import './styles/components/loader.css';
+@import './styles/components/footer.css';
 
-/* iOS height fixes */
-@supports (-webkit-touch-callout: none) {
-  body, 
-  html, 
-  #root {
-    height: -webkit-fill-available;
-  }
-  
-  .min-h-screen {
-    min-height: -webkit-fill-available;
-  }
-  
-  .h-screen {
-    height: -webkit-fill-available;
-  }
-}
+/* Effect styles */
+@import './styles/effects/glassmorphism.css';
+@import './styles/effects/animations.css';
+@import './styles/effects/icons.css';
+@import './styles/effects/scrollbars.css';
 
-/* Root element settings */
-#root {
-  height: 100%;
-  width: 100%;
-  position: relative;
-  overflow: hidden;
-}
+/* Utility styles */
+@import './styles/utils/utilities.css';
 
-/* Fix for SVG and image rendering */
-img, 
-svg {
-  display: inline-block;
-  vertical-align: middle;
-  max-width: 100%;
-  height: auto;
-}
-
-/* Ensure proper box-sizing for all elements */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-/* Custom scrollbar styles */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.1);
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.3);
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.4);
-}
+/* Responsive styles */
+@import './styles/responsive/mobile.css';
+@import './styles/responsive/desktop.css';

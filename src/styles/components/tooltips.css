@@ -1,0 +1,50 @@
+/* src/styles/components/tooltips.css */
+
+/***************************************
+ * TOOLTIP STYLES
+ ***************************************/
+
+ .tooltip {
+    position: absolute;
+    visibility: hidden;
+    opacity: 0;
+    background-color: white;
+    color: black;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 50;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+    transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+    transform: translateY(5px);
+  }
+  
+  .tooltip-top {
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-5px);
+    margin-bottom: 10px;
+  }
+  
+  .tooltip-top-left {
+    bottom: 100%;
+    left: 0;
+    transform: translateY(-5px);
+    margin-bottom: 10px;
+  }
+  
+  /* Show tooltips on hover - desktop only */
+  @media (min-width: 768px) {
+    .icon-container:hover .tooltip {
+      visibility: visible;
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+    
+    .icon-container:hover .tooltip-top-left {
+      visibility: visible;
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
