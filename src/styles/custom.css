@@ -406,3 +406,264 @@
     opacity: 0.9;
   }
 }
+
+/* Стили для меню */
+.menu-item {
+  border-radius: 0.5rem;
+  transition: background-color 0.2s ease;
+}
+
+.menu-item:hover {
+  background-color: rgba(243, 244, 246, 0.7);
+}
+
+/* Эффект стекла для меню (если еще не определен для glassmorphism) */
+.glassmorphism {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+/* Анимации для переключателя темы */
+.theme-toggle-switch {
+  transition: transform 0.3s ease;
+}
+
+.theme-toggle-bg {
+  transition: background-color 0.3s ease;
+}
+
+/* Пульсирующий статус */
+.pulse-animation {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7);
+  }
+  
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 10px rgba(74, 222, 128, 0);
+  }
+  
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(74, 222, 128, 0);
+  }
+}
+
+/* Анимации для открытия и закрытия меню */
+.menu-enter {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.menu-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 200ms, transform 200ms;
+}
+
+.menu-exit {
+  opacity: 1;
+}
+
+.menu-exit-active {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 200ms, transform 200ms;
+}
+
+/* Добавьте эти стили в конец файла src/styles/custom.css */
+
+/* Исправление для зеленых прямоугольников на экране загрузки */
+.App {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Удаляем ненужные стили, которые могли вызывать проблемы */
+.icon-container-40 {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Более специфичные стили для меню и его компонентов */
+.menu-animation {
+  animation: menuFadeIn 0.2s ease-out forwards;
+}
+
+@keyframes menuFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Улучшенные анимации для аккордеона YouTube */
+.accordion-animation {
+  transition: all 0.5s ease-in-out;
+}
+
+/* Стили для фоновых контейнеров */
+.bg-status {
+  background-color: #E3FFEE;
+}
+
+.bg-youtube {
+  background-color: rgba(255, 0, 0, 0.1);
+}
+
+.bg-github {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.bg-theme-light {
+  background-color: rgba(255, 170, 0, 0.1);
+}
+
+.bg-theme-dark {
+  background-color: rgba(0, 0, 0, 0.08);
+}
+
+/* Анимации для разных типов устройств */
+
+/* Десктопная версия - появление снизу вверх */
+@keyframes menuDesktopEnter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Десктопная версия - исчезновение сверху вниз */
+@keyframes menuDesktopExit {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+/* Мобильная версия - появление сверху вниз */
+@keyframes menuMobileEnter {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Мобильная версия - исчезновение снизу вверх */
+@keyframes menuMobileExit {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+/* Классы для меню */
+.menu-desktop-enter {
+  animation: menuDesktopEnter 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.menu-desktop-exit {
+  animation: menuDesktopExit 0.2s cubic-bezier(0.36, 0.07, 0.19, 0.97) forwards;
+}
+
+.menu-mobile-enter {
+  animation: menuMobileEnter 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.menu-mobile-exit {
+  animation: menuMobileExit 0.2s cubic-bezier(0.36, 0.07, 0.19, 0.97) forwards;
+}
+
+/* Анимация переключения между иконками */
+.icon-transition {
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Фиксы для лоадера */
+.loader-container {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(8px);
+  z-index: 9999;
+}
+
+.loader-icon {
+  width: 64px;
+  height: 64px;
+  margin-bottom: 16px;
+  position: relative;
+}
+
+.loader-pulse {
+  animation: pulse 2s infinite;
+}
+
+.loader-ring {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 4px solid #3b82f6;
+  border-radius: 50%;
+  opacity: 0.7;
+  animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes ping {
+  75%, 100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+/* Дополнительные стили для корректной работы меню */
+.no-hover {
+  pointer-events: none !important;
+}
+
+.menu-item {
+  border-radius: 0.5rem;
+  transition: background-color 0.2s ease;
+}
+
+.menu-item-hover:hover {
+  background-color: rgba(243, 244, 246, 0.7);
+}

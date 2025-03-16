@@ -4,33 +4,33 @@ import MobileLayout from './MobileLayout';
 import DesktopLayout from './DesktopLayout';
 import AnimatedBackground from '../common/AnimatedBackground';
 import ContactModal from '../modals/ContactModal';
+import Menu from '../common/Menu';
 import usePortfolio from '../../hooks/usePortfolio';
 
 const PortfolioLayout = () => {
-  // Сразу определяем тип устройства при первом рендере
+  // Define device type on initial render
   const initialIsMobile = window.innerWidth < 768;
   const [isMobile, setIsMobile] = useState(initialIsMobile);
   const portfolioState = usePortfolio();
   
-  // Оптимизируем функцию проверки мобильного устройства
+  // Optimize mobile detection function
   const checkIfMobile = useCallback(() => {
     setIsMobile(window.innerWidth < 768);
   }, []);
   
   useEffect(() => {
-    // Добавляем слушатель изменения размера
+    // Add resize listener
     window.addEventListener('resize', checkIfMobile);
     
-    // Очищаем слушатель при размонтировании
+    // Clean up listener on unmount
     return () => {
       window.removeEventListener('resize', checkIfMobile);
     };
   }, [checkIfMobile]);
 
-  // Используем React.memo для AnimatedBackground (уже сделано)
+  // Memoized components
   const backgroundComponent = useMemo(() => <AnimatedBackground />, []);
   
-  // Используем React.memo для ContactModal
   const contactModalComponent = useMemo(() => (
     <ContactModal 
       showContactModal={portfolioState.showContactModal}
@@ -42,6 +42,20 @@ const PortfolioLayout = () => {
     portfolioState.setShowContactModal, 
     portfolioState.activeCompany
   ]);
+  
+  const menuComponent = useMemo(() => (
+    <Menu 
+      isOpen={portfolioState.isMenuOpen}
+      position={portfolioState.menuPosition}
+      onClose={portfolioState.closeMenu}
+      isMobile={isMobile}
+    />
+  ), [
+    portfolioState.isMenuOpen,
+    portfolioState.menuPosition,
+    portfolioState.closeMenu,
+    isMobile
+  ]);
 
   return (
     <div className="min-h-screen w-full overflow-hidden relative">
@@ -50,15 +64,23 @@ const PortfolioLayout = () => {
       {isMobile ? (
         <MobileLayout 
           {...portfolioState} 
-          // Явно передаем новые пропсы для ясности (хотя они уже включены в ...portfolioState)
           isCompanyCardTransformed={portfolioState.isCompanyCardTransformed}
           backToCompanyCard={portfolioState.backToCompanyCard}
+          foxIconRef={portfolioState.foxIconRef}
+          isMobile={isMobile}
+          isMenuOpen={portfolioState.isMenuOpen}
         />
       ) : (
-        <DesktopLayout {...portfolioState} />
+        <DesktopLayout 
+          {...portfolioState} 
+          foxIconRef={portfolioState.foxIconRef}
+          isMobile={isMobile}
+          isMenuOpen={portfolioState.isMenuOpen}
+        />
       )}
       
       {contactModalComponent}
+      {menuComponent}
     </div>
   );
 };

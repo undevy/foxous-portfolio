@@ -1,3 +1,4 @@
+// src/App.js
 import React, { useEffect, useState } from 'react';
 import './App.css';
 import PortfolioLayout from './components/layout/PortfolioLayout';
@@ -13,7 +14,11 @@ const imagesToPreload = [
   '/assets/svgs/Gmx.svg',
   '/assets/svgs/Nexus.svg',
   '/assets/svgs/P2P.svg',
-  '/assets/svgs/Wb.svg'
+  '/assets/svgs/Wb.svg',
+  '/assets/svgs/Sun.svg',
+  '/assets/svgs/Moon.svg',
+  '/assets/svgs/Github.svg',
+  '/assets/svgs/Youtube.svg'
 ];
 
 function App() {
@@ -36,14 +41,12 @@ function App() {
     const preloadAll = async () => {
       try {
         await Promise.all(imagesToPreload.map(src => preloadImage(src)));
-        console.log('All images preloaded successfully');
         
         // Устанавливаем минимальное время отображения лоадера (2 секунды)
         setTimeout(() => {
           setIsLoading(false);
         }, 2000);
       } catch (err) {
-        console.error('Error preloading images:', err);
         // Даже при ошибке скрываем лоадер через 2 секунды
         setTimeout(() => {
           setIsLoading(false);

@@ -3,17 +3,17 @@ import React from 'react';
 
 const Loader = () => {
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-50 bg-white bg-opacity-30 backdrop-blur-sm">
+    <div className="loader-container">
       <div className="flex flex-col items-center">
-        {/* Анимированный лоадер в виде пульсирующего логотипа лисы */}
-        <div className="relative w-16 h-16 mb-4">
+        {/* Анимированный лоадер */}
+        <div className="loader-icon">
           <img 
             src="/assets/svgs/Fox.svg" 
             alt="Loading" 
-            className="w-16 h-16 animate-pulse"
+            className="w-16 h-16 loader-pulse"
           />
           {/* Анимированное кольцо вокруг логотипа */}
-          <div className="absolute top-0 left-0 w-16 h-16 border-4 border-blue-500 rounded-full opacity-75 animate-ping"></div>
+          <div className="loader-ring"></div>
         </div>
         
         {/* Текст загрузки */}

@@ -1,3 +1,4 @@
+// src/components/layout/MobileLayout.jsx
 import React, { useEffect } from 'react';
 import Footer from '../common/Footer';
 import ProjectDetails from '../company/ProjectDetails';
@@ -14,20 +15,20 @@ const MobileLayout = ({
   backToCompanyCard,
   closeProjectDetails,
   setShowContactModal,
+  foxIconRef,
+  isMobile,
+  isMenuOpen
 }) => {
-  // Добавим логи для отладки
-  useEffect(() => {
-    console.log("🔍 MobileLayout рендерится со следующими пропсами:");
-    console.log("🔍 activeCompany:", activeCompany);
-    console.log("🔍 activeCase:", activeCase);
-    console.log("🔍 isOpen:", isOpen);
-    console.log("🔍 isCompanyCardTransformed:", isCompanyCardTransformed);
-  }, [activeCompany, activeCase, isOpen, isCompanyCardTransformed]);
-
   // Используем useMemo для запоминания вычисляемых значений
   const footerComponent = React.useMemo(() => (
-    <Footer activeCompany={activeCompany} toggleCompany={toggleCompany} isMobile={true} />
-  ), [activeCompany, toggleCompany]);
+    <Footer 
+      activeCompany={activeCompany} 
+      toggleCompany={toggleCompany} 
+      isMobile={true}
+      foxIconRef={foxIconRef}
+      isMenuOpen={isMenuOpen}
+    />
+  ), [activeCompany, toggleCompany, foxIconRef, isMenuOpen]);
 
   return (
     <>
@@ -59,9 +60,7 @@ const MobileLayout = ({
                 isTransformed={isCompanyCardTransformed}
                 isMobile={true}
                 maxHeight={'calc(100dvh - 160px)'}
-                onHeightChange={() => {
-                  console.log("🔍 onHeightChange вызван в TransformingCompanyHeader");
-                }}
+                onHeightChange={() => {}}
               />
             </div>
 

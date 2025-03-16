@@ -1,3 +1,4 @@
+// src/components/layout/DesktopLayout.jsx
 import React, { useRef, useEffect, useState, useMemo } from 'react';
 import Footer from '../common/Footer';
 import CompanyCard from '../company/CompanyCard';
@@ -74,6 +75,9 @@ const DesktopLayout = ({
   closeSidebar,
   closeProjectDetails,
   setShowContactModal,
+  foxIconRef,
+  isMobile,
+  isMenuOpen
 }) => {
   const footerRef = useRef(null);
   const [contentHeight, setContentHeight] = useState('auto');
@@ -103,8 +107,14 @@ const DesktopLayout = ({
 
   // Мемоизируем футер для предотвращения ненужных перерисовок
   const footerComponent = useMemo(() => (
-    <Footer activeCompany={activeCompany} toggleCompany={toggleCompany} isMobile={false} />
-  ), [activeCompany, toggleCompany]);
+    <Footer 
+      activeCompany={activeCompany} 
+      toggleCompany={toggleCompany} 
+      isMobile={false}
+      foxIconRef={foxIconRef}
+      isMenuOpen={isMenuOpen}
+    />
+  ), [activeCompany, toggleCompany, foxIconRef, isMenuOpen]);
 
   return (
     <>

@@ -1,114 +1,123 @@
-//src/hooks/usePortfolio.js
-import { useState, useEffect } from 'react';
+// src/hooks/usePortfolio.js
+import { useState, useRef } from 'react';
 
 const usePortfolio = () => {
-  // Состояние для активной компании
+  // Existing states
   const [activeCompany, setActiveCompany] = useState(null);
-  
-  // Состояние для активного кейса (проекта)
   const [activeCase, setActiveCase] = useState(null);
-  
-  // Для сохранения выбранных проектов для каждой компании
   const [savedProjects, setSavedProjects] = useState({});
-  
-  // Состояние открыто/закрыто основное окно
   const [isOpen, setIsOpen] = useState(false);
-  
-  // Состояние модального окна контактов
   const [showContactModal, setShowContactModal] = useState(false);
-  
-  // Новое состояние: трансформирована ли карточка компании в компактный вид
   const [isCompanyCardTransformed, setIsCompanyCardTransformed] = useState(false);
+  
+  // Menu states
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [menuPosition, setMenuPosition] = useState(null);
+  const foxIconRef = useRef(null);
 
-  // Отладочный лог при изменении состояния трансформации
-  useEffect(() => {
-    console.log("🔍 isCompanyCardTransformed изменилось:", isCompanyCardTransformed);
-  }, [isCompanyCardTransformed]);
-
-  // Отладочный лог при изменении активного проекта
-  useEffect(() => {
-    console.log("🔍 activeCase изменился:", activeCase);
-  }, [activeCase]);
-
-  // Функция для переключения компании
+  // Function to toggle company visibility
   const toggleCompany = (companyId) => {
-    console.log("🔍 toggleCompany вызван с companyId:", companyId);
+    // Handle menu separately
+    if (companyId === 'menu') {
+      toggleMenu();
+      return;
+    }
     
+    // Handle contact modal
     if (companyId === 'contact') {
       setShowContactModal(true);
       return;
     }
     
+    // Toggle active company
     if (activeCompany === companyId) {
-      // Если нажимаем на ту же компанию - закрываем ее
+      // Close current company
       setActiveCompany(null);
       setActiveCase(null);
       setIsOpen(false);
-      setIsCompanyCardTransformed(false); // Сбрасываем состояние трансформации
-      console.log("🔍 Закрываем компанию:", companyId);
+      setIsCompanyCardTransformed(false);
     } else {
-      // Иначе открываем новую компанию
+      // Open new company
       setActiveCompany(companyId);
       
-      // Восстанавливаем сохраненный проект для этой компании или устанавливаем первый проект по умолчанию
+      // Restore saved project or default state
       const savedCase = savedProjects[companyId];
       if (savedCase) {
         setActiveCase(savedCase);
-        setIsCompanyCardTransformed(true); // Если есть сохраненный проект, трансформируем карточку
-        console.log("🔍 Открываем компанию с сохраненным проектом:", companyId, savedCase);
+        setIsCompanyCardTransformed(true);
       } else {
-        // Здесь можно установить проект по умолчанию, если нужно
         setActiveCase(null);
-        setIsCompanyCardTransformed(false); // Если нет проекта, показываем полную карточку
-        console.log("🔍 Открываем компанию без проекта:", companyId);
+        setIsCompanyCardTransformed(false);
       }
       
       setIsOpen(true);
     }
   };
 
-  // Функция для выбора проекта
+  // Function to select a project case
   const selectCase = (caseId) => {
-    console.log("🔍 selectCase вызван с caseId:", caseId);
     setActiveCase(caseId);
-    setIsCompanyCardTransformed(true); // При выборе проекта трансформируем карточку
-    console.log("🔍 Устанавливаем isCompanyCardTransformed в true");
+    setIsCompanyCardTransformed(true);
     
-    // Сохраняем выбор проекта для текущей компании
+    // Save project selection for this company
     setSavedProjects({
       ...savedProjects,
       [activeCompany]: caseId
     });
   };
 
-  // Функция для возврата к полной карточке компании
+  // Function to return to full company card
   const backToCompanyCard = () => {
-    console.log("🔍 backToCompanyCard вызван");
     setActiveCase(null);
     setIsCompanyCardTransformed(false);
-    console.log("🔍 Устанавливаем isCompanyCardTransformed в false");
   };
 
-  // Функция закрытия сайдбара (закрывает все окна)
+  // Function to close sidebar (all windows)
   const closeSidebar = () => {
-    console.log("🔍 closeSidebar вызван");
     setIsOpen(false);
     setActiveCompany(null);
     setActiveCase(null);
     setIsCompanyCardTransformed(false);
   };
 
-  // Функция закрытия только окна деталей проекта
+  // Function to close only project details
   const closeProjectDetails = () => {
-    console.log("🔍 closeProjectDetails вызван");
     setActiveCase(null);
     setIsCompanyCardTransformed(false);
   };
 
-  // Функция для открытия модального окна контактов
+  // Function to open contact modal
   const openContactModal = () => {
-    console.log("🔍 openContactModal вызван");
     setShowContactModal(true);
+  };
+  
+  // Function to toggle menu
+  const toggleMenu = () => {
+    // If menu is open, close it
+    if (isMenuOpen) {
+      setIsMenuOpen(false);
+      return;
+    }
+    
+    // Get position for menu placement
+    if (foxIconRef.current) {
+      const rect = foxIconRef.current.getBoundingClientRect();
+      const position = {
+        x: rect.left,
+        y: rect.top,
+        height: rect.height,
+        width: rect.width
+      };
+      setMenuPosition(position);
+    }
+    
+    // Open menu
+    setIsMenuOpen(true);
+  };
+  
+  // Function to close menu
+  const closeMenu = () => {
+    setIsMenuOpen(false);
   };
 
   return {
@@ -123,7 +132,12 @@ const usePortfolio = () => {
     closeSidebar,
     closeProjectDetails,
     backToCompanyCard,
-    openContactModal
+    openContactModal,
+    isMenuOpen,
+    menuPosition,
+    toggleMenu,
+    closeMenu,
+    foxIconRef
   };
 };
 
