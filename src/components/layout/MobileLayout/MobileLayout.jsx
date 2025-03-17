@@ -1,8 +1,9 @@
 // src/components/layout/MobileLayout/MobileLayout.jsx
-import React from 'react';
+import React, { useState } from 'react';
 import Footer from '../Footer';
 import ProjectDetails from '../../features/project/ProjectDetails';
 import TransformingCompanyHeader from '../../features/company/TransformingCompanyHeader';
+import ContactInfo from '../../ui/ContactInfo';
 
 const MobileLayout = ({
   activeCompany,
@@ -19,11 +20,27 @@ const MobileLayout = ({
   isMobile,
   isMenuOpen
 }) => {
+  // Состояние для отображения контактной информации
+  const [showContacts, setShowContacts] = useState(false);
+  
+  // Перехватываем вызов модального окна
+  const handleContactClick = () => {
+    // Вместо открытия модального окна, показываем встроенный компонент
+    setShowContacts(true);
+  };
+
   // Используем useMemo для запоминания вычисляемых значений
   const footerComponent = React.useMemo(() => (
     <Footer 
       activeCompany={activeCompany} 
-      toggleCompany={toggleCompany} 
+      toggleCompany={(companyId) => {
+        // Перехватываем нажатие на контакт
+        if (companyId === 'contact') {
+          handleContactClick();
+        } else {
+          toggleCompany(companyId);
+        }
+      }} 
       isMobile={true}
       foxIconRef={foxIconRef}
       isMenuOpen={isMenuOpen}
@@ -38,6 +55,13 @@ const MobileLayout = ({
           {footerComponent}
         </div>
       </div>
+
+      {/* Компонент ContactInfo (отображается как оверлей) */}
+      <ContactInfo 
+        activeCompany={activeCompany} 
+        showContacts={showContacts} 
+        setShowContacts={setShowContacts} 
+      />
 
       {/* Контент */}
       <div className="pt-20 px-4 pb-4">
@@ -56,7 +80,7 @@ const MobileLayout = ({
                 selectCase={selectCase}
                 closeSidebar={closeSidebar}
                 backToCompanyCard={backToCompanyCard}
-                setShowContactModal={setShowContactModal}
+                setShowContactModal={showContacts ? () => {} : setShowContactModal}
                 isTransformed={isCompanyCardTransformed}
                 isMobile={true}
                 maxHeight={'calc(100dvh - 160px)'}

@@ -16,14 +16,6 @@ const TransformingCompanyHeader = ({
   maxHeight,
   onHeightChange
 }) => {
-  // Добавляем отладочные логи
-  useEffect(() => {
-    console.log("🔍 TransformingCompanyHeader рендерится со следующими пропсами:");
-    console.log("🔍 company:", company);
-    console.log("🔍 activeCase:", activeCase);
-    console.log("🔍 isTransformed:", isTransformed);
-    console.log("🔍 компонент будет в режиме:", isTransformed ? "КОМПАКТНЫЙ" : "ПОЛНЫЙ");
-  }, [company, activeCase, isTransformed]);
 
   // Получаем данные компании
   const companyInfo = companyData[company];

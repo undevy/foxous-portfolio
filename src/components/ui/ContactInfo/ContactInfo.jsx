@@ -3,15 +3,14 @@ import PropTypes from 'prop-types';
 import { contactInfo } from '../../../data/contacts';
 
 /**
- * Компонент модального окна контактов
+ * Встроенный компонент контактной информации (без модального окна)
  * @param {Object} props - Свойства компонента
- * @param {boolean} props.showContactModal - Показывать ли модальное окно
- * @param {Function} props.setShowContactModal - Функция управления видимостью окна
  * @param {string} props.activeCompany - ID активной компании
- * @returns {JSX.Element} Компонент модального окна контактов
+ * @param {boolean} props.showContacts - Флаг видимости компонента
+ * @param {Function} props.setShowContacts - Функция управления видимостью
+ * @returns {JSX.Element} Компонент контактной информации
  */
-const ContactModal = ({ showContactModal, setShowContactModal, activeCompany }) => {
-  // Состояния для отслеживания копирования
+const ContactInfo = ({ activeCompany, showContacts, setShowContacts }) => {
   const [isEmailCopied, setIsEmailCopied] = useState(false);
   const [isTelegramCopied, setIsTelegramCopied] = useState(false);
   
@@ -21,10 +20,8 @@ const ContactModal = ({ showContactModal, setShowContactModal, activeCompany }) 
     }
   };
   
-  // Получаем название компании, если она активна
   const companyName = activeCompany && companyData[activeCompany] ? companyData[activeCompany].name : "";
   
-  // Функция копирования в буфер обмена с появлением tooltip
   const copyToClipboard = (text, type) => {
     // Создаем функцию-обертку для различных методов копирования
     const performCopy = async () => {
@@ -85,8 +82,7 @@ const ContactModal = ({ showContactModal, setShowContactModal, activeCompany }) 
     performCopy();
   };
   
-  // Функция для получения текста модального окна
-  const getModalText = () => {
+  const getContactText = () => {
     if (activeCompany === 'nexus') {
       return (
         <>
@@ -117,25 +113,25 @@ const ContactModal = ({ showContactModal, setShowContactModal, activeCompany }) 
     }
   };
   
-  if (!showContactModal) return null;
+  if (!showContacts) return null;
   
   return (
     <div 
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4" 
-      onClick={() => setShowContactModal(false)}
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4"
+      onClick={() => setShowContacts(false)}
       style={{
         paddingTop: 'env(safe-area-inset-top, 0)',
         paddingBottom: 'env(safe-area-inset-bottom, 0)'
       }}
     >
       <div 
-        className="bg-white rounded-3xl p-4 shadow-lg max-w-lg w-full mx-4" 
+        className="bg-white rounded-3xl p-4 shadow-lg w-full max-w-lg mx-4"
         onClick={e => e.stopPropagation()}
       >
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-semibold">Get in Touch</h2>
           <button 
-            onClick={() => setShowContactModal(false)} 
+            onClick={() => setShowContacts(false)} 
             className="h-8 w-8 rounded-full bg-gray-100 flex items-center justify-center"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -145,7 +141,7 @@ const ContactModal = ({ showContactModal, setShowContactModal, activeCompany }) 
           </button>
         </div>
         
-        {getModalText()}
+        {getContactText()}
         
         <div className="flex flex-col space-y-4">
           {/* Email контакт */}
@@ -229,15 +225,10 @@ const ContactModal = ({ showContactModal, setShowContactModal, activeCompany }) 
   );
 };
 
-ContactModal.propTypes = {
-  showContactModal: PropTypes.bool.isRequired,
-  setShowContactModal: PropTypes.func.isRequired,
-  activeCompany: PropTypes.string
+ContactInfo.propTypes = {
+  activeCompany: PropTypes.string,
+  showContacts: PropTypes.bool.isRequired,
+  setShowContacts: PropTypes.func.isRequired
 };
 
-export default React.memo(ContactModal, (prevProps, nextProps) => {
-  return (
-    prevProps.showContactModal === nextProps.showContactModal &&
-    prevProps.activeCompany === nextProps.activeCompany
-  );
-});
+export default React.memo(ContactInfo);
