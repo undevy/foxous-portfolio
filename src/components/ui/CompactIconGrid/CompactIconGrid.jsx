@@ -1,3 +1,4 @@
+// src/components/ui/CompactIconGrid/CompactIconGrid.jsx
 import React from 'react';
 import PropTypes from 'prop-types';
 
@@ -37,7 +38,11 @@ const CompactIconGrid = ({ onOpen, activeCompany }) => {
           <div 
             key={companyId}
             className="flex items-center justify-center overflow-hidden rounded-sm"
-            style={{ width: '16px', height: '16px' }}
+            style={{ 
+              width: '16px', 
+              height: '16px',
+              opacity: activeCompany ? (activeCompany === companyId ? 1 : 0.2) : 1 // Прозрачность иконки в зависимости от активной компании
+            }}
           >
             <img 
               src={`/assets/svgs/${companyIds[companyId]}.svg`} 

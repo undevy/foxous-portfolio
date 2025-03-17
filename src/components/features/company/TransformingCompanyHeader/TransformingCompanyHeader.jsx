@@ -1,9 +1,24 @@
-// src/components/common/TransformingCompanyHeader.jsx
+// src/components/features/company/TransformingCompanyHeader/TransformingCompanyHeader.jsx
 import React, { useEffect, useRef } from 'react';
+import PropTypes from 'prop-types';
 import { companyData } from '../../../../data/companies';
 import { projectsByCompany } from '../../../../data/projects';
 
-// Компонент, который трансформируется из карточки компании в навигационный элемент
+/**
+ * Компонент, который трансформируется из карточки компании в навигационный элемент
+ * @param {Object} props - Свойства компонента
+ * @param {string} props.company - ID компании
+ * @param {string} props.activeCase - ID активного кейса
+ * @param {Function} props.selectCase - Функция выбора кейса
+ * @param {Function} props.closeSidebar - Функция закрытия сайдбара
+ * @param {Function} props.backToCompanyCard - Функция возврата к карточке компании
+ * @param {Function} props.setShowContactModal - Функция показа модального окна контактов
+ * @param {boolean} props.isTransformed - Флаг трансформации
+ * @param {boolean} props.isMobile - Флаг мобильного устройства
+ * @param {string|number} props.maxHeight - Максимальная высота компонента
+ * @param {Function} props.onHeightChange - Функция обратного вызова при изменении высоты
+ * @returns {JSX.Element} Компонент трансформирующегося заголовка компании
+ */
 const TransformingCompanyHeader = ({
   company,
   activeCase,
@@ -16,7 +31,6 @@ const TransformingCompanyHeader = ({
   maxHeight,
   onHeightChange
 }) => {
-
   // Получаем данные компании
   const companyInfo = companyData[company];
   
@@ -53,114 +67,105 @@ const TransformingCompanyHeader = ({
 
   // Обновлённый расчёт высоты прокручиваемой области
   const contentHeight = maxHeight
-    ? `calc(${typeof maxHeight === 'string' ? maxHeight : maxHeight + 'px'} - 260px)`
-    : `calc(100vh - 260px)`;
-
-  // Если компания не определена, не отображаем ничего
-  if (!company || !companyInfo) {
-    console.log("🔍 TransformingCompanyHeader: компания не определена, ничего не отображаем");
-    return null;
-  }
+    ? `calc(${typeof maxHeight === 'string' ? maxHeight : maxHeight + 'px'} - 280px)`
+    : `calc(100vh - 280px)`;
 
   // Трансформированный режим (компактная карточка с табами)
   if (isTransformed) {
-    console.log("🔍 TransformingCompanyHeader: рендерим КОМПАКТНЫЙ режим");
     return (
       <div 
         className="bg-white rounded-t-3xl shadow-sm border border-gray-200 overflow-hidden transform-card-transition"
         style={{ 
-          minHeight: '60px',  // Гарантируем минимальную высоту
+          minHeight: '100px', // Увеличиваем минимальную высоту для большего пространства
           position: 'relative',
-          zIndex: 30  // Увеличиваем z-index, чтобы быть выше ProjectDetails
+          zIndex: 30,
+          marginTop: isMobile ? '-50px' : '0', // Увеличиваем перекрытие с футером в мобильной версии
+          paddingTop: '30px' // Увеличиваем отступ сверху для предотвращения перекрытия футером
         }}
       >
-        <div className="p-4 flex items-center justify-between">
-          {/* Стрелка вверх (СЛЕВА) - возврат к полной карточке */}
-          <button
-            onClick={() => {
-              console.log("🔍 Нажата кнопка стрелки вверх в трансформированной карточке");
-              backToCompanyCard();
-            }}
-            className="h-8 w-8 rounded-full bg-gray-100 flex items-center justify-center"
-            aria-label="Вернуться к компании"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="#666"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              <path d="M18 15l-6-6-6 6"/>
-            </svg>
-          </button>
-
-          {/* Название проекта по центру */}
-          <div className="text-base font-medium text-center flex-grow">
-            {activeCase && companyProjects.find(p => p.id === activeCase)?.shortName}
-          </div>
-
-          {/* Кнопка закрытия (СПРАВА) - закрывает обе карточки */}
-          <button
-            onClick={() => {
-              console.log("🔍 Нажата кнопка закрытия (X) в трансформированной карточке");
-              closeSidebar(); // Закрывает обе карточки
-            }}
-            className="h-8 w-8 rounded-full bg-gray-100 flex items-center justify-center"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="#666"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-          </button>
-        </div>
-
         {/* Горизонтальная прокрутка с табами проектов */}
         <div 
-          className="overflow-x-auto custom-scrollbar scrollbar-hide pb-3 horizontal-scroll" 
-          style={{ WebkitOverflowScrolling: 'touch' }}
+          className="overflow-x-auto custom-scrollbar scrollbar-hide pb-4 horizontal-scroll" 
+          style={{ 
+            WebkitOverflowScrolling: 'touch', 
+            paddingTop: '30px', // Увеличиваем отступ сверху для предотвращения перекрытия футером
+            paddingBottom: '12px' // Добавляем отступ снизу
+          }}
         >
-          <div className="flex space-x-2 px-4 pb-3 min-w-max">
-            {companyProjects.map((project) => (
-              <button
-                key={project.id}
-                onClick={() => {
-                  console.log(`🔍 Нажат таб проекта: ${project.shortName} (${project.id})`);
-                  selectCase(project.id);
-                }}
-                className={`px-3 py-1 text-sm rounded-full whitespace-nowrap ${
-                  activeCase === project.id
-                    ? 'bg-blue-100 text-blue-700'
-                    : 'bg-gray-100 hover:bg-gray-200 text-gray-600'
-                }`}
-              >
-                {project.shortName}
-              </button>
-            ))}
+          <div className="flex space-x-3 px-4 pb-3 min-w-max">
+            {/* Кнопка "Назад к компании" */}
             <button
               onClick={() => {
-                console.log("🔍 Нажата кнопка 'Other' в табах проектов");
+                backToCompanyCard();
+              }}
+              className="border-gray-200 bg-gray-100 text-black" // Изменён цвет текста на чёрный
+              style={{
+                display: 'flex',
+                padding: '8px 20px',
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: '4px',
+                borderRadius: '9999px',
+                border: '1px solid #E7E7E7',
+                background: '#F3F4F6',
+                fontSize: '14px',
+                fontWeight: '400',
+                width: 'auto' // Ширина подстраивается под содержимое
+              }}
+            >
+              ⬅️ Back to {companyInfo.name}
+            </button>
+            
+            {/* Кнопки проектов (кроме активного) */}
+            {companyProjects.map((project) => {
+              // Не отображаем активный проект
+              if (activeCase === project.id) return null;
+              
+              return (
+                <button
+                  key={project.id}
+                  onClick={() => {
+                    selectCase(project.id);
+                  }}
+                  className="border-gray-200 hover:bg-gray-100 text-black"
+                  style={{
+                    display: 'flex',
+                    padding: '8px 20px',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    gap: '4px',
+                    borderRadius: '9999px',
+                    border: '1px solid #E7E7E7',
+                    fontSize: '14px',
+                    fontWeight: '400',
+                    width: 'auto' // Ширина подстраивается под содержимое
+                  }}
+                >
+                  {project.shortName}
+                </button>
+              );
+            })}
+            
+            {/* Кнопка "Other" */}
+            <button
+              onClick={() => {
                 setShowContactModal(true);
               }}
-              className="px-3 py-1 text-sm rounded-full whitespace-nowrap bg-gray-100 hover:bg-gray-200 text-gray-600"
+              className="border-gray-200 hover:bg-gray-100 text-black"
+              style={{
+                display: 'flex',
+                padding: '8px 20px',
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: '4px',
+                borderRadius: '9999px',
+                border: '1px solid #E7E7E7',
+                fontSize: '14px',
+                fontWeight: '400',
+                width: 'auto' // Ширина подстраивается под содержимое
+              }}
             >
-              Other
+              🔍 Other
             </button>
           </div>
         </div>
@@ -169,14 +174,13 @@ const TransformingCompanyHeader = ({
   }
 
   // Полная карточка компании (не трансформированный вид)
-  console.log("🔍 TransformingCompanyHeader: рендерим ПОЛНЫЙ режим");
   return (
     <div
       ref={cardRef}
       className="bg-white rounded-3xl shadow-sm border border-gray-200 relative overflow-hidden transform-card-transition"
       style={{
         height: '100%',
-        maxHeight: maxHeight || (isMobile ? 'calc(100vh - 140px)' : 'none'),
+        maxHeight: maxHeight || (isMobile ? 'calc(100vh - 120px)' : 'none'),
         zIndex: isMobile ? 10 : 'auto',
       }}
     >
@@ -184,7 +188,6 @@ const TransformingCompanyHeader = ({
       <div className="sticky top-0 z-10 bg-white p-6 pb-4 border-b border-gray-50">
         <button
           onClick={() => {
-            console.log("🔍 Нажата кнопка закрытия (X) в полной карточке компании");
             closeSidebar();
           }}
           className="absolute top-3 right-3 h-6 w-6 rounded-full bg-gray-100 flex items-center justify-center z-40"
@@ -223,47 +226,56 @@ const TransformingCompanyHeader = ({
         </p>
 
         <div className="mb-6">
-          <h3 className="text-sm font-medium text-gray-500 mb-2 text-left">Key Projects</h3>
-          <div className="flex flex-wrap gap-2">
+          <h3 className="text-sm font-medium text-black mb-3 text-left">Get a Sneak Peek</h3>
+          <div className="flex flex-wrap gap-3">
             {companyProjects.map((project) => (
               <button
                 key={project.id || project.title}
                 onClick={() => {
-                  console.log(`🔍 Нажата кнопка проекта: ${project.shortName || project.id}`);
-                  selectCase(
-                    project.id || project.title.toLowerCase().replace(/\s+/g, '')
-                  );
+                  selectCase(project.id);
                 }}
-                className={`px-3 py-1 text-sm rounded-full ${
-                  activeCase ===
-                  (project.id || project.title.toLowerCase().replace(/\s+/g, ''))
-                    ? 'bg-blue-100 text-blue-700'
-                    : 'bg-gray-100 hover:bg-gray-200 text-gray-600'
+                className={`${
+                  activeCase === project.id
+                    ? 'border-blue-700 bg-blue-50 text-black'
+                    : 'border-gray-200 hover:bg-gray-100 text-black'
                 }`}
+                style={{
+                  display: 'flex',
+                  padding: '8px 20px',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  gap: '4px',
+                  borderRadius: '9999px',
+                  border: activeCase === project.id ? '1px solid #1D4ED8' : '1px solid #E7E7E7',
+                  background: activeCase === project.id ? '#EFF6FF' : 'transparent',
+                  fontSize: '14px',
+                  fontWeight: '400',
+                  width: 'auto' // Ширина подстраивается под содержимое
+                }}
               >
-                {project.shortName || project.id}
+                {project.shortName}
               </button>
             ))}
             <button
               onClick={() => {
-                console.log("🔍 Нажата кнопка 'Other' в полной карточке компании");
                 setShowContactModal(true);
               }}
-              className="px-3 py-1 text-sm rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600"
+              className="border-gray-200 hover:bg-gray-100 text-black"
+              style={{
+                display: 'flex',
+                padding: '8px 20px',
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: '4px',
+                borderRadius: '9999px',
+                border: '1px solid #E7E7E7',
+                fontSize: '14px',
+                fontWeight: '400',
+                width: 'auto' // Ширина подстраивается под содержимое
+              }}
             >
-              Other
+              🔍 Other
             </button>
-          </div>
-        </div>
-
-        <div className="mb-6">
-          <h3 className="text-sm font-medium text-gray-500 mb-2 text-left">Tags</h3>
-          <div className="flex flex-wrap gap-2">
-            {companyInfo.tags && companyInfo.tags.map((tag, index) => (
-              <span key={index} className="px-2 py-1 text-xs rounded bg-blue-50 text-blue-600">
-                {tag}
-              </span>
-            ))}
           </div>
         </div>
 
@@ -272,7 +284,6 @@ const TransformingCompanyHeader = ({
             // Специальная логика для Nexus Network
             <button
               onClick={() => {
-                console.log("🔍 Нажата кнопка 'Contact about'");
                 setShowContactModal(true);
               }}
               className="text-sm text-blue-600 hover:text-blue-800 flex items-center"
@@ -352,9 +363,22 @@ const TransformingCompanyHeader = ({
   );
 };
 
-// Дополнительные props с значениями по умолчанию
-TransformingCompanyHeader.defaultProps = {
-  onHeightChange: () => {} // Пустая функция по умолчанию
+TransformingCompanyHeader.propTypes = {
+  company: PropTypes.string.isRequired,
+  activeCase: PropTypes.string,
+  selectCase: PropTypes.func.isRequired,
+  closeSidebar: PropTypes.func.isRequired,
+  backToCompanyCard: PropTypes.func.isRequired,
+  setShowContactModal: PropTypes.func.isRequired,
+  isTransformed: PropTypes.bool.isRequired,
+  isMobile: PropTypes.bool.isRequired,
+  maxHeight: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  onHeightChange: PropTypes.func
 };
 
-export default TransformingCompanyHeader;
+// Значения по умолчанию для функций обратного вызова
+TransformingCompanyHeader.defaultProps = {
+  onHeightChange: () => {}
+};
+
+export default React.memo(TransformingCompanyHeader);

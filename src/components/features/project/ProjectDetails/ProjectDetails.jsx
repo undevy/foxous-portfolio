@@ -1,3 +1,4 @@
+// src/components/features/project/ProjectDetails/ProjectDetails.jsx
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { caseStudies } from '../../../../data/projects';
@@ -18,8 +19,8 @@ const ProjectDetails = ({
   handleCloseDetail, 
   isMobile, 
   maxHeight,
-  hideCloseButton, // Новый параметр для скрытия кнопки закрытия
-  squareTopCorners // Новый параметр для прямых верхних углов
+  hideCloseButton, // Параметр для скрытия кнопки закрытия
+  squareTopCorners // Параметр для прямых верхних углов
 }) => {
   // Поиск проекта по id или ключу
   const project = useMemo(() => {
@@ -41,18 +42,18 @@ const ProjectDetails = ({
       borderBottomLeftRadius: '16px',
       borderBottomRightRadius: '16px',
       zIndex: 20,
-      maxHeight: 'calc(85vh - 120px)',
+      maxHeight: 'calc(85vh - 80px)', // Увеличиваем максимальную высоту
     };
   }, [isMobile, squareTopCorners]);
 
   // Используем useMemo для вычисления высоты контента - всегда, независимо от наличия проекта
   const { calculatedMaxHeight, contentHeight } = useMemo(() => {
-    const calculatedMaxHeight = maxHeight || (isMobile ? 'calc(85vh - 120px)' : 'auto');
+    const calculatedMaxHeight = maxHeight || (isMobile ? 'calc(85vh - 80px)' : 'auto'); // Увеличиваем максимальную высоту
     const contentHeight = `calc(${
       typeof calculatedMaxHeight === 'string'
         ? calculatedMaxHeight
         : calculatedMaxHeight + 'px'
-    } - 80px)`;
+    } - 80px)`; // Уменьшаем вычитаемую высоту
 
     return { calculatedMaxHeight, contentHeight };
   }, [maxHeight, isMobile]);
@@ -100,31 +101,52 @@ const ProjectDetails = ({
         ...mobileStyles,
       }}
     >
-      {/* Фиксированный заголовок */}
-      <div className="sticky top-0 z-30 bg-white p-6 pb-4 border-b border-gray-50">
-        {!hideCloseButton && (
+      {/* Заголовок в виде кнопки проекта */}
+      <div className="sticky top-0 z-30 bg-white">
+        <div className="p-4">
+          {/* Стилизованная кнопка с названием проекта */}
           <button
-            onClick={handleCloseDetail}
-            className="absolute top-3 right-3 h-6 w-6 rounded-full bg-gray-100 flex items-center justify-center z-40"
+            className="inline-flex border-blue-700 bg-blue-50 text-black"
+            style={{
+              display: 'inline-flex', // Изменено с flex на inline-flex
+              padding: '8px 20px', // Корректные паддинги
+              alignItems: 'center',
+              gap: '4px',
+              borderRadius: '9999px',
+              border: '1px solid #1D4ED8',
+              background: '#EFF6FF',
+              fontSize: '14px',
+              fontWeight: '400',
+              cursor: 'default',
+              // width: 'auto', // Убрано свойство width: 100%, теперь ширина подстраивается под контент
+              flexDirection: 'row' // Явно указываем направление flex
+            }}
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="12"
-              height="12"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="#666"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
+            {project.title}
           </button>
-        )}
-
-        <h1 className="text-2xl font-semibold text-left">{project.title}</h1>
+          
+          {!hideCloseButton && (
+            <button
+              onClick={handleCloseDetail}
+              className="absolute top-3 right-3 h-6 w-6 rounded-full bg-gray-100 flex items-center justify-center z-40"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#666"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Скроллируемое содержимое */}

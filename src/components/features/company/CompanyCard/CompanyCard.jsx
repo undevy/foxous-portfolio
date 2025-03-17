@@ -1,3 +1,4 @@
+// src/components/features/company/CompanyCard/CompanyCard.jsx
 import React, { useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { companyData } from '../../../../data/companies';
@@ -30,7 +31,6 @@ const CompanyCard = ({
   const companyProjects = projectsByCompany[company] || [];
   const cardRef = useRef(null);
 
-
   // Функция для получения изображения компании
   const getCompanyImage = (companyId) => {
     const imageMap = {
@@ -45,8 +45,8 @@ const CompanyCard = ({
 
   // Обновлённый расчёт высоты прокручиваемой области:
   const contentHeight = maxHeight
-    ? `calc(${typeof maxHeight === 'string' ? maxHeight : maxHeight + 'px'} - 260px)`
-    : `calc(100vh - 260px)`;
+    ? `calc(${typeof maxHeight === 'string' ? maxHeight : maxHeight + 'px'} - 240px)`
+    : `calc(100vh - 240px)`;
 
   // Функция для открытия модального окна контактов
   const openContactModal = () => {
@@ -118,38 +118,57 @@ const CompanyCard = ({
         </p>
 
         <div className="mb-6">
-          <h3 className="text-sm font-medium text-gray-500 mb-2 text-left">Key Projects</h3>
-          <div className="flex flex-wrap gap-2">
-            {companyProjects.map((project) => (
-              <button
-                key={project.id || project.title}
-                onClick={() => setActiveCase(project.id)}
-                className={`px-3 py-1 text-sm rounded-full ${
-                  activeCase === project.id
-                    ? 'bg-blue-100 text-blue-700'
-                    : 'bg-gray-100 hover:bg-gray-200 text-gray-600'
-                }`}
-              >
-                {project.shortName || project.id}
-              </button>
-            ))}
+          <h3 className="text-sm font-medium text-black mb-3 text-left">Get a Sneak Peek</h3>
+          <div className="flex flex-wrap gap-3">
+            {companyProjects.map((project) => {
+              // Не отображать активный проект в десктопной версии
+              if (!isMobile && activeCase === project.id) return null;
+              
+              return (
+                <button
+                  key={project.id || project.title}
+                  onClick={() => setActiveCase(project.id)}
+                  className={`${
+                    activeCase === project.id
+                      ? 'border-blue-700 bg-blue-50 text-black'
+                      : 'border-gray-200 hover:bg-gray-100 text-black'
+                  }`}
+                  style={{
+                    display: 'flex',
+                    padding: '8px 20px',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    gap: '4px',
+                    borderRadius: '9999px',
+                    border: activeCase === project.id ? '1px solid #1D4ED8' : '1px solid #E7E7E7',
+                    background: activeCase === project.id ? '#EFF6FF' : 'transparent',
+                    fontSize: '14px',
+                    fontWeight: '400',
+                    width: 'auto' // Ширина подстраивается под содержимое
+                  }}
+                >
+                  {project.shortName}
+                </button>
+              );
+            })}
             <button
               onClick={openContactModal}
-              className="px-3 py-1 text-sm rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600"
+              className="border-gray-200 hover:bg-gray-100 text-black"
+              style={{
+                display: 'flex',
+                padding: '8px 20px',
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: '4px',
+                borderRadius: '9999px',
+                border: '1px solid #E7E7E7',
+                fontSize: '14px',
+                fontWeight: '400',
+                width: 'auto' // Ширина подстраивается под содержимое
+              }}
             >
-              Other
+              🔍 Other
             </button>
-          </div>
-        </div>
-
-        <div className="mb-6">
-          <h3 className="text-sm font-medium text-gray-500 mb-2 text-left">Tags</h3>
-          <div className="flex flex-wrap gap-2">
-            {companyInfo.tags.map((tag, index) => (
-              <span key={index} className="px-2 py-1 text-xs rounded bg-blue-50 text-blue-600">
-                {tag}
-              </span>
-            ))}
           </div>
         </div>
 
@@ -250,7 +269,7 @@ CompanyCard.defaultProps = {
   onHeightChange: () => {}
 };
 
-// Добавляем мемоизацию с пользовательским сравнением пропсов
+// Добавляем мемоизацию с кастомным сравнением пропсов
 export default React.memo(CompanyCard, (prevProps, nextProps) => {
   // Сравниваем только те пропсы, которые действительно влияют на рендеринг
   return (

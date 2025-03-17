@@ -1,10 +1,29 @@
 // src/components/layout/MobileLayout/MobileLayout.jsx
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import Footer from '../Footer';
 import ProjectDetails from '../../features/project/ProjectDetails';
 import TransformingCompanyHeader from '../../features/company/TransformingCompanyHeader';
 import ContactInfo from '../../ui/ContactInfo';
 
+/**
+ * Компонент мобильного макета приложения
+ * @param {Object} props - Свойства компонента
+ * @param {string} props.activeCompany - ID активной компании
+ * @param {string} props.activeCase - ID активного кейса
+ * @param {boolean} props.isOpen - Открыто ли окно
+ * @param {boolean} props.isCompanyCardTransformed - Трансформирована ли карточка компании
+ * @param {Function} props.toggleCompany - Функция переключения компании
+ * @param {Function} props.selectCase - Функция выбора проекта
+ * @param {Function} props.closeSidebar - Функция закрытия сайдбара
+ * @param {Function} props.backToCompanyCard - Функция возврата к карточке компании
+ * @param {Function} props.closeProjectDetails - Функция закрытия деталей проекта
+ * @param {Function} props.setShowContactModal - Функция показа модального окна контактов
+ * @param {Object} props.foxIconRef - Ref для иконки лисы
+ * @param {boolean} props.isMobile - Флаг мобильного устройства
+ * @param {boolean} props.isMenuOpen - Открыто ли меню
+ * @returns {JSX.Element} Компонент мобильного макета
+ */
 const MobileLayout = ({
   activeCompany,
   activeCase,
@@ -83,7 +102,7 @@ const MobileLayout = ({
                 setShowContactModal={showContacts ? () => {} : setShowContactModal}
                 isTransformed={isCompanyCardTransformed}
                 isMobile={true}
-                maxHeight={'calc(100dvh - 160px)'}
+                maxHeight={'calc(100dvh - 120px)'} // Уменьшаем отступ
                 onHeightChange={() => {}}
               />
             </div>
@@ -100,7 +119,7 @@ const MobileLayout = ({
                   activeCase={activeCase}
                   handleCloseDetail={backToCompanyCard}
                   isMobile={true}
-                  maxHeight="min(60dvh, calc(100dvh - 260px))"
+                  maxHeight="min(80dvh, calc(100dvh - 180px))" // Увеличиваем относительную высоту
                   hideCloseButton={true} // Скрываем кнопку закрытия
                   squareTopCorners={true} // Прямые верхние углы
                 />
@@ -111,6 +130,22 @@ const MobileLayout = ({
       </div>
     </>
   );
+};
+
+MobileLayout.propTypes = {
+  activeCompany: PropTypes.string,
+  activeCase: PropTypes.string,
+  isOpen: PropTypes.bool.isRequired,
+  isCompanyCardTransformed: PropTypes.bool.isRequired,
+  toggleCompany: PropTypes.func.isRequired,
+  selectCase: PropTypes.func.isRequired,
+  closeSidebar: PropTypes.func.isRequired,
+  backToCompanyCard: PropTypes.func.isRequired,
+  closeProjectDetails: PropTypes.func.isRequired,
+  setShowContactModal: PropTypes.func.isRequired,
+  foxIconRef: PropTypes.object,
+  isMobile: PropTypes.bool.isRequired,
+  isMenuOpen: PropTypes.bool.isRequired
 };
 
 export default React.memo(MobileLayout);
