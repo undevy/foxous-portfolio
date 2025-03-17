@@ -1,5 +1,5 @@
 // src/components/features/company/CompanyCard/CompanyCard.jsx
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { companyData } from '../../../../data/companies';
 import { projectsByCompany } from '../../../../data/projects';
@@ -30,6 +30,9 @@ const CompanyCard = ({
   const companyInfo = companyData[company];
   const companyProjects = projectsByCompany[company] || [];
   const cardRef = useRef(null);
+  
+  // Состояние для отслеживания развернутости текста
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
 
   // Функция для получения изображения компании
   const getCompanyImage = (companyId) => {
@@ -57,6 +60,12 @@ const CompanyCard = ({
     }
   };
 
+  // Функция для переключения видимости полного описания
+  const toggleDescription = () => {
+    console.log('Toggle description called, current state:', isDescriptionExpanded);
+    setIsDescriptionExpanded(!isDescriptionExpanded);
+  };
+
   // Используем ResizeObserver для уведомления родителя об изменении высоты
   useEffect(() => {
     if (!cardRef.current || isMobile || !onHeightChange) return;
@@ -68,6 +77,9 @@ const CompanyCard = ({
     return () => observer.disconnect();
   }, [isMobile, onHeightChange]);
 
+  // Отладочный вывод для проверки мобильного режима
+  console.log('isMobile value:', isMobile);
+  
   return (
     <div
       ref={cardRef}
@@ -113,9 +125,42 @@ const CompanyCard = ({
         className="p-6 pt-2 overflow-y-auto custom-scrollbar"
         style={{ maxHeight: contentHeight, minHeight: '150px' }}
       >
-        <p className="text-base text-gray-600 mb-4 text-left">
-          {companyInfo.description}
-        </p>
+        {/* Описание компании с возможностью сворачивания на мобильных устройствах */}
+        {isMobile ? (
+          <div className="relative mb-4">
+            <div 
+              className="text-base text-gray-600 text-left overflow-hidden"
+              style={{
+                maxHeight: isDescriptionExpanded ? 'none' : '4.5em',
+                position: 'relative'
+              }}
+            >
+              {companyInfo.description}
+              {!isDescriptionExpanded && (
+                <div 
+                  style={{
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    height: '1.5em',
+                    background: 'linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1))'
+                  }}
+                ></div>
+              )}
+            </div>
+            <button 
+              onClick={toggleDescription}
+              className="text-blue-600 font-normal text-base mt-1"
+            >
+              {isDescriptionExpanded ? 'less' : 'more'}
+            </button>
+          </div>
+        ) : (
+          <p className="text-base text-gray-600 mb-4 text-left">
+            {companyInfo.description}
+          </p>
+        )}
 
         <div className="mb-6">
           <h3 className="text-sm font-medium text-black mb-3 text-left">Get a Sneak Peek</h3>

@@ -129,7 +129,7 @@ const ContactModal = ({ showContactModal, setShowContactModal, activeCompany }) 
       }}
     >
       <div 
-        className="bg-white rounded-3xl p-4 shadow-lg max-w-lg w-full mx-4" 
+        className="bg-white rounded-3xl p-6 shadow-lg max-w-lg w-full mx-auto overflow-y-auto" 
         onClick={e => e.stopPropagation()}
       >
         <div className="flex justify-between items-center mb-4">

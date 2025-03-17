@@ -1,5 +1,5 @@
 // src/components/features/company/TransformingCompanyHeader/TransformingCompanyHeader.jsx
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { companyData } from '../../../../data/companies';
 import { projectsByCompany } from '../../../../data/projects';
@@ -40,6 +40,9 @@ const TransformingCompanyHeader = ({
   // Ref для измерения высоты карточки (для десктопной версии)
   const cardRef = useRef(null);
 
+  // Состояние для отслеживания развернутости описания
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
+
   // Функция для получения изображения компании
   const getCompanyImage = (companyId) => {
     const imageMap = {
@@ -50,6 +53,12 @@ const TransformingCompanyHeader = ({
     };
     
     return imageMap[companyId] || '/api/placeholder/400/250'; // Используем заглушку, если изображение не найдено
+  };
+
+  // Функция для переключения видимости полного описания
+  const toggleDescription = () => {
+    console.log('Toggle description called in TransformingCompanyHeader, current state:', isDescriptionExpanded);
+    setIsDescriptionExpanded(!isDescriptionExpanded);
   };
 
   // Используем ResizeObserver для уведомления родителя об изменении высоты (для десктопной версии)
@@ -69,6 +78,9 @@ const TransformingCompanyHeader = ({
   const contentHeight = maxHeight
     ? `calc(${typeof maxHeight === 'string' ? maxHeight : maxHeight + 'px'} - 280px)`
     : `calc(100vh - 280px)`;
+
+  // Отладочный вывод для проверки мобильного режима
+  console.log('TransformingCompanyHeader rendering, isMobile:', isMobile, 'isTransformed:', isTransformed);
 
   // Трансформированный режим (компактная карточка с табами)
   if (isTransformed) {
@@ -92,7 +104,7 @@ const TransformingCompanyHeader = ({
             paddingBottom: '12px' // Добавляем отступ снизу
           }}
         >
-          <div className="flex space-x-3 px-4 pb-3 min-w-max">
+          <div className="flex space-x-1 px-4 pb-3 min-w-max">
             {/* Кнопка "Назад к компании" */}
             <button
               onClick={() => {
@@ -113,7 +125,7 @@ const TransformingCompanyHeader = ({
                 width: 'auto' // Ширина подстраивается под содержимое
               }}
             >
-              ⬅️ Back to {companyInfo.name}
+              ⬅️ To {companyInfo.name}
             </button>
             
             {/* Кнопки проектов (кроме активного) */}
@@ -137,7 +149,7 @@ const TransformingCompanyHeader = ({
                     borderRadius: '9999px',
                     border: '1px solid #E7E7E7',
                     fontSize: '14px',
-                    fontWeight: '400',
+                    fontWeight: '600',
                     width: 'auto' // Ширина подстраивается под содержимое
                   }}
                 >
@@ -161,7 +173,7 @@ const TransformingCompanyHeader = ({
                 borderRadius: '9999px',
                 border: '1px solid #E7E7E7',
                 fontSize: '14px',
-                fontWeight: '400',
+                fontWeight: '600',
                 width: 'auto' // Ширина подстраивается под содержимое
               }}
             >
@@ -185,7 +197,7 @@ const TransformingCompanyHeader = ({
       }}
     >
       {/* Фиксированный заголовок */}
-      <div className="sticky top-0 z-10 bg-white p-6 pb-4 border-b border-gray-50">
+      <div className="sticky top-0 z-10 bg-white p-6 pb-1 border-b border-gray-50">
         <button
           onClick={() => {
             closeSidebar();
@@ -221,63 +233,153 @@ const TransformingCompanyHeader = ({
         className="p-6 pt-2 overflow-y-auto custom-scrollbar"
         style={{ maxHeight: contentHeight, minHeight: '150px' }}
       >
-        <p className="text-base text-gray-600 mb-4 text-left">
-          {companyInfo.description}
-        </p>
-
-        <div className="mb-6">
-          <h3 className="text-sm font-medium text-black mb-3 text-left">Get a Sneak Peek</h3>
-          <div className="flex flex-wrap gap-3">
-            {companyProjects.map((project) => (
-              <button
-                key={project.id || project.title}
-                onClick={() => {
-                  selectCase(project.id);
-                }}
-                className={`${
-                  activeCase === project.id
-                    ? 'border-blue-700 bg-blue-50 text-black'
-                    : 'border-gray-200 hover:bg-gray-100 text-black'
-                }`}
-                style={{
-                  display: 'flex',
-                  padding: '8px 20px',
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  gap: '4px',
-                  borderRadius: '9999px',
-                  border: activeCase === project.id ? '1px solid #1D4ED8' : '1px solid #E7E7E7',
-                  background: activeCase === project.id ? '#EFF6FF' : 'transparent',
-                  fontSize: '14px',
-                  fontWeight: '400',
-                  width: 'auto' // Ширина подстраивается под содержимое
-                }}
-              >
-                {project.shortName}
-              </button>
-            ))}
-            <button
-              onClick={() => {
-                setShowContactModal(true);
-              }}
-              className="border-gray-200 hover:bg-gray-100 text-black"
+        {/* Описание компании с возможностью сворачивания на мобильных устройствах */}
+        {isMobile ? (
+          <div className="relative mb-4">
+            <div 
+              className="text-base text-gray-600 text-left overflow-hidden"
               style={{
-                display: 'flex',
-                padding: '8px 20px',
-                flexDirection: 'row',
-                alignItems: 'center',
-                gap: '4px',
-                borderRadius: '9999px',
-                border: '1px solid #E7E7E7',
-                fontSize: '14px',
-                fontWeight: '400',
-                width: 'auto' // Ширина подстраивается под содержимое
+                maxHeight: isDescriptionExpanded ? 'none' : '4.5em',
+                position: 'relative'
               }}
             >
-              🔍 Other
+              {companyInfo.description}
+              {!isDescriptionExpanded && (
+                <div 
+                  style={{
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    height: '1.5em',
+                    background: 'linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1))'
+                  }}
+                ></div>
+              )}
+            </div>
+            <button 
+              onClick={toggleDescription}
+              className="text-blue-600 font-normal text-base mt-1"
+            >
+              {isDescriptionExpanded ? 'less' : 'more'}
             </button>
           </div>
-        </div>
+        ) : (
+          <p className="text-base text-gray-600 mb-4 text-left">
+            {companyInfo.description}
+          </p>
+        )}
+
+<div className="mb-4">
+  <h3 className="text-sm font-medium text-black mb-2 text-left">Get a Sneak Peek</h3>
+  
+  {/* Условный рендеринг в зависимости от типа устройства */}
+  {isMobile ? (
+    // Мобильная версия с горизонтальным скроллом
+    <div 
+      className="overflow-x-auto custom-scrollbar scrollbar-hide pb-4 horizontal-scroll" 
+      style={{ 
+        WebkitOverflowScrolling: 'touch', 
+        paddingBottom: '0px' 
+      }}
+    >
+      <div className="flex space-x-1 px-0 min-w-max">
+        {companyProjects.map((project) => (
+          <button
+            key={project.id || project.title}
+            onClick={() => selectCase(project.id)}
+            className={`${
+              activeCase === project.id
+                ? 'border-blue-700 bg-blue-50 text-black'
+                : 'border-gray-200 hover:bg-gray-100 text-black'
+            }`}
+            style={{
+              display: 'flex',
+              padding: '8px 20px',
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: '4px',
+              borderRadius: '9999px',
+              border: activeCase === project.id ? '1px solid #1D4ED8' : '1px solid #E7E7E7',
+              background: activeCase === project.id ? '#EFF6FF' : 'transparent',
+              fontSize: '14px',
+              fontWeight: '600',
+              width: 'auto' // Ширина подстраивается под содержимое
+            }}
+          >
+            {project.shortName}
+          </button>
+        ))}
+        <button
+          onClick={() => setShowContactModal(true)}
+          className="border-gray-200 hover:bg-gray-100 text-black"
+          style={{
+            display: 'flex',
+            padding: '8px 20px',
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: '4px',
+            borderRadius: '9999px',
+            border: '1px solid #E7E7E7',
+            fontSize: '14px',
+            fontWeight: '600',
+            width: 'auto' // Ширина подстраивается под содержимое
+          }}
+        >
+          🔍 Other
+        </button>
+      </div>
+    </div>
+  ) : (
+    // Десктопная версия с flex-wrap
+    <div className="flex flex-wrap gap-3">
+      {companyProjects.map((project) => (
+        <button
+          key={project.id || project.title}
+          onClick={() => selectCase(project.id)}
+          className={`${
+            activeCase === project.id
+              ? 'border-blue-700 bg-blue-50 text-black'
+              : 'border-gray-200 hover:bg-gray-100 text-black'
+          }`}
+          style={{
+            display: 'flex',
+            padding: '8px 20px',
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: '4px',
+            borderRadius: '9999px',
+            border: activeCase === project.id ? '1px solid #1D4ED8' : '1px solid #E7E7E7',
+            background: activeCase === project.id ? '#EFF6FF' : 'transparent',
+            fontSize: '14px',
+            fontWeight: '600',
+            width: 'auto' // Ширина подстраивается под содержимое
+          }}
+        >
+          {project.shortName}
+        </button>
+      ))}
+      <button
+        onClick={() => setShowContactModal(true)}
+        className="border-gray-200 hover:bg-gray-100 text-black"
+        style={{
+          display: 'flex',
+          padding: '8px 20px',
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: '4px',
+          borderRadius: '9999px',
+          border: '1px solid #E7E7E7',
+          fontSize: '14px',
+          fontWeight: '600',
+          width: 'auto' // Ширина подстраивается под содержимое
+        }}
+      >
+        🔍 Other
+      </button>
+    </div>
+  )}
+</div>
 
         <div className="pt-4 border-t border-gray-100 flex flex-col space-y-2">
           {company === 'nexus' ? (

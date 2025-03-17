@@ -51,9 +51,9 @@ const CircularMenu = ({
         zIndex: 60,
         borderRadius: '12.5rem',
         border: '1px solid rgba(255, 255, 255, 0.60)',
-        background: 'rgba(255, 255, 255, 0.05)',
+        background: 'rgba(255, 255, 255, 0.50)',
         boxShadow: '0px 2px 10px 0px rgba(0, 0, 0, 0.05)',
-        backdropFilter: 'blur(12px)'
+        backdropFilter: 'blur(16px)'
       }}
       onClick={(e) => {
         e.stopPropagation();

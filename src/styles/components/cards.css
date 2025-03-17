@@ -6,42 +6,88 @@
 
 /* Card transformations */
 .transform-card-transition {
-    transition: all 0.25s ease-in-out;
+  transition: all 0.25s ease-in-out;
+}
+
+/* Mobile card stacking */
+.mobile-card-stack .bottom-card {
+  z-index: 10;
+  position: relative;
+}
+
+.mobile-card-stack .top-card {
+  margin-top: -24px;
+  border-top-left-radius: 24px;
+  border-top-right-radius: 24px;
+  z-index: 20;
+  box-shadow: 0 -10px 15px -5px rgba(0, 0, 0, 0.1);
+  padding-top: 32px;
+}
+
+/* Mobile-specific project card styles */
+@media (max-width: 767px) {
+  .mobile-project-details {
+    border-radius: 0 0 16px 16px !important;
+    box-shadow: none !important;
   }
   
-  /* Mobile card stacking */
-  .mobile-card-stack .bottom-card {
-    z-index: 10;
-    position: relative;
+  .mobile-project-company-stack {
+    display: flex;
+    flex-direction: column;
   }
   
-  .mobile-card-stack .top-card {
-    margin-top: -24px;
-    border-top-left-radius: 24px;
-    border-top-right-radius: 24px;
-    z-index: 20;
-    box-shadow: 0 -10px 15px -5px rgba(0, 0, 0, 0.1);
-    padding-top: 32px;
+  .mobile-project-company-stack > div:first-child {
+    margin-bottom: 2px;
   }
   
-  /* Mobile-specific project card styles */
-  @media (max-width: 767px) {
-    .mobile-project-details {
-      border-radius: 0 0 16px 16px !important;
-      box-shadow: none !important;
-    }
-    
-    .mobile-project-company-stack {
-      display: flex;
-      flex-direction: column;
-    }
-    
-    .mobile-project-company-stack > div:first-child {
-      margin-bottom: 2px;
-    }
-    
-    .mobile-project-company-stack > div:last-child {
-      border-top-left-radius: 0 !important;
-      border-top-right-radius: 0 !important;
-    }
+  .mobile-project-company-stack > div:last-child {
+    border-top-left-radius: 0 !important;
+    border-top-right-radius: 0 !important;
   }
+}
+
+/* Стили для сворачиваемого описания */
+.description-container {
+position: relative;
+overflow: hidden;
+transition: max-height 0.3s ease;
+}
+
+.description-container.collapsed-description {
+max-height: 4.5em; /* Примерно 3 строки текста */
+display: -webkit-box;
+line-clamp: 3;
+-webkit-line-clamp: 3;
+-webkit-box-orient: vertical;
+overflow: hidden;
+}
+
+.description-container.collapsed-description::after {
+content: "";
+position: absolute;
+bottom: 0;
+left: 0;
+right: 0;
+height: 1.5em;
+background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
+pointer-events: none;
+}
+
+/* Стиль для градиентного затухания текста */
+.description-fade {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1.5em;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
+  pointer-events: none;
+}
+
+/* Стиль для кнопки "more" */
+.description-more-button {
+  color: #2563eb; /* blue-600 */
+  font-weight: normal;
+  font-size: 1rem;
+  margin-top: 0.25rem;
+}

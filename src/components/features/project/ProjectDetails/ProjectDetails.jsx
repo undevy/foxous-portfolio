@@ -116,7 +116,7 @@ const ProjectDetails = ({
               border: '1px solid #1D4ED8',
               background: '#EFF6FF',
               fontSize: '14px',
-              fontWeight: '400',
+              fontWeight: '600',
               cursor: 'default',
               // width: 'auto', // Убрано свойство width: 100%, теперь ширина подстраивается под контент
               flexDirection: 'row' // Явно указываем направление flex
