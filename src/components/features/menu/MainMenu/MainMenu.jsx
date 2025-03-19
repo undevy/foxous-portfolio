@@ -132,7 +132,7 @@ const MainMenu = ({
   return (
     <div 
       ref={menuRef}
-      className="glassmorphism rounded-2xl shadow-lg p-2 overflow-hidden transform-card-transition"
+      className={`glassmorphism rounded-2xl shadow-lg p-2 overflow-hidden transform-card-transition ${animationClass}`}
       style={menuStyle}
     >
       <div className="flex flex-col">
