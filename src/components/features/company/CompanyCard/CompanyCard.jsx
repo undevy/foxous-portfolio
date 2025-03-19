@@ -83,7 +83,7 @@ const CompanyCard = ({
   return (
     <div
       ref={cardRef}
-      className="bg-white rounded-3xl shadow-sm border border-gray-200 relative overflow-hidden"
+      className="card-glassmorphism rounded-3xl shadow-sm relative overflow-hidden"
       style={{
         height: '100%',
         maxHeight: maxHeight || (isMobile ? 'calc(100vh - 140px)' : 'none'),
@@ -91,10 +91,10 @@ const CompanyCard = ({
       }}
     >
       {/* Фиксированный заголовок */}
-      <div className="sticky top-0 z-10 bg-white p-6 pb-4 border-b border-gray-50">
+      <div className="sticky top-0 z-10 card-glassmorphism-bottom-border p-6 pb-4">
         <button
           onClick={handleCloseSidebar}
-          className="absolute top-3 right-3 h-6 w-6 rounded-full bg-gray-100 flex items-center justify-center z-40"
+          className="absolute top-3 right-3 h-6 w-6 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center z-40"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -102,10 +102,11 @@ const CompanyCard = ({
             height="12"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="#666"
+            stroke="currentColor"
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
+            className="text-gray-600 dark:text-gray-300"
           >
             <line x1="18" y1="6" x2="6" y2="18"></line>
             <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -117,7 +118,7 @@ const CompanyCard = ({
           alt={companyInfo.name} 
           className="w-full h-auto rounded-xl mb-4"
         />
-        <h2 className="text-2xl font-semibold mb-2 text-left">{companyInfo.name}</h2>
+        <h2 className="text-2xl font-semibold mb-2 text-left text-gray-900 dark:text-white">{companyInfo.name}</h2>
       </div>
 
       {/* Прокручиваемое содержимое с добавлением minHeight */}
@@ -129,7 +130,7 @@ const CompanyCard = ({
         {isMobile ? (
           <div className="relative mb-4">
             <div 
-              className="text-base text-gray-600 text-left overflow-hidden"
+              className="text-base text-gray-600 dark:text-gray-300 text-left overflow-hidden"
               style={{
                 maxHeight: isDescriptionExpanded ? 'none' : '4.5em',
                 position: 'relative'
@@ -146,24 +147,38 @@ const CompanyCard = ({
                     height: '1.5em',
                     background: 'linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1))'
                   }}
+                  className="dark:hidden"
+                ></div>
+              )}
+              {!isDescriptionExpanded && (
+                <div 
+                  style={{
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    height: '1.5em',
+                    background: 'linear-gradient(to bottom, rgba(31, 41, 55, 0), rgba(31, 41, 55, 1))'
+                  }}
+                  className="hidden dark:block"
                 ></div>
               )}
             </div>
             <button 
               onClick={toggleDescription}
-              className="text-blue-600 font-normal text-base mt-1"
+              className="text-primary font-normal text-base mt-1"
             >
               {isDescriptionExpanded ? 'less' : 'more'}
             </button>
           </div>
         ) : (
-          <p className="text-base text-gray-600 mb-4 text-left">
+          <p className="text-base text-gray-600 dark:text-gray-300 mb-4 text-left">
             {companyInfo.description}
           </p>
         )}
 
         <div className="mb-6">
-          <h3 className="text-sm font-medium text-black mb-3 text-left">Get a Sneak Peek</h3>
+          <h3 className="text-sm font-medium text-black dark:text-white mb-3 text-left">Get a Sneak Peek</h3>
           <div className="flex flex-wrap gap-3">
             {companyProjects.map((project) => {
               // Не отображать активный проект в десктопной версии
@@ -175,8 +190,8 @@ const CompanyCard = ({
                   onClick={() => setActiveCase(project.id)}
                   className={`${
                     activeCase === project.id
-                      ? 'border-blue-700 bg-blue-50 text-black'
-                      : 'border-gray-200 hover:bg-gray-100 text-black'
+                      ? 'border-primary-dark bg-primary-light text-black dark:text-white'
+                      : 'border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 text-black dark:text-white'
                   }`}
                   style={{
                     display: 'flex',
@@ -185,8 +200,8 @@ const CompanyCard = ({
                     alignItems: 'center',
                     gap: '4px',
                     borderRadius: '9999px',
-                    border: activeCase === project.id ? '1px solid #1D4ED8' : '1px solid #E7E7E7',
-                    background: activeCase === project.id ? '#EFF6FF' : 'transparent',
+                    border: activeCase === project.id ? '1px solid #1D4ED8' : '1px solid var(--color-button-border)',
+                    background: activeCase === project.id ? 'var(--color-primary-light)' : 'transparent',
                     fontSize: '14px',
                     fontWeight: '400',
                     width: 'auto' // Ширина подстраивается под содержимое
@@ -198,7 +213,7 @@ const CompanyCard = ({
             })}
             <button
               onClick={openContactModal}
-              className="border-gray-200 hover:bg-gray-100 text-black"
+              className="border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 text-black dark:text-white"
               style={{
                 display: 'flex',
                 padding: '8px 20px',
@@ -206,7 +221,7 @@ const CompanyCard = ({
                 alignItems: 'center',
                 gap: '4px',
                 borderRadius: '9999px',
-                border: '1px solid #E7E7E7',
+                border: '1px solid var(--color-button-border)',
                 fontSize: '14px',
                 fontWeight: '400',
                 width: 'auto' // Ширина подстраивается под содержимое
@@ -217,12 +232,12 @@ const CompanyCard = ({
           </div>
         </div>
 
-        <div className="pt-4 border-t border-gray-100 flex flex-col space-y-2">
+        <div className="pt-4 border-t border-gray-100 dark:border-gray-700 flex flex-col space-y-2">
           {company === 'nexus' ? (
             // Специальная логика для Nexus Network
             <button
               onClick={openContactModal}
-              className="text-sm text-blue-600 hover:text-blue-800 flex items-center"
+              className="text-sm text-primary hover:text-primary-dark flex items-center"
             >
               <span>Contact about {companyInfo.name}</span>
               <svg
@@ -247,7 +262,7 @@ const CompanyCard = ({
               href={companyInfo.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm text-blue-600 hover:text-blue-800 flex items-center"
+              className="text-sm text-primary hover:text-primary-dark flex items-center"
             >
               <span>Visit {companyInfo.name}</span>
               <svg
@@ -273,7 +288,7 @@ const CompanyCard = ({
               href={companyInfo.keyAppUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm text-blue-600 hover:text-blue-800 flex items-center"
+              className="text-sm text-primary hover:text-primary-dark flex items-center"
             >
               <span>Download Key App</span>
               <svg

@@ -17,7 +17,7 @@ const GithubLink = () => {
       onMouseLeave={() => setIsHovered(false)}
     >
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center">
+        <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
           <img 
             src="/assets/svgs/Github.svg"
             alt="GitHub"
@@ -25,13 +25,13 @@ const GithubLink = () => {
           />
         </div>
         <div>
-          <div className="font-medium text-gray-900">GitHub Repository</div>
-          <div className="text-sm text-gray-500">undevy/foxous-portfolio</div>
+          <div className="font-medium text-gray-900 dark:text-white">GitHub Repository</div>
+          <div className="text-sm text-gray-500 dark:text-gray-400">undevy/foxous-portfolio</div>
         </div>
       </div>
       
       {isHovered && (
-        <div className="text-gray-400">
+        <div className="text-gray-400 dark:text-gray-500">
           <svg 
             xmlns="http://www.w3.org/2000/svg" 
             width="16" 

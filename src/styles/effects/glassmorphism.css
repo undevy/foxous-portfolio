@@ -5,8 +5,40 @@
  ***************************************/
 
  .glassmorphism {
-    background: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.6);
-  }
+  background: var(--color-glass-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--color-glass-border);
+  transition: var(--transition-theme);
+}
+
+/* Новый класс для карточек с переключением стилей по теме */
+.card-glassmorphism {
+  /* Стили для светлой темы */
+  background: white;
+  border: 1px solid rgba(229, 231, 235, 1);
+}
+
+/* Стили для тёмной темы */
+.dark .card-glassmorphism {
+  background: var(--color-glass-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--color-glass-border);
+}
+
+.card-glassmorphism-bottom-border {
+  /* Стили для светлой темы */
+  background: white;
+  border: none;
+  border-bottom: 1px solid rgba(229, 231, 235, 1);
+}
+
+/* Стили для тёмной темы */
+.dark .card-glassmorphism-bottom-border {
+  background: var(--color-glass-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: none;
+  border-bottom: 1px solid var(--color-glass-border);
+}

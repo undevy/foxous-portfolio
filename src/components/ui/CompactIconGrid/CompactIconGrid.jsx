@@ -28,7 +28,7 @@ const CompactIconGrid = ({ onOpen, activeCompany }) => {
 
   return (
     <button 
-      className="w-10 h-10 rounded-lg flex items-center justify-center bg-white bg-opacity-80 shadow-sm"
+      className="w-10 h-10 rounded-lg flex items-center justify-center bg-white dark:bg-gray-800 bg-opacity-80 dark:bg-opacity-80 shadow-sm"
       onClick={onOpen}
       aria-label="Открыть меню компаний"
       style={{ minWidth: '40px', minHeight: '40px' }}

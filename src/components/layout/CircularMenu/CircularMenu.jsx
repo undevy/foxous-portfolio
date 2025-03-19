@@ -50,8 +50,8 @@ const CircularMenu = ({
         top: '-88px',
         zIndex: 60,
         borderRadius: '12.5rem',
-        border: '1px solid rgba(255, 255, 255, 0.60)',
-        background: 'rgba(255, 255, 255, 0.50)',
+        border: '1px solid var(--color-glass-border)',
+        background: 'var(--color-glass-bg)',
         boxShadow: '0px 2px 10px 0px rgba(0, 0, 0, 0.05)',
         backdropFilter: 'blur(16px)'
       }}
@@ -87,7 +87,7 @@ const CircularMenu = ({
       ))}
       
       {/* Кнопка закрытия с белым фоном */}
-      <div className="absolute top-1/2 left-1/2 w-10 h-10 bg-white rounded-full transform -translate-x-1/2 -translate-y-1/2 flex items-center justify-center transition-all duration-300 ease-out shadow-sm">
+      <div className="absolute top-1/2 left-1/2 w-10 h-10 bg-white dark:bg-gray-800 rounded-full transform -translate-x-1/2 -translate-y-1/2 flex items-center justify-center transition-all duration-300 ease-out shadow-sm">
         <button
           className="w-10 h-10 rounded-full flex items-center justify-center"
           onClick={(e) => {
@@ -95,7 +95,7 @@ const CircularMenu = ({
             onClose();
           }}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-700 dark:text-gray-200">
             <line x1="18" y1="6" x2="6" y2="18"></line>
             <line x1="6" y1="6" x2="18" y2="18"></line>
           </svg>

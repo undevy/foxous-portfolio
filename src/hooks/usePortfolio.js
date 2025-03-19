@@ -1,10 +1,14 @@
 import { useState, useRef } from 'react';
+import { useTheme } from '../contexts/ThemeContext';
 
 /**
  * Хук управления состоянием портфолио
  * @returns {Object} Объект с состояниями и функциями управления портфолио
  */
 const usePortfolio = () => {
+  // Получаем функцию для изменения цветовой схемы компании
+  const { setCompanyTheme } = useTheme();
+
   // Основные состояния
   const [activeCompany, setActiveCompany] = useState(null);
   const [activeCase, setActiveCase] = useState(null);
@@ -42,6 +46,9 @@ const usePortfolio = () => {
       setActiveCase(null);
       setIsOpen(false);
       setIsCompanyCardTransformed(false);
+      
+      // Сбрасываем тему компании на дефолтную
+      setCompanyTheme('default');
     } else {
       // Открываем новую компанию
       setActiveCompany(companyId);
@@ -57,6 +64,9 @@ const usePortfolio = () => {
       }
       
       setIsOpen(true);
+      
+      // Устанавливаем цветовую схему для выбранной компании
+      setCompanyTheme(companyId);
     }
   };
 
@@ -91,6 +101,9 @@ const usePortfolio = () => {
     setActiveCompany(null);
     setActiveCase(null);
     setIsCompanyCardTransformed(false);
+    
+    // Сбрасываем тему компании на дефолтную
+    setCompanyTheme('default');
   };
 
   /**

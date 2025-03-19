@@ -91,3 +91,34 @@ pointer-events: none;
   font-size: 1rem;
   margin-top: 0.25rem;
 }
+
+/* Класс для ограничения количества строк текста */
+.text-clamp {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: all 0.3s ease;
+}
+
+/* Класс для ограничения 3 строк текста */
+.text-clamp-3 {
+  line-clamp: 3;
+  -webkit-line-clamp: 3;
+}
+
+/* Класс для отображения полного текста */
+.text-clamp-none {
+  line-clamp: 3;
+  -webkit-line-clamp: unset;
+}
+
+/* Анимация при раскрытии текста */
+.text-clamp-transition {
+  max-height: 300px; /* Это должно быть больше, чем любой текст, который может быть */
+  transition: max-height 0.3s ease;
+}
+
+.text-clamp-3.text-clamp-transition {
+  max-height: 4.5em; /* Примерная высота для 3 строк */
+}

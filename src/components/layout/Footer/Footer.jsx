@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import CompactIconGrid from '../../ui/CompactIconGrid';
 import CircularMenu from '../CircularMenu';
+import { useTheme } from '../../../contexts/ThemeContext';
+import { companyData } from '../../../data/companies';
 
 /**
  * Компонент футера (нижней навигационной панели)
@@ -15,6 +17,8 @@ import CircularMenu from '../CircularMenu';
  */
 const Footer = ({ activeCompany, toggleCompany, isMobile, foxIconRef, isMenuOpen }) => {
   const [isCircularMenuOpen, setIsCircularMenuOpen] = useState(false);
+  // Получаем текущую тему для выбора иконки лисы
+  const { isDarkMode } = useTheme();
   
   // Маппинг ID компаний к именам файлов SVG-иконок
   const companyIds = {
@@ -48,7 +52,7 @@ const Footer = ({ activeCompany, toggleCompany, isMobile, foxIconRef, isMenuOpen
               onClick={() => toggleCompany('menu')}
               ref={foxIconRef}
             >
-              <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center icon-transition">
+              <div className="w-10 h-10 rounded-xl bg-white dark:bg-gray-800 flex items-center justify-center icon-transition">
                 {isMenuOpen ? (
                   // Крестик когда меню открыто
                   <svg
@@ -61,15 +65,15 @@ const Footer = ({ activeCompany, toggleCompany, isMobile, foxIconRef, isMenuOpen
                     strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    className="text-gray-700 icon-transition"
+                    className="text-gray-700 dark:text-gray-200 icon-transition"
                   >
                     <line x1="18" y1="6" x2="6" y2="18"></line>
                     <line x1="6" y1="6" x2="18" y2="18"></line>
                   </svg>
                 ) : (
-                  // Иконка лисы когда меню закрыто
+                  // Иконка лисы когда меню закрыто (разная для светлой и тёмной темы)
                   <img 
-                    src="/assets/svgs/Fox.svg" 
+                    src={isDarkMode ? "/assets/svgs/Fox-Dark.svg" : "/assets/svgs/Fox.svg"} 
                     alt="Foxous Menu" 
                     className={`w-10 h-10 nav-icon icon-transition ${activeCompany === 'menu' ? 'icon-active' : ''}`}
                   />
@@ -80,7 +84,7 @@ const Footer = ({ activeCompany, toggleCompany, isMobile, foxIconRef, isMenuOpen
               )}
               
               {activeCompany === 'menu' && !isMenuOpen && (
-                <div className="absolute bottom-[-10px] w-2 h-2 rounded-full bg-blue-600 border border-white"></div>
+                <div className="absolute bottom-[-10px] w-2 h-2 rounded-full bg-primary border border-white dark:border-gray-800"></div>
               )}
             </button>
           </div>
@@ -125,10 +129,10 @@ const Footer = ({ activeCompany, toggleCompany, isMobile, foxIconRef, isMenuOpen
                       />
                       
                       {activeCompany === companyId && (
-                        <div className="absolute bottom-[-10px] w-2 h-2 rounded-full bg-blue-600 border border-white"></div>
+                        <div className="absolute bottom-[-10px] w-2 h-2 rounded-full bg-primary border border-white dark:border-gray-800"></div>
                       )}
                       
-                      <span className="tooltip tooltip-top">{companyId}</span>
+                      <span className="tooltip tooltip-top">{companyData[companyId].name}</span>
                     </button>
                   </div>
                 ))}
@@ -139,7 +143,8 @@ const Footer = ({ activeCompany, toggleCompany, isMobile, foxIconRef, isMenuOpen
           {/* Кнопка Connect */}
           <button 
             onClick={() => toggleCompany('contact')} 
-            className={`bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200 outline-none focus:outline-none ${!isMobile ? 'min-w-[120px]' : ''}`}
+            className="bg-primary hover:bg-primary-dark text-white dark:text-white px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200 outline-none focus:outline-none"
+            style={{ minWidth: isMobile ? 'auto' : '120px' }}
           >
             Connect
           </button>

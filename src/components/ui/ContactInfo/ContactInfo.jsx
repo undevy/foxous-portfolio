@@ -86,11 +86,11 @@ const ContactInfo = ({ activeCompany, showContacts, setShowContacts }) => {
     if (activeCompany === 'nexus') {
       return (
         <>
-          <p className="text-gray-600 mb-4">
+          <p className="text-gray-600 dark:text-gray-300 mb-4">
             <strong>Note:</strong> Due to a Non-Disclosure Agreement, I cannot reveal the actual name of this company. 
             I'd be happy to share more details during a personal conversation.
           </p>
-          <p className="text-gray-600 mb-4">
+          <p className="text-gray-600 dark:text-gray-300 mb-4">
             If you'd like to learn more about my work at {companyName} or discuss other aspects of the project, 
             please feel free to reach out through any of the following channels:
           </p>
@@ -98,14 +98,14 @@ const ContactInfo = ({ activeCompany, showContacts, setShowContacts }) => {
       );
     } else if (activeCompany) {
       return (
-        <p className="text-gray-600 mb-4">
+        <p className="text-gray-600 dark:text-gray-300 mb-4">
           If you'd like to learn more about my work at {companyName} or discuss other aspects of the project, 
           please feel free to reach out through any of the following channels:
         </p>
       );
     } else {
       return (
-        <p className="text-gray-600 mb-4">
+        <p className="text-gray-600 dark:text-gray-300 mb-4">
           If you'd like to discuss my work or opportunities for collaboration, 
           please feel free to reach out through any of the following channels:
         </p>
@@ -125,16 +125,16 @@ const ContactInfo = ({ activeCompany, showContacts, setShowContacts }) => {
       }}
     >
       <div 
-        className="bg-white rounded-3xl p-4 shadow-lg w-full max-w-lg mx-4"
+        className="bg-white dark:bg-gray-800 rounded-3xl p-4 shadow-lg w-full max-w-lg mx-4"
         onClick={e => e.stopPropagation()}
       >
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-semibold">Get in Touch</h2>
+          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">Get in Touch</h2>
           <button 
             onClick={() => setShowContacts(false)} 
-            className="h-8 w-8 rounded-full bg-gray-100 flex items-center justify-center"
+            className="h-8 w-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-600 dark:text-gray-200">
               <line x1="18" y1="6" x2="6" y2="18"></line>
               <line x1="6" y1="6" x2="18" y2="18"></line>
             </svg>
@@ -145,21 +145,21 @@ const ContactInfo = ({ activeCompany, showContacts, setShowContacts }) => {
         
         <div className="flex flex-col space-y-4">
           {/* Email контакт */}
-          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+          <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-xl">
             <div className="flex items-center">
               <img 
                 src="/assets/icons/email-icon.svg" 
                 alt="Email" 
-                className="w-5 h-5 mr-3" 
+                className="w-5 h-5 mr-3 text-primary" 
               />
-              <a href={`mailto:${contactInfo.email}`} className="text-blue-600 hover:text-blue-800">
+              <a href={`mailto:${contactInfo.email}`} className="text-primary hover:text-primary-dark">
                 {contactInfo.email}
               </a>
             </div>
             <div className="relative">
               <button 
                 onClick={() => copyToClipboard(contactInfo.email, 'email')}
-                className="text-gray-500 hover:text-gray-700 p-2"
+                className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 p-2"
                 aria-label="Copy email"
               >
                 {isEmailCopied ? (
@@ -183,21 +183,21 @@ const ContactInfo = ({ activeCompany, showContacts, setShowContacts }) => {
           </div>
           
           {/* Telegram контакт */}
-          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+          <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-xl">
             <div className="flex items-center">
               <img 
                 src="/assets/icons/telegram-icon.svg" 
                 alt="Telegram" 
-                className="w-5 h-5 mr-3" 
+                className="w-5 h-5 mr-3 text-primary" 
               />
-              <a href={`https://t.me/${contactInfo.telegram.replace('@', '')}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800">
+              <a href={`https://t.me/${contactInfo.telegram.replace('@', '')}`} target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary-dark">
                 {contactInfo.telegram}
               </a>
             </div>
             <div className="relative">
               <button 
                 onClick={() => copyToClipboard(contactInfo.telegram, 'telegram')}
-                className="text-gray-500 hover:text-gray-700 p-2"
+                className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 p-2"
                 aria-label="Copy telegram username"
               >
                 {isTelegramCopied ? (

@@ -4,6 +4,7 @@ import ThemeToggle from '../../../ui/ThemeToggle';
 import YoutubePlayer from '../../../ui/YoutubePlayer';
 import StatusIndicator from '../../../ui/StatusIndicator';
 import GithubLink from '../../../ui/GithubLink';
+import { useTheme } from '../../../../contexts/ThemeContext';
 
 /**
  * Компонент главного меню
@@ -23,6 +24,8 @@ const MainMenu = ({
   const menuRef = useRef(null);
   const [isExiting, setIsExiting] = useState(false);
   const [shouldRender, setShouldRender] = useState(isOpen);
+  // Получаем текущую тему
+  const { isDarkMode } = useTheme();
 
   // Управление появлением/исчезновением меню
   useEffect(() => {
@@ -65,11 +68,11 @@ const MainMenu = ({
     minWidth: '280px',
     ...(isMobile ? {
       top: position ? position.y + position.height + 10 : '70px',
-      left: position ? position.x - 16 : '50%',
+      left: position ? position.x + 4 : '50%',
       transform: 'translateX(-20px)',
     } : {
       bottom: position ? window.innerHeight - position.y + 10 : '70px',
-      left: position ? position.x - 20 : '50%',
+      left: position ? position.x - 16 : '50%',
     })
   };
 
@@ -85,15 +88,15 @@ const MainMenu = ({
       component: (
         <div className="flex items-center gap-3 p-2">
           <div className="w-10 h-10 rounded-xl flex items-center justify-center">
-            <img 
-              src="/assets/svgs/Fox.svg" 
-              alt="Foxous" 
-              className="w-10 h-10"
-            />
+          <img 
+            src={isDarkMode ? "/assets/svgs/Fox-Dark.svg" : "/assets/svgs/Fox.svg"} 
+            alt="Foxous" 
+            className="w-10 h-10"
+          />
           </div>
           <div>
-            <div className="font-medium text-gray-900">Foxous</div>
-            <div className="text-sm text-gray-500">Designer / Developer</div>
+            <div className="font-medium text-gray-900 dark:text-white">Foxous</div>
+            <div className="text-sm text-gray-500 dark:text-gray-400">Designer / Developer</div>
           </div>
         </div>
       ),
@@ -129,14 +132,14 @@ const MainMenu = ({
   return (
     <div 
       ref={menuRef}
-      className={`glassmorphism rounded-2xl shadow-lg p-2 overflow-hidden ${animationClass}`}
+      className="glassmorphism rounded-2xl shadow-lg p-2 overflow-hidden transform-card-transition"
       style={menuStyle}
     >
       <div className="flex flex-col">
         {menuItems.map((item) => (
           <div key={item.id} className={`${item.clickable ? 'menu-item menu-item-hover cursor-pointer' : ''}`}>
             {item.component}
-            {item.divider && <div className="border-b border-gray-200 my-2"></div>}
+            {item.divider && <div className="border-b border-gray-200 dark:border-gray-700 my-2"></div>}
           </div>
         ))}
       </div>

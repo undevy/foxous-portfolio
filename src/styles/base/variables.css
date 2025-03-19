@@ -1,38 +1,86 @@
 /* src/styles/base/variables.css */
 
+/* Базовая тема (светлая) */
 :root {
-    /* Colors */
-    --color-primary: #3b82f6;
-    --color-primary-light: #93c5fd;
-    --color-primary-dark: #2563eb;
-    
-    --color-background: #E3F2FD;
-    --color-background-alt: #F5F9FF;
-    
-    --color-text: #1f2937;
-    --color-text-light: #6b7280;
-    
-    --color-border: rgba(255, 255, 255, 0.6);
-    --color-shadow: rgba(0, 0, 0, 0.1);
+  /* Основные цвета (переопределяются для разных компаний) */
+  --color-primary: #3b82f6;        /* Основной акцентный */
+  --color-primary-light: #93c5fd;  /* Светлый акцентный */
+  --color-primary-dark: #2563eb;   /* Темный акцентный */
   
-    /* Spacing */
-    --spacing-sm: 0.5rem;
-    --spacing-md: 1rem;
-    --spacing-lg: 1.5rem;
-    --spacing-xl: 2rem;
-    
-    /* Border radius */
-    --radius-sm: 0.25rem;
-    --radius-md: 0.5rem;
-    --radius-lg: 1rem;
-    --radius-xl: 1.5rem;
-    --radius-2xl: 2rem;
-    --radius-3xl: 3rem;
-    --radius-full: 9999px;
-    
-    /* Transitions */
-    --transition-fast: 0.2s ease;
-    --transition-normal: 0.3s ease;
-    --transition-slow: 0.5s ease;
-    --transition-bounce: 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
+  /* Цвета фона */
+  --color-background: #E3F2FD;     /* Фон страницы */
+  --color-card: #FFFFFF;           /* Фон карточек */
+  
+  /* Цвета текста */
+  --color-text: #1f2937;           /* Основной текст */
+  --color-text-light: #6b7280;     /* Дополнительный текст */
+
+  /* Границы и интерфейс */
+  --color-button-border: #E7E7E7;  /* Цвет границы кнопок проектов */
+  
+  /* Glassmorphism эффекты */
+  --color-glass-bg: rgba(255, 255, 255, 0.9);
+  --color-glass-border: rgba(255, 255, 255, 0.6);
+  
+  /* Градиенты для фона */
+  --gradient-primary: #90CAF9;
+  --gradient-secondary: #64B5F6;
+  --gradient-tertiary: #BBDEFB;
+  
+  /* Утилитарные цвета */
+  --color-success: #22c55e;
+  --color-error: #ef4444;
+  --color-warning: #f59e0b;
+  
+  /* Прочие интерфейсные переменные */
+  --color-border: rgba(229, 231, 235, 1);
+  --color-shadow: rgba(0, 0, 0, 0.1);
+  
+  /* Переходы */
+  --transition-theme: all 0.3s ease;
+  
+  /* Размеры */
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  
+  /* Скругления */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-2xl: 2rem;
+  --radius-3xl: 3rem;
+  --radius-full: 9999px;
+
+  /* Градиенты для скрытия текста */
+  --gradient-fade-start: rgba(255, 255, 255, 0);
+  --gradient-fade-end: rgba(255, 255, 255, 1);
+}
+
+/* Тёмная тема - базовая */
+.dark {
+  --color-background: #121212;
+  --color-card: #1e1e1e;
+  --color-text: #f3f4f6;
+  --color-text-light: #d1d5db;
+  
+  /* Границы для тёмной темы */
+  --color-button-border: #394150;  /* Тёмный цвет границы кнопок проектов */
+  
+  --color-glass-bg: rgba(20, 20, 20, 0.8);
+  --color-glass-border: rgba(50, 50, 50, 0.6);
+  
+  --color-border: rgba(75, 85, 99, 0.3);
+  --color-shadow: rgba(0, 0, 0, 0.3);
+  
+  /* Градиенты для тёмного фона */
+  --gradient-primary: #1E3A8A;
+  --gradient-secondary: #3B82F6;
+  --gradient-tertiary: #60A5FA;
+
+  /* Градиенты для скрытия текста в тёмной теме */
+  --gradient-fade-start: rgba(30, 30, 30, 0);
+  --gradient-fade-end: rgba(30, 30, 30, 1);
+}

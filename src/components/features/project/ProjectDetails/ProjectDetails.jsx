@@ -61,11 +61,11 @@ const ProjectDetails = ({
   // После вызова всех хуков можем использовать условный рендеринг
   if (!project) {
     return (
-      <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-200 relative">
+      <div className="bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 relative">
         {!hideCloseButton && (
           <button
             onClick={handleCloseDetail}
-            className="absolute top-3 right-3 h-6 w-6 rounded-full bg-gray-100 flex items-center justify-center"
+            className="absolute top-3 right-3 h-6 w-6 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -73,10 +73,11 @@ const ProjectDetails = ({
               height="12"
               viewBox="0 0 24 24"
               fill="none"
-              stroke="#666"
+              stroke="currentColor"
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
+              className="text-gray-600 dark:text-gray-300"
             >
               <line x1="18" y1="6" x2="6" y2="18"></line>
               <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -84,7 +85,7 @@ const ProjectDetails = ({
           </button>
         )}
         <div className="flex justify-center items-center h-64">
-          <p className="text-base text-gray-600">
+          <p className="text-base text-gray-600 dark:text-gray-300">
             Проект не найден. Пожалуйста, выберите другой проект.
           </p>
         </div>
@@ -94,7 +95,7 @@ const ProjectDetails = ({
 
   return (
     <div
-      className="bg-white rounded-3xl shadow-sm border border-gray-200 relative overflow-hidden"
+      className="card-glassmorphism rounded-3xl shadow-sm relative overflow-hidden"
       style={{
         height: '100%',
         maxHeight: calculatedMaxHeight,
@@ -102,19 +103,19 @@ const ProjectDetails = ({
       }}
     >
       {/* Заголовок в виде кнопки проекта */}
-      <div className="sticky top-0 z-30 bg-white">
+      <div className="sticky top-0 z-30 card-glassmorphism-bottom-border">
         <div className="p-4">
           {/* Стилизованная кнопка с названием проекта */}
           <button
-            className="inline-flex border-blue-700 bg-blue-50 text-black"
+            className="inline-flex border-primary-dark bg-primary-light text-black dark:text-white"
             style={{
               display: 'inline-flex', // Изменено с flex на inline-flex
               padding: '8px 20px', // Корректные паддинги
               alignItems: 'center',
               gap: '4px',
               borderRadius: '9999px',
-              border: '1px solid #1D4ED8',
-              background: '#EFF6FF',
+              border: '1px solid var(--color-primary-dark)',
+              background: 'var(--color-primary-light)',
               fontSize: '14px',
               fontWeight: '600',
               cursor: 'default',
@@ -128,7 +129,7 @@ const ProjectDetails = ({
           {!hideCloseButton && (
             <button
               onClick={handleCloseDetail}
-              className="absolute top-3 right-3 h-6 w-6 rounded-full bg-gray-100 flex items-center justify-center z-40"
+              className="absolute top-3 right-3 h-6 w-6 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center z-40"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -136,10 +137,11 @@ const ProjectDetails = ({
                 height="12"
                 viewBox="0 0 24 24"
                 fill="none"
-                stroke="#666"
+                stroke="currentColor"
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
+                className="text-gray-600 dark:text-gray-300"
               >
                 <line x1="18" y1="6" x2="6" y2="18"></line>
                 <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -153,19 +155,19 @@ const ProjectDetails = ({
       <div className="p-6 pt-2 overflow-y-auto custom-scrollbar" style={{ maxHeight: contentHeight }}>
         <div className="max-w-3xl">
           <div className="mb-6">
-            <h2 className="text-xl font-medium mb-3 text-left">Challenge</h2>
-            <p className="text-base text-gray-600 text-left">{project.challenge}</p>
+            <h2 className="text-xl font-medium mb-3 text-left text-gray-900 dark:text-white">Challenge</h2>
+            <p className="text-base text-gray-600 dark:text-gray-300 text-left">{project.challenge}</p>
           </div>
 
           <div className="mb-6">
-            <h2 className="text-xl font-medium mb-3 text-left">Solution</h2>
-            <p className="text-base text-gray-600 text-left">{project.solution}</p>
+            <h2 className="text-xl font-medium mb-3 text-left text-gray-900 dark:text-white">Solution</h2>
+            <p className="text-base text-gray-600 dark:text-gray-300 text-left">{project.solution}</p>
           </div>
 
           <div>
-            <h2 className="text-xl font-medium mb-3 text-left">Impact</h2>
+            <h2 className="text-xl font-medium mb-3 text-left text-gray-900 dark:text-white">Impact</h2>
             {Array.isArray(project.impact) ? (
-              <ul className="list-disc list-inside text-base text-gray-600 text-left">
+              <ul className="list-disc list-inside text-base text-gray-600 dark:text-gray-300 text-left">
                 {project.impact.map((item, index) => (
                   <li key={index} className="mb-1">
                     {item}
@@ -173,7 +175,7 @@ const ProjectDetails = ({
                 ))}
               </ul>
             ) : (
-              <p className="text-base text-gray-600 text-left">{project.impact}</p>
+              <p className="text-base text-gray-600 dark:text-gray-300 text-left">{project.impact}</p>
             )}
           </div>
         </div>

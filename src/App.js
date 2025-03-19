@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react';
 import './App.css';
 import PortfolioLayout from './components/layout/PortfolioLayout';
 import Loader from './components/ui/Loader';
+import { ThemeProvider } from './contexts/ThemeContext';
+import ThemeMeta from './components/utils/ThemeMeta';
 
 // Список всех изображений для предзагрузки
 const imagesToPreload = [
@@ -11,6 +13,7 @@ const imagesToPreload = [
   '/assets/images/KeyApp.webp',
   '/assets/images/Wb.webp',
   '/assets/svgs/Fox.svg',
+  '/assets/svgs/Fox-Dark.svg',
   '/assets/svgs/Gmx.svg',
   '/assets/svgs/Nexus.svg',
   '/assets/svgs/P2P.svg',
@@ -63,13 +66,17 @@ function App() {
   }, []);
 
   return (
-    <div className="App">
-      {isLoading ? (
-        <Loader />
-      ) : (
-        <PortfolioLayout />
-      )}
-    </div>
+    <ThemeProvider>
+      {/* Компонент для управления мета-тегами в соответствии с темой */}
+      <ThemeMeta />
+      <div className="App">
+        {isLoading ? (
+          <Loader />
+        ) : (
+          <PortfolioLayout />
+        )}
+      </div>
+    </ThemeProvider>
   );
 }
 

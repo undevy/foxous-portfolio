@@ -29,3 +29,29 @@
 /* Responsive styles */
 @import './styles/responsive/mobile.css';
 @import './styles/responsive/desktop.css';
+
+/* Дополнительные адаптации для темной темы */
+@layer base {
+  .dark .tooltip {
+    background-color: #1e1e1e;
+    color: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  }
+
+  .dark .menu-item-hover:hover {
+    background-color: rgba(31, 41, 55, 0.5);
+  }
+  
+  /* Стили для скроллбаров в темной теме */
+  .dark .custom-scrollbar::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+  }
+  
+  .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+  }
+  
+  .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
+}

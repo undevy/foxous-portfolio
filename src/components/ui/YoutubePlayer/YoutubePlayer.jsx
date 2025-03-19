@@ -42,7 +42,7 @@ const YoutubePlayer = () => {
     >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-xl bg-red-50 dark:bg-red-900 flex items-center justify-center">
             <img 
               src="/assets/svgs/Youtube.svg" 
               alt="YouTube" 
@@ -50,13 +50,13 @@ const YoutubePlayer = () => {
             />
           </div>
           <div>
-            <div className="font-medium text-gray-900">Layer2 Meetup Talk</div>
-            <div className="text-sm text-gray-500">Why UX in Web3 Sucks</div>
+            <div className="font-medium text-gray-900 dark:text-white">Layer2 Meetup Talk</div>
+            <div className="text-sm text-gray-500 dark:text-gray-400">Why UX in Web3 Sucks</div>
           </div>
         </div>
         
         {isHovered && (
-          <div className="text-gray-400 icon-transition">
+          <div className="text-gray-400 dark:text-gray-500 icon-transition">
             <svg 
               xmlns="http://www.w3.org/2000/svg" 
               width="16" 
