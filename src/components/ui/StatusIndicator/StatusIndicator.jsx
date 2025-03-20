@@ -20,7 +20,7 @@ const StatusIndicator = () => {
         </div>
         <div>
           <div className="font-medium text-gray-900 dark:text-white">Status</div>
-          <div className="text-sm text-gray-500 dark:text-gray-400">
+          <div className="text-xs text-gray-500 dark:text-gray-400">
             {isAvailable ? 'Available for projects' : 'Currently busy'}
           </div>
         </div>

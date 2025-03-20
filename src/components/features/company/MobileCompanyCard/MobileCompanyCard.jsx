@@ -1,9 +1,12 @@
 // src/components/features/company/MobileCompanyCard/MobileCompanyCard.jsx
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { companyData } from '../../../../data/companies';
 import { projectsByCompany } from '../../../../data/projects';
 import { getCompanyImage } from '../../../../utils/companyUtils';
+import { useImageViewer } from '../../../../contexts/ImageViewerContext';
+import { getCompanyPngImage } from '../../../../utils/companyUtils';
+import useTouchClick from '../../../../hooks/useTouchClick';
 
 /**
  * Компонент карточки компании для мобильных устройств
@@ -24,10 +27,19 @@ const MobileCompanyCard = ({
 }) => {
   const companyInfo = companyData[company];
   const companyProjects = projectsByCompany[company] || [];
+  const { openViewer } = useImageViewer();
+   // Обработчик клика по изображению
+   const handleImageClick = useCallback((e) => {
+    openViewer(getCompanyPngImage(company), companyInfo.name);
+  }, [company, companyInfo, openViewer]);
+  
+  // Используем наш новый хук
+  const touchProps = useTouchClick(handleImageClick);
   
   // Состояние для отслеживания развернутости текста
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
-
+  // Добавляем новое состояние для изображения
+  const [imageLoading, setImageLoading] = useState(true);
   // Обновлённый расчёт высоты прокручиваемой области
   const contentHeight = maxHeight
     ? `calc(${typeof maxHeight === 'string' ? maxHeight : maxHeight + 'px'} - 280px)`
@@ -70,11 +82,19 @@ const MobileCompanyCard = ({
           </svg>
         </button>
 
-        <img
-          src={getCompanyImage(company)}
-          alt={companyInfo.name}
-          className="w-full h-auto rounded-xl mb-4"
-        />
+        <div 
+          className="image-hover-effect mb-4 cursor-pointer" 
+          {...touchProps}
+        >
+          <img 
+            src={getCompanyImage(company)}
+            alt={companyInfo.name}
+            className={`w-full h-auto transition-all duration-500 ${
+              imageLoading ? 'opacity-0 scale-95' : 'opacity-100 scale-100'
+            }`}
+            onLoad={() => setImageLoading(false)}
+          />
+        </div>
         <h2 className="text-2xl font-semibold mb-2 text-left text-gray-900 dark:text-white">{companyInfo.name}</h2>
       </div>
 
@@ -84,9 +104,9 @@ const MobileCompanyCard = ({
         style={{ maxHeight: contentHeight, minHeight: '150px' }}
       >
         {/* Описание компании с возможностью сворачивания */}
-        <div className="relative mb-4">
+        <div className="relative mb-4 mt-2">
           <div 
-            className={`text-base text-gray-600 dark:text-gray-300 text-left text-clamp text-clamp-transition ${
+            className={`text-xs text-gray-600 dark:text-gray-300 text-left text-clamp text-clamp-transition ${
               isDescriptionExpanded ? 'text-clamp-none' : 'text-clamp-3'
             }`}
           >
@@ -94,14 +114,14 @@ const MobileCompanyCard = ({
           </div>
           <button 
             onClick={toggleDescription}
-            className="text-primary font-normal text-base mt-1"
+            className="text-primary font-normal text-xs mt-1"
           >
             {isDescriptionExpanded ? 'less' : 'more'}
           </button>
         </div>
 
         <div className="mb-4">
-          <h3 className="text-sm font-medium text-black dark:text-white mb-2 text-left">Get a Sneak Peek</h3>
+          <h3 className="text-xs font-medium text-black dark:text-white mb-2 text-left">Get a Sneak Peek</h3>
           
           {/* Горизонтальный скролл для списка проектов */}
           <div 
@@ -160,7 +180,7 @@ const MobileCompanyCard = ({
             // Специальная логика для Nexus Network
             <button
               onClick={() => setShowContactModal(true)}
-              className="text-sm text-primary hover:text-primary-dark flex items-center"
+              className="text-xs text-primary hover:text-primary-dark flex items-center"
             >
               <span>Contact about {companyInfo.name}</span>
               <svg
@@ -185,7 +205,7 @@ const MobileCompanyCard = ({
               href={companyInfo.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm text-primary hover:text-primary-dark flex items-center"
+              className="text-xs text-primary hover:text-primary-dark flex items-center"
             >
               <span>Visit {companyInfo.name}</span>
               <svg
@@ -211,7 +231,7 @@ const MobileCompanyCard = ({
               href={companyInfo.keyAppUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm text-primary hover:text-primary-dark flex items-center"
+              className="text-xs text-primary hover:text-primary-dark flex items-center"
             >
               <span>Download Key App</span>
               <svg

@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 
 /**
@@ -9,11 +9,18 @@ const usePortfolio = () => {
   // Получаем функцию для изменения цветовой схемы компании
   const { setCompanyTheme } = useTheme();
 
-  // Основные состояния
-  const [activeCompany, setActiveCompany] = useState(null);
-  const [activeCase, setActiveCase] = useState(null);
-  const [savedProjects, setSavedProjects] = useState({});
-  const [isOpen, setIsOpen] = useState(false);
+  // Определение типа устройства при инициализации
+  const [isMobile, setIsMobile] = useState(() => {
+    return window.innerWidth < 768; // Стандартная точка разрыва для мобильных устройств
+  });
+
+  // Основные состояния с начальными значениями, зависящими от типа устройства
+  const [activeCompany, setActiveCompany] = useState('gmx');
+  const [activeCase, setActiveCase] = useState(null); // Изначально не устанавливаем проект
+  const [savedProjects, setSavedProjects] = useState({
+    'gmx': 'tradepage'
+  });
+  const [isOpen, setIsOpen] = useState(true);
   const [showContactModal, setShowContactModal] = useState(false);
   const [isCompanyCardTransformed, setIsCompanyCardTransformed] = useState(false);
   
@@ -21,6 +28,35 @@ const usePortfolio = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [menuPosition, setMenuPosition] = useState(null);
   const foxIconRef = useRef(null);
+
+  // Функция для проверки размера экрана
+  const checkIfMobile = useCallback(() => {
+    setIsMobile(window.innerWidth < 768);
+  }, []);
+
+  // Слушатель изменения размера окна
+  useEffect(() => {
+    window.addEventListener('resize', checkIfMobile);
+    return () => {
+      window.removeEventListener('resize', checkIfMobile);
+    };
+  }, [checkIfMobile]);
+
+  // Установка начального состояния в зависимости от типа устройства
+  useEffect(() => {
+    // Устанавливаем GMX как активную компанию в любом случае
+    setCompanyTheme('gmx');
+    
+    if (!isMobile) {
+      // Для десктопа - открываем первый проект
+      setActiveCase('tradepage');
+      setIsCompanyCardTransformed(true);
+    } else {
+      // Для мобильных - только карточка компании
+      setActiveCase(null);
+      setIsCompanyCardTransformed(false);
+    }
+  }, [isMobile, setCompanyTheme]);
 
   /**
    * Переключает видимость компании
@@ -53,12 +89,38 @@ const usePortfolio = () => {
       // Открываем новую компанию
       setActiveCompany(companyId);
       
-      // Восстанавливаем сохраненный проект или сбрасываем
-      const savedCase = savedProjects[companyId];
-      if (savedCase) {
-        setActiveCase(savedCase);
-        setIsCompanyCardTransformed(true);
+      if (!isMobile) {
+        // На десктопе автоматически открываем первый проект
+        const savedCase = savedProjects[companyId] || 
+          (companyId === 'gmx' ? 'tradepage' : null);
+        
+        if (savedCase) {
+          setActiveCase(savedCase);
+          setIsCompanyCardTransformed(true);
+        } else {
+          // Если нет сохраненного проекта, но это десктоп,
+          // попробуем найти первый проект для этой компании
+          import('../data/projects').then(module => {
+            const projects = module.projectsByCompany[companyId];
+            if (projects && projects.length > 0) {
+              const firstProjectId = projects[0].id;
+              setActiveCase(firstProjectId);
+              setIsCompanyCardTransformed(true);
+              
+              // Сохраняем для будущего использования
+              setSavedProjects(prev => ({
+                ...prev,
+                [companyId]: firstProjectId
+              }));
+            }
+          }).catch(() => {
+            // Если ошибка при импорте, просто не открываем проект
+            setActiveCase(null);
+            setIsCompanyCardTransformed(false);
+          });
+        }
       } else {
+        // На мобильных только открываем карточку компании
         setActiveCase(null);
         setIsCompanyCardTransformed(false);
       }
@@ -79,10 +141,10 @@ const usePortfolio = () => {
     setIsCompanyCardTransformed(true);
     
     // Сохраняем выбор проекта для этой компании
-    setSavedProjects({
-      ...savedProjects,
+    setSavedProjects(prev => ({
+      ...prev,
       [activeCompany]: caseId
-    });
+    }));
   };
 
   /**
@@ -171,7 +233,8 @@ const usePortfolio = () => {
     menuPosition,
     toggleMenu,
     closeMenu,
-    foxIconRef
+    foxIconRef,
+    isMobile // Экспортируем флаг типа устройства
   };
 };
 

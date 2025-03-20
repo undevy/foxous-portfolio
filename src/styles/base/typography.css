@@ -26,4 +26,9 @@ h2.section-title {
   letter-spacing: 0.02em;
 }
 
-/* Остальные стили из рекомендаций */
+/* Медиа-запрос для мобильной версии */
+@media (max-width: 767px) {
+  .body-text {
+    font-size: 14px;
+  }
+}

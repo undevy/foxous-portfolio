@@ -21,7 +21,7 @@ const ThemeToggle = () => {
         </div>
         <div>
           <div className="font-medium text-gray-900 dark:text-white">Theme</div>
-          <div className="text-sm text-gray-500 dark:text-gray-400">
+          <div className="text-xs text-gray-500 dark:text-gray-400">
             {isDarkMode ? "Dark Mode" : "Light Mode"}
           </div>
         </div>

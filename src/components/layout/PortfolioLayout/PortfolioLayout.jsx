@@ -12,27 +12,10 @@ import usePortfolio from '../../../hooks/usePortfolio';
  * @returns {JSX.Element} Компонент макета портфолио
  */
 const PortfolioLayout = () => {
-  // Определяем тип устройства при начальном рендере
-  const initialIsMobile = window.innerWidth < 768;
-  const [isMobile, setIsMobile] = useState(initialIsMobile);
-  
-  // Получаем все состояния и функции из хука usePortfolio
+  // Получаем все состояния и функции из хука usePortfolio, включая флаг isMobile
   const portfolioState = usePortfolio();
-  
-  // Оптимизированная функция определения мобильного устройства
-  const checkIfMobile = useCallback(() => {
-    setIsMobile(window.innerWidth < 768);
-  }, []);
-  
-  // Добавляем слушатель изменения размера окна
-  useEffect(() => {
-    window.addEventListener('resize', checkIfMobile);
-    
-    // Убираем слушатель при размонтировании
-    return () => {
-      window.removeEventListener('resize', checkIfMobile);
-    };
-  }, [checkIfMobile]);
+  // Используем isMobile из portfolioState вместо локального состояния
+  const { isMobile } = portfolioState;
 
   // Мемоизированные компоненты для предотвращения ненужных ререндеров
   const backgroundComponent = useMemo(() => <AnimatedBackground />, []);

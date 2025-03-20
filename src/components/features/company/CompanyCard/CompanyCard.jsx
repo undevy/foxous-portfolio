@@ -1,9 +1,12 @@
 // src/components/features/company/CompanyCard/CompanyCard.jsx
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { companyData } from '../../../../data/companies';
 import { projectsByCompany } from '../../../../data/projects';
 import { getCompanyImage } from '../../../../utils/companyUtils';
+import { useImageViewer } from '../../../../contexts/ImageViewerContext';
+import { getCompanyPngImage } from '../../../../utils/companyUtils';
+import useTouchClick from '../../../../hooks/useTouchClick';
 
 /**
  * Компонент карточки компании для десктопной версии
@@ -26,9 +29,17 @@ const CompanyCard = ({
   maxHeight,
   onHeightChange
 }) => {
+  const [imageLoading, setImageLoading] = useState(true);
   const companyInfo = companyData[company];
   const companyProjects = projectsByCompany[company] || [];
   const cardRef = useRef(null);
+  const { openViewer } = useImageViewer();
+  const handleImageClick = useCallback((e) => {
+    openViewer(getCompanyPngImage(company), companyInfo.name);
+  }, [company, companyInfo, openViewer]);
+  
+  // Используем наш новый хук
+  const touchProps = useTouchClick(handleImageClick);
 
   // Обновлённый расчёт высоты прокручиваемой области
   const contentHeight = maxHeight
@@ -89,21 +100,29 @@ const CompanyCard = ({
           </svg>
         </button>
 
-        <img 
-          src={getCompanyImage(company)}
-          alt={companyInfo.name} 
-          className="w-full h-auto rounded-xl mb-4"
-        />
+        <div 
+          className="image-hover-effect mb-4 cursor-pointer" 
+          {...touchProps}
+        >
+          <img 
+            src={getCompanyImage(company)}
+            alt={companyInfo.name} 
+            className={`w-full h-auto transition-all duration-500 ${
+              imageLoading ? 'opacity-0 scale-95' : 'opacity-100 scale-100'
+            }`}
+            onLoad={() => setImageLoading(false)}
+          />
+        </div>
         <h2 className="text-2xl font-semibold mb-2 text-left text-gray-900 dark:text-white">{companyInfo.name}</h2>
       </div>
 
       {/* Прокручиваемое содержимое */}
       <div
-        className="p-6 pt-2 overflow-y-auto custom-scrollbar"
+        className="p-6 pt-6 overflow-y-auto custom-scrollbar"
         style={{ maxHeight: contentHeight, minHeight: '150px' }}
       >
         {/* Описание компании */}
-        <p className="text-base text-gray-600 dark:text-gray-300 mb-4 text-left">
+        <p className="text-sm text-gray-600 dark:text-gray-300 mb-4 text-left">
           {companyInfo.description}
         </p>
 
@@ -127,6 +146,8 @@ const CompanyCard = ({
                     gap: '4px',
                     borderRadius: '9999px',
                     border: '1px solid var(--color-button-border)',
+                    fontSize: '16px',
+                    fontWeight: '500',
                     width: 'auto'
                   }}
                 >
@@ -145,8 +166,8 @@ const CompanyCard = ({
                 gap: '4px',
                 borderRadius: '9999px',
                 border: '1px solid var(--color-button-border)',
-                fontSize: '14px',
-                fontWeight: '400',
+                fontSize: '16px',
+                fontWeight: '500',
                 width: 'auto'
               }}
             >

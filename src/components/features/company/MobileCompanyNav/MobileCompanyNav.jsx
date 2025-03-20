@@ -59,7 +59,7 @@ const MobileCompanyNav = ({
               border: '1px solid var(--color-button-border)',
               background: 'transparent',
               fontSize: '14px',
-              fontWeight: '400',
+              fontWeight: '600',
               width: 'auto'
             }}
           >

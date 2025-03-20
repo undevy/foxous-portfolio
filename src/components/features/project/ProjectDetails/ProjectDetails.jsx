@@ -1,7 +1,11 @@
 // src/components/features/project/ProjectDetails/ProjectDetails.jsx
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { caseStudies } from '../../../../data/projects';
+import { getProjectImage } from '../../../../utils/projectUtils';
+import { useImageViewer } from '../../../../contexts/ImageViewerContext';
+import { getProjectPngImage } from '../../../../utils/projectUtils';
+import useTouchClick from '../../../../hooks/useTouchClick';
 
 /**
  * Компонент отображения деталей проекта
@@ -22,6 +26,8 @@ const ProjectDetails = ({
   hideCloseButton, // Параметр для скрытия кнопки закрытия
   squareTopCorners // Параметр для прямых верхних углов
 }) => {
+  const [imageError, setImageError] = useState(false);
+  const [imageLoading, setImageLoading] = useState(true);
   // Поиск проекта по id или ключу
   const project = useMemo(() => {
     return Object.values(caseStudies).find(
@@ -30,6 +36,16 @@ const ProjectDetails = ({
         p.title.toLowerCase().replace(/\s+/g, '') === activeCase
     );
   }, [activeCase]);
+
+  const { openViewer } = useImageViewer();
+   // Обработчик клика по изображению проекта
+   const handleImageClick = useCallback((e) => {
+    if (!project) return;
+    openViewer(getProjectPngImage(project.id), project.title);
+  }, [project, openViewer]);
+  
+  // Используем наш новый хук
+  const touchProps = useTouchClick(handleImageClick);
 
   // Используем useMemo для вычисления стилей - всегда, независимо от наличия проекта
   const mobileStyles = useMemo(() => {
@@ -116,10 +132,9 @@ const ProjectDetails = ({
               borderRadius: '9999px',
               border: '1px solid var(--color-primary-dark)',
               background: 'var(--color-primary-light)',
-              fontSize: '14px',
-              fontWeight: '600',
+              fontSize: isMobile ? '14px' : '16px',     // Условное определение размера
+              fontWeight: isMobile ? '600' : '500',     // Условное определение веса
               cursor: 'default',
-              // width: 'auto', // Убрано свойство width: 100%, теперь ширина подстраивается под контент
               flexDirection: 'row' // Явно указываем направление flex
             }}
           >
@@ -154,20 +169,36 @@ const ProjectDetails = ({
       {/* Скроллируемое содержимое */}
       <div className="p-6 pt-2 overflow-y-auto custom-scrollbar" style={{ maxHeight: contentHeight }}>
         <div className="max-w-3xl">
-          <div className="mb-6">
-            <h2 className="text-xl font-medium mb-3 text-left text-gray-900 dark:text-white">Challenge</h2>
-            <p className="text-base text-gray-600 dark:text-gray-300 text-left">{project.challenge}</p>
-          </div>
 
+            <div className="mb-6" style={{ paddingTop: '8px' }}>
+            <h2 className="text-xl font-bold mb-3 text-left text-gray-900 dark:text-white">Challenge</h2>
+            <p className="text-sm text-gray-600 dark:text-gray-300 text-left">{project.challenge}</p>
+          </div>
+          {project && !imageError && (
+            <div 
+              className="image-hover-effect mb-4 cursor-pointer" 
+              {...touchProps}
+            >
+              <img
+                src={getProjectImage(project.id)}
+                alt={project.title}
+                className={`w-full h-auto transition-all duration-500 ${
+                  imageLoading ? 'opacity-0 scale-95' : 'opacity-100 scale-100'
+                }`}
+                onError={() => setImageError(true)}
+                onLoad={() => setImageLoading(false)}
+              />
+            </div>
+          )}
           <div className="mb-6">
-            <h2 className="text-xl font-medium mb-3 text-left text-gray-900 dark:text-white">Solution</h2>
-            <p className="text-base text-gray-600 dark:text-gray-300 text-left">{project.solution}</p>
+            <h2 className="text-xl font-bold mb-3 text-left text-gray-900 dark:text-white">Solution</h2>
+            <p className="text-sm text-gray-600 dark:text-gray-300 text-left">{project.solution}</p>
           </div>
 
           <div>
-            <h2 className="text-xl font-medium mb-3 text-left text-gray-900 dark:text-white">Impact</h2>
+          <h2 className="text-xl font-bold mb-3 text-left text-gray-900 dark:text-white">Impact</h2>
             {Array.isArray(project.impact) ? (
-              <ul className="list-disc list-inside text-base text-gray-600 dark:text-gray-300 text-left">
+              <ul className="list-disc list-inside text-sm text-gray-600 dark:text-gray-300 text-left">
                 {project.impact.map((item, index) => (
                   <li key={index} className="mb-1">
                     {item}
@@ -175,7 +206,7 @@ const ProjectDetails = ({
                 ))}
               </ul>
             ) : (
-              <p className="text-base text-gray-600 dark:text-gray-300 text-left">{project.impact}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-300 text-left">{project.impact}</p>
             )}
           </div>
         </div>

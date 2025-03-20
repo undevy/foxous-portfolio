@@ -33,3 +33,73 @@
       box-shadow: 0 0 0 0 rgba(74, 222, 128, 0);
     }
   }
+
+/* Улучшенные эффекты для изображений */
+.image-hover-effect {
+  overflow: hidden;
+  border-radius: 0.75rem; /* rounded-xl */
+  position: relative;
+}
+
+.image-hover-effect::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0);
+  transition: background 0.3s ease;
+  pointer-events: none;
+}
+
+.image-hover-effect img {
+  transition: transform 0.5s ease, opacity 0.5s ease;
+}
+
+/* Эффект на десктопе при наведении мыши */
+@media (hover: hover) {
+  .image-hover-effect:hover img {
+    transform: scale(1.05);
+  }
+  
+  .image-hover-effect:hover::after {
+    background: rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* Эффект при касании на мобильных устройствах */
+@media (hover: none) {
+  .image-hover-effect:active img {
+    transform: scale(1.03);
+  }
+  
+  .image-hover-effect:active::after {
+    background: rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* Стиль для курсора над изображениями */
+.cursor-pointer {
+  cursor: pointer;
+}
+
+/* Активная область для сенсорных устройств */
+@media (hover: none) {
+  .image-hover-effect {
+    -webkit-tap-highlight-color: transparent; /* Убираем стандартную подсветку при нажатии */
+  }
+  
+  .image-hover-effect::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    pointer-events: auto; /* Гарантируем, что события касания регистрируются */
+  }
+  
+  /* Стиль нажатия для визуальной обратной связи */
+  .image-hover-effect:active::before {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+}

@@ -5,6 +5,7 @@ import PortfolioLayout from './components/layout/PortfolioLayout';
 import Loader from './components/ui/Loader';
 import { ThemeProvider } from './contexts/ThemeContext';
 import ThemeMeta from './components/utils/ThemeMeta';
+import { ImageViewerProvider } from './contexts/ImageViewerContext';
 
 // Список всех изображений для предзагрузки
 const imagesToPreload = [
@@ -21,7 +22,23 @@ const imagesToPreload = [
   '/assets/svgs/Sun.svg',
   '/assets/svgs/Moon.svg',
   '/assets/svgs/Github.svg',
-  '/assets/svgs/Youtube.svg'
+  '/assets/svgs/Youtube.svg',
+  '/assets/images/tradepage.webp',
+  '/assets/images/gasless.webp',
+  '/assets/images/pools.webp',
+  '/assets/images/multichain.webp',
+  '/assets/images/stablecoin.webp',
+  '/assets/images/android.webp',
+  '/assets/images/research.webp',
+  '/assets/images/design.webp',
+  '/assets/images/nftmarketplace.webp',
+  '/assets/images/walletonboarding.webp',
+  '/assets/images/developertools.webp',
+  '/assets/images/gameintegration.webp',
+  '/assets/images/designsystem.webp',
+  '/assets/images/supplierportal.webp',
+  '/assets/images/paymentapp.webp',
+  '/assets/images/documentapp.webp'
 ];
 
 function App() {
@@ -64,18 +81,19 @@ function App() {
   
     return () => clearTimeout(fallbackTimer);
   }, []);
-
   return (
     <ThemeProvider>
-      {/* Компонент для управления мета-тегами в соответствии с темой */}
-      <ThemeMeta />
-      <div className="App">
-        {isLoading ? (
-          <Loader />
-        ) : (
-          <PortfolioLayout />
-        )}
-      </div>
+      <ImageViewerProvider>
+        {/* Компонент для управления мета-тегами в соответствии с темой */}
+        <ThemeMeta />
+        <div className="App">
+          {isLoading ? (
+            <Loader />
+          ) : (
+            <PortfolioLayout />
+          )}
+        </div>
+      </ImageViewerProvider>
     </ThemeProvider>
   );
 }
