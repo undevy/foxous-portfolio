@@ -2,6 +2,10 @@
 
 /* Базовая тема (светлая) */
 :root {
+  /* Шрифты */
+  --font-primary: 'Raleway', sans-serif;
+  --font-headings: 'Raleway', sans-serif;
+
   /* Основные цвета (переопределяются для разных компаний) */
   --color-primary: #3b82f6;        /* Основной акцентный */
   --color-primary-light: #93c5fd;  /* Светлый акцентный */

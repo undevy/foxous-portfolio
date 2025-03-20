@@ -1,5 +1,7 @@
 /* src/index.css */
 
+@import './styles/base/typography.css';
+
 /* Tailwind imports */
 @tailwind base;
 @tailwind components;

@@ -68,11 +68,11 @@ const MainMenu = ({
     minWidth: '280px',
     ...(isMobile ? {
       top: position ? position.y + position.height + 10 : '70px',
-      left: position ? position.x + 4 : '50%',
+      left: position ? position.x - 16 : '50%',
       transform: 'translateX(-20px)',
     } : {
       bottom: position ? window.innerHeight - position.y + 10 : '70px',
-      left: position ? position.x - 16 : '50%',
+      left: position ? position.x - 20 : '50%',
     })
   };
 

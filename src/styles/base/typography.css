@@ -1,0 +1,29 @@
+/* src/styles/base/typography.css */
+:root {
+  --font-family: 'Space Grotesk', sans-serif;
+}
+
+html, body {
+  font-family: var(--font-family);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-family);
+  margin: 0;
+}
+
+h2.section-title {
+  font-weight: 700;
+  font-size: 28px;
+  letter-spacing: -0.02em;
+  margin-bottom: 1rem;
+}
+
+.btn-primary {
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+/* Остальные стили из рекомендаций */

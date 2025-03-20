@@ -1,75 +1,56 @@
-// src/components/features/company/CompanyCard/CompanyCard.jsx
-import React, { useRef, useEffect } from 'react';
+// src/components/features/company/MobileCompanyCard/MobileCompanyCard.jsx
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { companyData } from '../../../../data/companies';
 import { projectsByCompany } from '../../../../data/projects';
 import { getCompanyImage } from '../../../../utils/companyUtils';
 
 /**
- * Компонент карточки компании для десктопной версии
+ * Компонент карточки компании для мобильных устройств
  * @param {Object} props - Свойства компонента
  * @param {string} props.company - ID компании
- * @param {string} props.activeCase - ID активного кейса
- * @param {Function} props.setActiveCase - Функция установки активного кейса
- * @param {Function} props.handleCloseSidebar - Функция закрытия сайдбара
+ * @param {Function} props.selectCase - Функция выбора кейса
+ * @param {Function} props.closeSidebar - Функция закрытия сайдбара
  * @param {Function} props.setShowContactModal - Функция показа модального окна контактов
- * @param {number|string} props.maxHeight - Максимальная высота карточки
- * @param {Function} props.onHeightChange - Функция обратного вызова при изменении высоты
- * @returns {JSX.Element} Компонент карточки компании
+ * @param {string|number} props.maxHeight - Максимальная высота компонента
+ * @returns {JSX.Element} Компонент карточки компании для мобильных устройств
  */
-const CompanyCard = ({
+const MobileCompanyCard = ({
   company,
-  activeCase,
-  setActiveCase,
-  handleCloseSidebar,
+  selectCase,
+  closeSidebar,
   setShowContactModal,
-  maxHeight,
-  onHeightChange
+  maxHeight
 }) => {
   const companyInfo = companyData[company];
   const companyProjects = projectsByCompany[company] || [];
-  const cardRef = useRef(null);
+  
+  // Состояние для отслеживания развернутости текста
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
 
   // Обновлённый расчёт высоты прокручиваемой области
   const contentHeight = maxHeight
-    ? `calc(${typeof maxHeight === 'string' ? maxHeight : maxHeight + 'px'} - 240px)`
-    : `calc(100vh - 240px)`;
+    ? `calc(${typeof maxHeight === 'string' ? maxHeight : maxHeight + 'px'} - 280px)`
+    : `calc(100vh - 280px)`;
 
-  // Функция для открытия модального окна контактов
-  const openContactModal = () => {
-    if (typeof setShowContactModal === 'function') {
-      setShowContactModal(true);
-    } else {
-      console.error('setShowContactModal is not a function');
-    }
+  // Функция для переключения видимости полного описания
+  const toggleDescription = () => {
+    setIsDescriptionExpanded(!isDescriptionExpanded);
   };
 
-  // Используем ResizeObserver для уведомления родителя об изменении высоты
-  useEffect(() => {
-    if (!cardRef.current || !onHeightChange) return;
-    
-    const observer = new ResizeObserver((entries) => {
-      const height = entries[0].contentRect.height;
-      onHeightChange(height);
-    });
-    
-    observer.observe(cardRef.current);
-    return () => observer.disconnect();
-  }, [onHeightChange]);
-  
   return (
     <div
-      ref={cardRef}
-      className="card-glassmorphism rounded-3xl shadow-sm relative overflow-hidden"
+      className="card-glassmorphism rounded-3xl shadow-sm relative overflow-hidden transform-card-transition"
       style={{
         height: '100%',
-        maxHeight: maxHeight || 'none'
+        maxHeight: maxHeight || 'calc(100vh - 120px)',
+        zIndex: 10
       }}
     >
       {/* Фиксированный заголовок */}
-      <div className="sticky top-0 z-10 card-glassmorphism-bottom-border p-6 pb-4">
+      <div className="sticky top-0 z-10 card-glassmorphism-bottom-border p-6 pb-1">
         <button
-          onClick={handleCloseSidebar}
+          onClick={closeSidebar}
           className="absolute top-3 right-3 h-6 w-6 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center z-40"
         >
           <svg
@@ -89,9 +70,9 @@ const CompanyCard = ({
           </svg>
         </button>
 
-        <img 
+        <img
           src={getCompanyImage(company)}
-          alt={companyInfo.name} 
+          alt={companyInfo.name}
           className="w-full h-auto rounded-xl mb-4"
         />
         <h2 className="text-2xl font-semibold mb-2 text-left text-gray-900 dark:text-white">{companyInfo.name}</h2>
@@ -102,23 +83,40 @@ const CompanyCard = ({
         className="p-6 pt-2 overflow-y-auto custom-scrollbar"
         style={{ maxHeight: contentHeight, minHeight: '150px' }}
       >
-        {/* Описание компании */}
-        <p className="text-base text-gray-600 dark:text-gray-300 mb-4 text-left">
-          {companyInfo.description}
-        </p>
+        {/* Описание компании с возможностью сворачивания */}
+        <div className="relative mb-4">
+          <div 
+            className={`text-base text-gray-600 dark:text-gray-300 text-left text-clamp text-clamp-transition ${
+              isDescriptionExpanded ? 'text-clamp-none' : 'text-clamp-3'
+            }`}
+          >
+            {companyInfo.description}
+          </div>
+          <button 
+            onClick={toggleDescription}
+            className="text-primary font-normal text-base mt-1"
+          >
+            {isDescriptionExpanded ? 'less' : 'more'}
+          </button>
+        </div>
 
-        <div className="mb-6">
-          <h3 className="text-sm font-medium text-black dark:text-white mb-3 text-left">Get a Sneak Peek</h3>
-          <div className="flex flex-wrap gap-3">
-            {companyProjects.map((project) => {
-              // Не отображать активный проект в десктопной версии
-              if (activeCase === project.id) return null;
-              
-              return (
+        <div className="mb-4">
+          <h3 className="text-sm font-medium text-black dark:text-white mb-2 text-left">Get a Sneak Peek</h3>
+          
+          {/* Горизонтальный скролл для списка проектов */}
+          <div 
+            className="overflow-x-auto custom-scrollbar scrollbar-hide pb-4 horizontal-scroll" 
+            style={{ 
+              WebkitOverflowScrolling: 'touch', 
+              paddingBottom: '0px' 
+            }}
+          >
+            <div className="flex space-x-1 px-0 min-w-max">
+              {companyProjects.map((project) => (
                 <button
                   key={project.id || project.title}
-                  onClick={() => setActiveCase(project.id)}
-                  className="border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 text-black dark:text-white project-tag-button"
+                  onClick={() => selectCase(project.id)}
+                  className="border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 text-black dark:text-white"
                   style={{
                     display: 'flex',
                     padding: '8px 20px',
@@ -127,31 +125,33 @@ const CompanyCard = ({
                     gap: '4px',
                     borderRadius: '9999px',
                     border: '1px solid var(--color-button-border)',
+                    fontSize: '14px',
+                    fontWeight: '600',
                     width: 'auto'
                   }}
                 >
                   {project.shortName}
                 </button>
-              );
-            })}
-            <button
-              onClick={openContactModal}
-              className="border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 text-black dark:text-white"
-              style={{
-                display: 'flex',
-                padding: '8px 20px',
-                flexDirection: 'row',
-                alignItems: 'center',
-                gap: '4px',
-                borderRadius: '9999px',
-                border: '1px solid var(--color-button-border)',
-                fontSize: '14px',
-                fontWeight: '400',
-                width: 'auto'
-              }}
-            >
-              🔍 Other
-            </button>
+              ))}
+              <button
+                onClick={() => setShowContactModal(true)}
+                className="border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 text-black dark:text-white"
+                style={{
+                  display: 'flex',
+                  padding: '8px 20px',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  gap: '4px',
+                  borderRadius: '9999px',
+                  border: '1px solid var(--color-button-border)',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  width: 'auto'
+                }}
+              >
+                🔍 Other
+              </button>
+            </div>
           </div>
         </div>
 
@@ -159,7 +159,7 @@ const CompanyCard = ({
           {company === 'nexus' ? (
             // Специальная логика для Nexus Network
             <button
-              onClick={openContactModal}
+              onClick={() => setShowContactModal(true)}
               className="text-sm text-primary hover:text-primary-dark flex items-center"
             >
               <span>Contact about {companyInfo.name}</span>
@@ -237,18 +237,12 @@ const CompanyCard = ({
   );
 };
 
-CompanyCard.propTypes = {
+MobileCompanyCard.propTypes = {
   company: PropTypes.string.isRequired,
-  activeCase: PropTypes.string,
-  setActiveCase: PropTypes.func.isRequired,
-  handleCloseSidebar: PropTypes.func.isRequired,
+  selectCase: PropTypes.func.isRequired,
+  closeSidebar: PropTypes.func.isRequired,
   setShowContactModal: PropTypes.func.isRequired,
-  maxHeight: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-  onHeightChange: PropTypes.func
+  maxHeight: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
 };
 
-CompanyCard.defaultProps = {
-  onHeightChange: () => {}
-};
-
-export default React.memo(CompanyCard);
+export default React.memo(MobileCompanyCard);

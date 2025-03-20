@@ -6,6 +6,32 @@ module.exports = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        'sans': ['Space Grotesk', 'sans-serif'],
+        'space': ['Space Grotesk', 'sans-serif'],
+      },
+      fontWeight: {
+        light: 300,
+        normal: 400,
+        medium: 500,
+        semibold: 600,
+        bold: 700,
+      },
+      fontSize: {
+        'xs': '14px',
+        'sm': '16px',
+        'base': '18px',
+        'lg': '20px',
+        'xl': '24px',
+        '2xl': '28px',
+        '3xl': '32px',
+      },
+      letterSpacing: {
+        tighter: '-0.02em',
+        tight: '-0.01em',
+        normal: '0em',
+        wide: '0.02em',
+      },
       colors: {
         primary: 'var(--color-primary)',
         'primary-light': 'var(--color-primary-light)',

@@ -143,7 +143,7 @@ const Footer = ({ activeCompany, toggleCompany, isMobile, foxIconRef, isMenuOpen
           {/* Кнопка Connect */}
           <button 
             onClick={() => toggleCompany('contact')} 
-            className="bg-primary hover:bg-primary-dark text-white dark:text-white px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200 outline-none focus:outline-none"
+            className="bg-primary hover:bg-primary-dark text-white dark:text-white px-4 py-2 rounded-full text-sm font-bold tracking-wide btn-primary transition-colors duration-200 outline-none focus:outline-none"
             style={{ minWidth: isMobile ? 'auto' : '120px' }}
           >
             Connect
