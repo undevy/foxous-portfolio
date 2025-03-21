@@ -1,3 +1,4 @@
+// src/hooks/usePortfolio.js
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import { trackEvent, startTimingEvent, endTimingEvent, EVENT_CATEGORIES, EVENT_ACTIONS } from '../services/analytics';
@@ -45,35 +46,35 @@ const usePortfolio = () => {
 
   // Установка начального состояния только при первой загрузке
   useEffect(() => {
-  // Устанавливаем GMX только при первой загрузке
-  setCompanyTheme('gmx');
-  
-  if (!isMobile) {
-    // Для десктопа - открываем первый проект
-    setActiveCase('tradepage');
-    setIsCompanyCardTransformed(true);
-  } else {
-    // Для мобильных - только карточка компании
-    setActiveCase(null);
-    setIsCompanyCardTransformed(false);
-  }
-  
-  // Пустой массив зависимостей - эффект выполняется только при монтировании
-  }, []);
-
-// Отдельный эффект для обработки изменения размера экрана
-useEffect(() => {
-  if (!isMobile) {
-    // Для десктопа - открываем первый проект если нет активного
-    if (!activeCase) {
+    // Устанавливаем GMX только при первой загрузке
+    setCompanyTheme('gmx');
+    
+    if (!isMobile) {
+      // Для десктопа - открываем первый проект
       setActiveCase('tradepage');
       setIsCompanyCardTransformed(true);
+    } else {
+      // Для мобильных - только карточка компании
+      setActiveCase(null);
+      setIsCompanyCardTransformed(false);
     }
-  } else {
-    // Для мобильных логика может быть другой
-    // Можно оставить текущий кейс или сбросить его
-  }
-}, [isMobile]);
+    
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Отдельный эффект для обработки изменения размера экрана
+  useEffect(() => {
+    if (!isMobile) {
+      // Для десктопа - открываем первый проект если нет активного
+      if (!activeCase) {
+        setActiveCase('tradepage');
+        setIsCompanyCardTransformed(true);
+      }
+    } else {
+      // Для мобильных логика может быть другой
+      // Можно оставить текущий кейс или сбросить его
+    }
+  }, [isMobile, activeCase]);
 
   /**
    * Переключает видимость компании

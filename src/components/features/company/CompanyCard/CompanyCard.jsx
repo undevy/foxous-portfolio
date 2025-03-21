@@ -35,11 +35,10 @@ const CompanyCard = ({
   const companyProjects = projectsByCompany[company] || [];
   const cardRef = useRef(null);
   const { openViewer } = useImageViewer();
+  
   const handleImageClick = useCallback((e) => {
     openViewer(getCompanyPngImage(company), companyInfo.name);
   }, [company, companyInfo, openViewer]);
-
-  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
 
   // Используем наш новый хук для обработки кликов и касаний
   const touchProps = useTouchClick(handleImageClick);
@@ -58,16 +57,6 @@ const CompanyCard = ({
       `company_card_${company}`
     );
   }, [setShowContactModal, company]);
-
-  // Переключаем состояние развернутого описания и отслеживаем действие
-  const toggleDescription = useCallback(() => {
-    setIsDescriptionExpanded(!isDescriptionExpanded);
-    trackEvent(
-      EVENT_CATEGORIES.UI_INTERACTION,
-      EVENT_ACTIONS.EXPAND_COLLAPSE,
-      `description_${company}_${!isDescriptionExpanded ? 'expand' : 'collapse'}`
-    );
-  }, [isDescriptionExpanded, company]);
 
   // Обработчик кликов по внешним ссылкам, отслеживаем действие
   const handleExternalLinkClick = useCallback((linkType, url) => {
