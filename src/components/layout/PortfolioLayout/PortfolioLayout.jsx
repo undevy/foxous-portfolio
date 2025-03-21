@@ -1,5 +1,5 @@
 // src/components/layout/PortfolioLayout/PortfolioLayout.jsx
-import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import MobileLayout from '../MobileLayout';
 import DesktopLayout from '../DesktopLayout';
 import AnimatedBackground from '../../ui/AnimatedBackground';
