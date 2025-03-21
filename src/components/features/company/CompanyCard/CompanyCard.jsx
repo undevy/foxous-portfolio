@@ -7,6 +7,7 @@ import { getCompanyImage } from '../../../../utils/companyUtils';
 import { useImageViewer } from '../../../../contexts/ImageViewerContext';
 import { getCompanyPngImage } from '../../../../utils/companyUtils';
 import useTouchClick from '../../../../hooks/useTouchClick';
+import { trackEvent, EVENT_CATEGORIES, EVENT_ACTIONS } from '../../../../services/analytics';
 
 /**
  * Компонент карточки компании для десктопной версии
@@ -37,37 +38,57 @@ const CompanyCard = ({
   const handleImageClick = useCallback((e) => {
     openViewer(getCompanyPngImage(company), companyInfo.name);
   }, [company, companyInfo, openViewer]);
-  
-  // Используем наш новый хук
+
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
+
+  // Используем наш новый хук для обработки кликов и касаний
   const touchProps = useTouchClick(handleImageClick);
 
-  // Обновлённый расчёт высоты прокручиваемой области
+  // Вычисляем высоту контента для прокрутки
   const contentHeight = maxHeight
     ? `calc(${typeof maxHeight === 'string' ? maxHeight : maxHeight + 'px'} - 240px)`
     : `calc(100vh - 240px)`;
 
-  // Функция для открытия модального окна контактов
-  const openContactModal = () => {
-    if (typeof setShowContactModal === 'function') {
-      setShowContactModal(true);
-    } else {
-      console.error('setShowContactModal is not a function');
-    }
-  };
+  // Открываем модальное окно контактов
+  const openContactModal = useCallback(() => {
+    setShowContactModal(true);
+    trackEvent(
+      EVENT_CATEGORIES.UI_INTERACTION,
+      EVENT_ACTIONS.CONTACT_OPEN,
+      `company_card_${company}`
+    );
+  }, [setShowContactModal, company]);
 
-  // Используем ResizeObserver для уведомления родителя об изменении высоты
+  // Переключаем состояние развернутого описания и отслеживаем действие
+  const toggleDescription = useCallback(() => {
+    setIsDescriptionExpanded(!isDescriptionExpanded);
+    trackEvent(
+      EVENT_CATEGORIES.UI_INTERACTION,
+      EVENT_ACTIONS.EXPAND_COLLAPSE,
+      `description_${company}_${!isDescriptionExpanded ? 'expand' : 'collapse'}`
+    );
+  }, [isDescriptionExpanded, company]);
+
+  // Обработчик кликов по внешним ссылкам, отслеживаем действие
+  const handleExternalLinkClick = useCallback((linkType, url) => {
+    trackEvent(
+      EVENT_CATEGORIES.UI_INTERACTION,
+      EVENT_ACTIONS.LINK_CLICK,
+      `${linkType}_${company}`
+    );
+  }, [company]);
+
+  // Эффект для отслеживания изменений высоты карточки
   useEffect(() => {
     if (!cardRef.current || !onHeightChange) return;
-    
     const observer = new ResizeObserver((entries) => {
       const height = entries[0].contentRect.height;
       onHeightChange(height);
     });
-    
     observer.observe(cardRef.current);
     return () => observer.disconnect();
   }, [onHeightChange]);
-  
+
   return (
     <div
       ref={cardRef}
@@ -77,46 +98,54 @@ const CompanyCard = ({
         maxHeight: maxHeight || 'none'
       }}
     >
-      {/* Фиксированный заголовок */}
+      {/* Фиксированный заголовок карточки */}
       <div className="sticky top-0 z-10 card-glassmorphism-bottom-border p-6 pb-4">
         <button
-          onClick={handleCloseSidebar}
+          onClick={() => {
+            trackEvent(
+              EVENT_CATEGORIES.UI_INTERACTION,
+              'close_company_card',
+              company
+            );
+            handleCloseSidebar();
+          }}
           className="absolute top-3 right-3 h-6 w-6 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center z-40"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="12"
-            height="12"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="text-gray-600 dark:text-gray-300"
-          >
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
+          <svg className="text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24" width="12" height="12" xmlns="http://www.w3.org/2000/svg">
+            <line x1="18" x2="6" y1="6" y2="18"></line>
+            <line x1="6" x2="18" y1="6" y2="18"></line>
           </svg>
         </button>
 
-        <div 
-          className="image-hover-effect mb-4 cursor-pointer" 
+        <div
+          className="image-hover-effect mb-4 cursor-pointer"
           {...touchProps}
         >
-          <img 
+          <img
             src={getCompanyImage(company)}
-            alt={companyInfo.name} 
-            className={`w-full h-auto transition-all duration-500 ${
-              imageLoading ? 'opacity-0 scale-95' : 'opacity-100 scale-100'
-            }`}
-            onLoad={() => setImageLoading(false)}
+            alt={companyInfo.name}
+            className={`w-full h-auto transition-all duration-500 ${imageLoading ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}
+            onLoad={() => { // Используем setImageLoading в onLoad
+              trackEvent(
+                EVENT_CATEGORIES.CONTENT_VIEW,
+                'image_loaded',
+                `company_image_${company}`
+              );
+              setImageLoading(false);
+            }}
+            onError={() => {
+              trackEvent(
+                EVENT_CATEGORIES.CONTENT_VIEW,
+                'image_error',
+                `company_image_${company}`
+              );
+            }}
           />
         </div>
         <h2 className="text-2xl font-semibold mb-2 text-left text-gray-900 dark:text-white">{companyInfo.name}</h2>
       </div>
 
-      {/* Прокручиваемое содержимое */}
+      {/* Прокручиваемая область с контентом */}
       <div
         className="p-6 pt-6 overflow-y-auto custom-scrollbar"
         style={{ maxHeight: contentHeight, minHeight: '150px' }}
@@ -129,14 +158,19 @@ const CompanyCard = ({
         <div className="mb-6">
           <h3 className="text-sm font-medium text-black dark:text-white mb-3 text-left">Get a Sneak Peek</h3>
           <div className="flex flex-wrap gap-3">
-            {companyProjects.map((project) => {
+            {companyProjects.map((project) => (
               // Не отображать активный проект в десктопной версии
-              if (activeCase === project.id) return null;
-              
-              return (
+              activeCase !== project.id && (
                 <button
                   key={project.id || project.title}
-                  onClick={() => setActiveCase(project.id)}
+                  onClick={() => {
+                    trackEvent(
+                      EVENT_CATEGORIES.NAVIGATION,
+                      EVENT_ACTIONS.PROJECT_SELECT,
+                      `${company}_${project.id}_from_card`
+                    );
+                    setActiveCase(project.id);
+                  }}
                   className="border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 text-black dark:text-white project-tag-button"
                   style={{
                     display: 'flex',
@@ -153,10 +187,17 @@ const CompanyCard = ({
                 >
                   {project.shortName}
                 </button>
-              );
-            })}
+              )
+            ))}
             <button
-              onClick={openContactModal}
+              onClick={() => {
+                trackEvent(
+                  EVENT_CATEGORIES.UI_INTERACTION,
+                  EVENT_ACTIONS.BUTTON_CLICK,
+                  `other_projects_${company}`
+                );
+                openContactModal();
+              }}
               className="border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 text-black dark:text-white"
               style={{
                 display: 'flex',
@@ -184,19 +225,8 @@ const CompanyCard = ({
               className="text-sm text-primary hover:text-primary-dark flex items-center"
             >
               <span>Contact about {companyInfo.name}</span>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="ml-1"
-              >
-                <line x1="7" y1="17" x2="17" y2="7"></line>
+              <svg className="ml-1" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg">
+                <line x1="7" x2="17" y1="17" y2="7"></line>
                 <polyline points="7 7 17 7 17 17"></polyline>
               </svg>
             </button>
@@ -207,21 +237,11 @@ const CompanyCard = ({
               target="_blank"
               rel="noopener noreferrer"
               className="text-sm text-primary hover:text-primary-dark flex items-center"
+              onClick={() => handleExternalLinkClick('website', companyInfo.url)}
             >
               <span>Visit {companyInfo.name}</span>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="ml-1"
-              >
-                <line x1="7" y1="17" x2="17" y2="7"></line>
+              <svg className="ml-1" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="7" x2="17" y1="17" y2="7"></line>
                 <polyline points="7 7 17 7 17 17"></polyline>
               </svg>
             </a>
@@ -233,21 +253,11 @@ const CompanyCard = ({
               target="_blank"
               rel="noopener noreferrer"
               className="text-sm text-primary hover:text-primary-dark flex items-center"
+              onClick={() => handleExternalLinkClick('app_download', companyInfo.keyAppUrl)}
             >
               <span>Download Key App</span>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="ml-1"
-              >
-                <line x1="7" y1="17" x2="17" y2="7"></line>
+              <svg className="ml-1" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="7" x2="17" y1="17" y2="7"></line>
                 <polyline points="7 7 17 7 17 17"></polyline>
               </svg>
             </a>

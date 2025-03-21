@@ -1,11 +1,12 @@
 // src/components/features/project/ProjectDetails/ProjectDetails.jsx
-import React, { useMemo, useState, useCallback } from 'react';
+import React, { useMemo, useEffect, useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { caseStudies } from '../../../../data/projects';
 import { getProjectImage } from '../../../../utils/projectUtils';
 import { useImageViewer } from '../../../../contexts/ImageViewerContext';
 import { getProjectPngImage } from '../../../../utils/projectUtils';
 import useTouchClick from '../../../../hooks/useTouchClick';
+import { trackEvent, startTimingEvent, endTimingEvent, EVENT_CATEGORIES, EVENT_ACTIONS } from '../../../../services/analytics';
 
 /**
  * Компонент отображения деталей проекта
@@ -73,6 +74,48 @@ const ProjectDetails = ({
 
     return { calculatedMaxHeight, contentHeight };
   }, [maxHeight, isMobile]);
+
+  // Отслеживание времени просмотра проекта
+  useEffect(() => {
+    if (project && project.id) {
+      // Начинаем отслеживать время просмотра
+      startTimingEvent(`project_details_view_${project.id}`);
+      
+      // Отслеживаем просмотр деталей проекта
+      trackEvent(
+        EVENT_CATEGORIES.CONTENT_VIEW,
+        'project_details_view',
+        `${project.companyId}_${project.id}`
+      );
+      
+      return () => {
+        // Завершаем отслеживание времени при размонтировании
+        endTimingEvent(
+          EVENT_CATEGORIES.ENGAGEMENT,
+          `project_details_duration`,
+          `${project.companyId}_${project.id}`
+        );
+      };
+    }
+  }, [project]);
+  
+  // Отслеживание прокрутки содержимого
+  const handleContentScroll = (e) => {
+    const scrollTop = e.target.scrollTop;
+    const scrollHeight = e.target.scrollHeight;
+    const clientHeight = e.target.clientHeight;
+    const scrollPercentage = Math.round((scrollTop / (scrollHeight - clientHeight)) * 100);
+    
+    // Отслеживаем только значительные изменения прокрутки (10%, 25%, 50%, 75%, 90%, 100%)
+    if (scrollPercentage === 25 || scrollPercentage === 50 || scrollPercentage === 75 || 
+        scrollPercentage === 90 || scrollPercentage === 100) {
+      trackEvent(
+        EVENT_CATEGORIES.UI_INTERACTION,
+        EVENT_ACTIONS.SCROLL,
+        `project_details_${project ? project.id : 'unknown'}_${scrollPercentage}%`
+      );
+    }
+  };
 
   // После вызова всех хуков можем использовать условный рендеринг
   if (!project) {
@@ -143,7 +186,15 @@ const ProjectDetails = ({
           
           {!hideCloseButton && (
             <button
-              onClick={handleCloseDetail}
+            onClick={() => {
+              // Отслеживаем закрытие деталей проекта
+              trackEvent(
+                EVENT_CATEGORIES.UI_INTERACTION,
+                'close_project_details',
+                `${project.companyId}_${project.id}`
+              );
+              handleCloseDetail();
+            }}
               className="absolute top-3 right-3 h-6 w-6 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center z-40"
             >
               <svg
@@ -167,7 +218,10 @@ const ProjectDetails = ({
       </div>
 
       {/* Скроллируемое содержимое */}
-      <div className="p-6 pt-2 overflow-y-auto custom-scrollbar" style={{ maxHeight: contentHeight }}>
+      <div className="p-6 pt-2 overflow-y-auto custom-scrollbar"
+        style={{ maxHeight: contentHeight }}
+        onScroll={handleContentScroll}
+        >
         <div className="max-w-3xl">
 
             <div className="mb-6" style={{ paddingTop: '8px' }}>
@@ -200,7 +254,17 @@ const ProjectDetails = ({
             {Array.isArray(project.impact) ? (
               <ul className="list-disc list-inside text-sm text-gray-600 dark:text-gray-300 text-left">
                 {project.impact.map((item, index) => (
-                  <li key={index} className="mb-1">
+                  <li key={index} className="mb-1"
+                  onMouseEnter={() => {
+                    // Отслеживаем наведение на пункт списка impact (только в десктопной версии)
+                    if (!isMobile) {
+                      trackEvent(
+                        EVENT_CATEGORIES.UI_INTERACTION,
+                        'impact_item_hover',
+                        `${project.id}_impact_${index}`
+                      );
+                    }
+                  }}>
                     {item}
                   </li>
                 ))}

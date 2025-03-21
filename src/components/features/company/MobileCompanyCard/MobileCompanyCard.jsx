@@ -7,6 +7,7 @@ import { getCompanyImage } from '../../../../utils/companyUtils';
 import { useImageViewer } from '../../../../contexts/ImageViewerContext';
 import { getCompanyPngImage } from '../../../../utils/companyUtils';
 import useTouchClick from '../../../../hooks/useTouchClick';
+import { trackEvent, EVENT_CATEGORIES, EVENT_ACTIONS } from '../../../../services/analytics';
 
 /**
  * Компонент карточки компании для мобильных устройств
@@ -30,6 +31,12 @@ const MobileCompanyCard = ({
   const { openViewer } = useImageViewer();
    // Обработчик клика по изображению
    const handleImageClick = useCallback((e) => {
+    // ✅ Добавляем трекинг
+    trackEvent(
+      EVENT_CATEGORIES.UI_INTERACTION,
+      'image_click',
+      `mobile_company_image_${company}`
+    );
     openViewer(getCompanyPngImage(company), companyInfo.name);
   }, [company, companyInfo, openViewer]);
   
@@ -46,9 +53,52 @@ const MobileCompanyCard = ({
     : `calc(100vh - 280px)`;
 
   // Функция для переключения видимости полного описания
-  const toggleDescription = () => {
+  const toggleDescription = useCallback(() => {
+    // Отслеживаем переключение описания
+    trackEvent(
+      EVENT_CATEGORIES.UI_INTERACTION,
+      EVENT_ACTIONS.EXPAND_COLLAPSE,
+      `mobile_description_${company}_${!isDescriptionExpanded ? 'expand' : 'collapse'}`
+    );
+    
     setIsDescriptionExpanded(!isDescriptionExpanded);
-  };
+  }, [isDescriptionExpanded, company]);
+
+   // Обработчик закрытия карточки 
+   const handleClose = useCallback(() => {
+    // Отслеживаем закрытие карточки компании
+    trackEvent(
+      EVENT_CATEGORIES.UI_INTERACTION,
+      'close_company_card',
+      `mobile_${company}`
+    );
+    
+    closeSidebar();
+  }, [closeSidebar, company]);
+  
+  // Обработчик выбора проекта
+  const handleProjectSelect = useCallback((projectId) => {
+    // Отслеживаем выбор проекта из мобильной карточки
+    trackEvent(
+      EVENT_CATEGORIES.NAVIGATION, 
+      EVENT_ACTIONS.PROJECT_SELECT,
+      `mobile_card_${company}_${projectId}`
+    );
+    
+    selectCase(projectId);
+  }, [selectCase, company]);
+  
+  // Обработчик открытия контактов
+  const handleOpenContacts = useCallback(() => {
+    // Отслеживаем нажатие на кнопку "Other"
+    trackEvent(
+      EVENT_CATEGORIES.UI_INTERACTION,
+      EVENT_ACTIONS.CONTACT_OPEN,
+      `mobile_card_other_projects_${company}`
+    );
+    
+    setShowContactModal(true);
+  }, [setShowContactModal, company]);
 
   return (
     <div
@@ -62,7 +112,7 @@ const MobileCompanyCard = ({
       {/* Фиксированный заголовок */}
       <div className="sticky top-0 z-10 card-glassmorphism-bottom-border p-6 pb-1">
         <button
-          onClick={closeSidebar}
+          onClick={handleClose}
           className="absolute top-3 right-3 h-6 w-6 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center z-40"
         >
           <svg
@@ -92,7 +142,15 @@ const MobileCompanyCard = ({
             className={`w-full h-auto transition-all duration-500 ${
               imageLoading ? 'opacity-0 scale-95' : 'opacity-100 scale-100'
             }`}
-            onLoad={() => setImageLoading(false)}
+            onLoad={() => {
+              // Отслеживаем успешную загрузку изображения
+              trackEvent(
+                EVENT_CATEGORIES.CONTENT_VIEW,
+                'image_loaded',
+                `mobile_company_image_${company}`
+              );
+              setImageLoading(false);
+            }}
           />
         </div>
         <h2 className="text-2xl font-semibold mb-2 text-left text-gray-900 dark:text-white">{companyInfo.name}</h2>
@@ -135,7 +193,7 @@ const MobileCompanyCard = ({
               {companyProjects.map((project) => (
                 <button
                   key={project.id || project.title}
-                  onClick={() => selectCase(project.id)}
+                  onClick={() => handleProjectSelect(project.id)}
                   className="border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 text-black dark:text-white"
                   style={{
                     display: 'flex',
@@ -154,7 +212,7 @@ const MobileCompanyCard = ({
                 </button>
               ))}
               <button
-                onClick={() => setShowContactModal(true)}
+                onClick={handleOpenContacts}
                 className="border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 text-black dark:text-white"
                 style={{
                   display: 'flex',
@@ -179,7 +237,15 @@ const MobileCompanyCard = ({
           {company === 'nexus' ? (
             // Специальная логика для Nexus Network
             <button
-              onClick={() => setShowContactModal(true)}
+            onClick={() => {
+              // ✅ Добавляем трекинг
+              trackEvent(
+                EVENT_CATEGORIES.UI_INTERACTION,
+                EVENT_ACTIONS.CONTACT_OPEN,
+                `mobile_card_nexus_contact_${companyInfo.name}`
+              );
+              setShowContactModal(true);
+            }}
               className="text-xs text-primary hover:text-primary-dark flex items-center"
             >
               <span>Contact about {companyInfo.name}</span>
@@ -205,6 +271,14 @@ const MobileCompanyCard = ({
               href={companyInfo.url}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => {
+                // ✅ Добавляем трекинг
+                trackEvent(
+                  EVENT_CATEGORIES.UI_INTERACTION,
+                  EVENT_ACTIONS.LINK_CLICK,
+                  `mobile_card_visit_${companyInfo.name}`
+                );
+              }}
               className="text-xs text-primary hover:text-primary-dark flex items-center"
             >
               <span>Visit {companyInfo.name}</span>
@@ -231,6 +305,14 @@ const MobileCompanyCard = ({
               href={companyInfo.keyAppUrl}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => {
+                // ✅ Добавляем трекинг
+                trackEvent(
+                  EVENT_CATEGORIES.UI_INTERACTION,
+                  EVENT_ACTIONS.LINK_CLICK,
+                  `mobile_card_download_key_app_${company}`
+                );
+              }}
               className="text-xs text-primary hover:text-primary-dark flex items-center"
             >
               <span>Download Key App</span>

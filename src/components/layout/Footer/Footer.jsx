@@ -4,6 +4,7 @@ import CompactIconGrid from '../../ui/CompactIconGrid';
 import CircularMenu from '../CircularMenu';
 import { useTheme } from '../../../contexts/ThemeContext';
 import { companyData } from '../../../data/companies';
+import { trackEvent, EVENT_CATEGORIES, EVENT_ACTIONS } from '../../../services/analytics';
 
 /**
  * Компонент футера (нижней навигационной панели)
@@ -34,11 +35,49 @@ const Footer = ({ activeCompany, toggleCompany, isMobile, foxIconRef, isMenuOpen
   // Открытие кругового меню (мобильная версия)
   const handleOpenCircularMenu = () => {
     setIsCircularMenuOpen(true);
+    
+    // Отслеживаем открытие кругового меню
+    trackEvent(
+      EVENT_CATEGORIES.UI_INTERACTION,
+      'circular_menu_open',
+      'compact_grid'
+    );
   };
   
   // Закрытие кругового меню (мобильная версия)
   const handleCloseCircularMenu = () => {
     setIsCircularMenuOpen(false);
+    
+    // Отслеживаем закрытие кругового меню
+    trackEvent(
+      EVENT_CATEGORIES.UI_INTERACTION,
+      'circular_menu_close',
+      'close_button'
+    );
+  };
+
+  // Обработчик клика по компании (для десктопной версии)
+  const handleCompanyClick = (companyId) => {
+    // Отслеживаем выбор компании в десктопной версии
+    trackEvent(
+      EVENT_CATEGORIES.NAVIGATION,
+      EVENT_ACTIONS.COMPANY_SELECT,
+      `footer_${companyId}`
+    );
+    
+    toggleCompany(companyId);
+  };
+  
+  // Обработчик клика по кнопке Connect
+  const handleConnectClick = () => {
+    // Отслеживаем нажатие на кнопку Connect
+    trackEvent(
+      EVENT_CATEGORIES.UI_INTERACTION,
+      EVENT_ACTIONS.BUTTON_CLICK,
+      'connect_button'
+    );
+    
+    toggleCompany('contact');
   };
   
   return (
@@ -49,7 +88,15 @@ const Footer = ({ activeCompany, toggleCompany, isMobile, foxIconRef, isMenuOpen
           <div className={`icon-container relative ${isMenuOpen ? 'no-hover' : ''}`}>
             <button 
               className="w-10 h-10 rounded-lg flex items-center justify-center outline-none focus:outline-none"
-              onClick={() => toggleCompany('menu')}
+              onClick={() => {
+                // Отслеживаем клик по иконке лисы/меню
+                trackEvent(
+                  EVENT_CATEGORIES.UI_INTERACTION,
+                  isMenuOpen ? 'menu_toggle_close' : 'menu_toggle_open',
+                  'fox_icon'
+                );
+                toggleCompany('menu');
+              }}
               ref={foxIconRef}
             >
               <div className="w-10 h-10 rounded-xl bg-white dark:bg-gray-800 flex items-center justify-center icon-transition">
@@ -104,7 +151,15 @@ const Footer = ({ activeCompany, toggleCompany, isMobile, foxIconRef, isMenuOpen
               <CircularMenu 
                 isOpen={isCircularMenuOpen}
                 onClose={handleCloseCircularMenu}
-                toggleCompany={toggleCompany}
+                toggleCompany={(companyId) => {
+                  // Отслеживаем выбор компании в круговом меню
+                  trackEvent(
+                    EVENT_CATEGORIES.NAVIGATION,
+                    EVENT_ACTIONS.COMPANY_SELECT,
+                    `circular_menu_${companyId}`
+                  );
+                  toggleCompany(companyId);
+                }}
                 activeCompany={activeCompany}
               />
             )}
@@ -118,7 +173,7 @@ const Footer = ({ activeCompany, toggleCompany, isMobile, foxIconRef, isMenuOpen
                     className="icon-container relative"
                   >
                     <button 
-                      onClick={() => toggleCompany(companyId)}
+                      onClick={() => handleCompanyClick(companyId)}
                       className="w-10 h-10 rounded-lg flex items-center justify-center outline-none focus:outline-none"
                       aria-label={companyId}
                     >
@@ -142,7 +197,7 @@ const Footer = ({ activeCompany, toggleCompany, isMobile, foxIconRef, isMenuOpen
           
           {/* Кнопка Connect */}
           <button 
-            onClick={() => toggleCompany('contact')} 
+            onClick={handleConnectClick}
             className="bg-primary hover:bg-primary-dark text-white dark:text-white px-4 py-2 rounded-full text-sm font-bold tracking-wide btn-primary transition-colors duration-200 outline-none focus:outline-none"
             style={{ minWidth: isMobile ? 'auto' : '120px' }}
           >

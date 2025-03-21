@@ -1,4 +1,5 @@
 import React, { createContext, useState, useEffect, useCallback, useContext } from 'react';
+import { updateUserProperty, trackEvent, EVENT_CATEGORIES, EVENT_ACTIONS, USER_PROPERTIES } from '../services/analytics';
 
 // Контекст для управления темой
 export const ThemeContext = createContext();
@@ -155,17 +156,34 @@ export const ThemeProvider = ({ children }) => {
     const newValue = !isDarkMode;
     setIsDarkMode(newValue);
     localStorage.setItem('theme', newValue ? 'dark' : 'light');
+
+    // Отслеживаем изменение темы
+    updateUserProperty(USER_PROPERTIES.THEME, newValue ? 'dark' : 'light');
+    trackEvent(
+      EVENT_CATEGORIES.USER_PREFERENCE, 
+      EVENT_ACTIONS.THEME_CHANGE, 
+      newValue ? 'dark' : 'light'
+    );
   };
   
   // Обновление компании
   const setCompanyTheme = (companyId) => {
     setActiveCompany(companyId || 'default');
+
+    // Отслеживаем изменение цветовой схемы компании
+    if (companyId && companyId !== 'default') {
+      trackEvent(
+        EVENT_CATEGORIES.USER_PREFERENCE,
+        'company_theme_change',
+        companyId
+      );
+    }
   };
   
   // Обновление при изменении состояния
   useEffect(() => {
     updateColorScheme();
-  }, [updateColorScheme]);
+  }, [updateColorScheme, activeCompany]);
   
   // Слушатель изменений системной темы
   useEffect(() => {

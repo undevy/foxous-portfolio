@@ -6,6 +6,7 @@ import Loader from './components/ui/Loader';
 import { ThemeProvider } from './contexts/ThemeContext';
 import ThemeMeta from './components/utils/ThemeMeta';
 import { ImageViewerProvider } from './contexts/ImageViewerContext';
+import { initAnalytics, trackUserMetadata, trackWebVitals } from './services/analytics';
 
 // Список всех изображений для предзагрузки
 const imagesToPreload = [
@@ -45,6 +46,38 @@ function App() {
   // Состояние загрузки приложения
   const [isLoading, setIsLoading] = useState(true);
 
+  // Инициализация аналитики при загрузке приложения
+  useEffect(() => {
+    // Инициализируем системы аналитики
+    initAnalytics();
+    
+    // Отслеживаем метрики веб-страницы
+    trackWebVitals();
+    
+    // Отслеживаем метаданные пользователя (устройство, браузер, тему и т.д.)
+    trackUserMetadata();
+    
+    // Настройка отладочной панели для разработки
+    if (process.env.NODE_ENV === 'development') {
+      import('./services/analytics/debug').then(({ setupDebugMode }) => {
+        return setupDebugMode();
+      }).catch(err => console.error('Failed to load debug mode:', err));
+    }
+    
+    // Устанавливаем слушатель для отправки всех данных перед уходом пользователя
+    const handleBeforeUnload = () => {
+      if (window.analytics && window.analytics.sendUserPathOnExit) {
+        window.analytics.sendUserPathOnExit();
+      }
+    };
+    
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
+
   // Предзагружаем изображения при монтировании компонента
   useEffect(() => {
     const preloadImage = (src) => {
@@ -81,6 +114,7 @@ function App() {
   
     return () => clearTimeout(fallbackTimer);
   }, []);
+  
   return (
     <ThemeProvider>
       <ImageViewerProvider>

@@ -1,8 +1,9 @@
 // src/components/features/company/MobileCompanyNav/MobileCompanyNav.jsx
-import React from 'react';
+import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { companyData } from '../../../../data/companies';
 import { projectsByCompany } from '../../../../data/projects';
+import { trackEvent, EVENT_CATEGORIES, EVENT_ACTIONS } from '../../../../services/analytics';
 
 /**
  * Компонент компактной навигационной панели компании для мобильных устройств
@@ -23,6 +24,42 @@ const MobileCompanyNav = ({
 }) => {
   const companyInfo = companyData[company];
   const companyProjects = projectsByCompany[company] || [];
+
+  // Обработчик возврата к карточке компании
+  const handleBackToCompany = useCallback(() => {
+    // Отслеживаем возврат к полной карточке
+    trackEvent(
+      EVENT_CATEGORIES.NAVIGATION,
+      'back_to_company_header',
+      `from_${activeCase}_to_${company}`
+    );
+    
+    backToCompanyCard();
+  }, [backToCompanyCard, activeCase, company]);
+  
+  // Обработчик выбора проекта
+  const handleProjectSelect = useCallback((projectId) => {
+    // Отслеживаем переключение между проектами
+    trackEvent(
+      EVENT_CATEGORIES.NAVIGATION,
+      EVENT_ACTIONS.PROJECT_SELECT,
+      `mobile_nav_switch_from_${activeCase}_to_${projectId}`
+    );
+    
+    selectCase(projectId);
+  }, [selectCase, activeCase]);
+  
+  // Обработчик открытия контактов
+  const handleOpenContacts = useCallback(() => {
+    // Отслеживаем нажатие на кнопку "Other"
+    trackEvent(
+      EVENT_CATEGORIES.UI_INTERACTION,
+      EVENT_ACTIONS.CONTACT_OPEN,
+      `mobile_nav_other_${company}`
+    );
+    
+    setShowContactModal(true);
+  }, [setShowContactModal, company]);
 
   return (
     <div 
@@ -47,7 +84,7 @@ const MobileCompanyNav = ({
         <div className="flex space-x-1 px-4 pb-3 min-w-max">
           {/* Кнопка "Назад к компании" */}
           <button
-            onClick={backToCompanyCard}
+            onClick={handleBackToCompany}
             className="border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-700 text-black dark:text-white" 
             style={{
               display: 'flex',
@@ -74,7 +111,7 @@ const MobileCompanyNav = ({
             return (
               <button
                 key={project.id}
-                onClick={() => selectCase(project.id)}
+                onClick={() => handleProjectSelect(project.id)}
                 className="border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 text-black dark:text-white"
                 style={{
                   display: 'flex',
@@ -96,7 +133,7 @@ const MobileCompanyNav = ({
           
           {/* Кнопка "Other" */}
           <button
-            onClick={() => setShowContactModal(true)}
+            onClick={handleOpenContacts}
             className="border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 text-black dark:text-white"
             style={{
               display: 'flex',
