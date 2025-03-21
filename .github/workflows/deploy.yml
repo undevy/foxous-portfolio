@@ -26,6 +26,10 @@ jobs:
       run: npm ci
       
     - name: Build
+      env:
+        REACT_APP_GA4_MEASUREMENT_ID: ${{ secrets.REACT_APP_GA4_MEASUREMENT_ID }}
+        REACT_APP_MIXPANEL_TOKEN: ${{ secrets.REACT_APP_MIXPANEL_TOKEN }}
+        REACT_APP_ANALYTICS_ENABLED: 'true'
       run: npm run build
       
     - name: Deploy to server
