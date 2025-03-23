@@ -81,6 +81,62 @@
   cursor: pointer;
 }
 
+/***************************************
+ * POWER OFF ANIMATION
+ ***************************************/
+
+/* Оверлей выключения */
+.power-off-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  background: transparent;
+  z-index: 9999;
+  pointer-events: all;
+}
+
+/* Анимация эффекта выключения */
+.power-off-effect {
+  position: absolute;
+  inset: 0;
+  background-color: black;
+  opacity: 0;
+  animation: power-off 1.5s ease-in forwards;
+}
+
+/* Keyframes для анимации выключения */
+@keyframes power-off {
+  0% {
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.9;
+  }
+  30% {
+    opacity: 0.8;
+  }
+  40% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.95;
+    clip-path: inset(0% 0% 0% 0%);
+  }
+  75% {
+    opacity: 1;
+    clip-path: inset(50% 25% 50% 25%);
+  }
+  90% {
+    opacity: 1;
+    clip-path: inset(50% 49% 50% 49%);
+  }
+  100% {
+    opacity: 1;
+    clip-path: inset(50% 50% 50% 50%);
+  }
+}
+
 /* Активная область для сенсорных устройств */
 @media (hover: none) {
   .image-hover-effect {

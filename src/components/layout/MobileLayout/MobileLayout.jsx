@@ -22,6 +22,7 @@ import ContactInfo from '../../ui/ContactInfo';
  * @param {Object} props.foxIconRef - Ref для иконки лисы
  * @param {boolean} props.isMobile - Флаг мобильного устройства
  * @param {boolean} props.isMenuOpen - Открыто ли меню
+ * @param {boolean} props.isFirstLoad - Флаг первой загрузки
  * @returns {JSX.Element} Компонент мобильного макета
  */
 const MobileLayout = ({
@@ -37,7 +38,8 @@ const MobileLayout = ({
   setShowContactModal,
   foxIconRef,
   isMobile,
-  isMenuOpen
+  isMenuOpen,
+  isFirstLoad
 }) => {
   // Состояние для отображения контактной информации
   const [showContacts, setShowContacts] = useState(false);
@@ -104,6 +106,7 @@ const MobileLayout = ({
                 isMobile={true}
                 maxHeight={'calc(100dvh - 120px)'} // Уменьшаем отступ
                 onHeightChange={() => {}}
+                isFirstLoad={isFirstLoad} // Передаем флаг первой загрузки
               />
             </div>
 
@@ -122,6 +125,7 @@ const MobileLayout = ({
                   maxHeight="min(80dvh, calc(100dvh - 180px))" // Увеличиваем относительную высоту
                   hideCloseButton={true} // Скрываем кнопку закрытия
                   squareTopCorners={true} // Прямые верхние углы
+                  isFirstLoad={isFirstLoad} // Передаем флаг первой загрузки
                 />
               </div>
             )}
@@ -145,7 +149,12 @@ MobileLayout.propTypes = {
   setShowContactModal: PropTypes.func.isRequired,
   foxIconRef: PropTypes.object,
   isMobile: PropTypes.bool.isRequired,
-  isMenuOpen: PropTypes.bool.isRequired
+  isMenuOpen: PropTypes.bool.isRequired,
+  isFirstLoad: PropTypes.bool
+};
+
+MobileLayout.defaultProps = {
+  isFirstLoad: false
 };
 
 export default React.memo(MobileLayout);

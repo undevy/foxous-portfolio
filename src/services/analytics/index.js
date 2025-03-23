@@ -87,8 +87,11 @@ export const trackPageView = (pagePath, pageTitle) => {
 export const trackEvent = (category, action, label, value = null) => {
   if (!isAnalyticsEnabled()) return;
 
+  // Для GA4 - value должен быть числом или undefined
+  const numericValue = value !== null ? Number(value) : undefined;
+  
   // Для GA4
-  GA4.trackEvent(category, action, label, value);
+  GA4.trackEvent(category, action, label, numericValue);
 
   // Для Mixpanel (преобразуем формат)
   const eventName = `${category}_${action}`;

@@ -17,6 +17,7 @@ import MobileCompanyNav from '../MobileCompanyNav';
  * @param {boolean} props.isMobile - Флаг мобильного устройства
  * @param {string|number} props.maxHeight - Максимальная высота компонента
  * @param {Function} props.onHeightChange - Функция обратного вызова при изменении высоты
+ * @param {boolean} props.isFirstLoad - Флаг первой загрузки
  * @returns {JSX.Element} Компонент трансформирующегося заголовка компании
  */
 const TransformingCompanyHeader = ({
@@ -27,7 +28,8 @@ const TransformingCompanyHeader = ({
   backToCompanyCard,
   setShowContactModal,
   isTransformed,
-  maxHeight
+  maxHeight,
+  isFirstLoad
 }) => {
   // Трансформированный режим (компактная панель с табами)
   if (isTransformed) {
@@ -38,6 +40,7 @@ const TransformingCompanyHeader = ({
         selectCase={selectCase}
         backToCompanyCard={backToCompanyCard}
         setShowContactModal={setShowContactModal}
+        isFirstLoad={isFirstLoad}
       />
     );
   }
@@ -50,6 +53,7 @@ const TransformingCompanyHeader = ({
       closeSidebar={closeSidebar}
       setShowContactModal={setShowContactModal}
       maxHeight={maxHeight}
+      isFirstLoad={isFirstLoad}
     />
   );
 };
@@ -64,7 +68,12 @@ TransformingCompanyHeader.propTypes = {
   isTransformed: PropTypes.bool.isRequired,
   isMobile: PropTypes.bool,
   maxHeight: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-  onHeightChange: PropTypes.func
+  onHeightChange: PropTypes.func,
+  isFirstLoad: PropTypes.bool
+};
+
+TransformingCompanyHeader.defaultProps = {
+  isFirstLoad: false
 };
 
 export default React.memo(TransformingCompanyHeader);

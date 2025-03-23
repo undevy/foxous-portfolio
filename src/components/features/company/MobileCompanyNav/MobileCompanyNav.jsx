@@ -13,6 +13,7 @@ import { trackEvent, EVENT_CATEGORIES, EVENT_ACTIONS } from '../../../../service
  * @param {Function} props.selectCase - Функция выбора кейса
  * @param {Function} props.backToCompanyCard - Функция возврата к карточке компании
  * @param {Function} props.setShowContactModal - Функция показа модального окна контактов
+ * @param {boolean} props.isFirstLoad - Флаг первой загрузки
  * @returns {JSX.Element} Компонент компактной навигационной панели
  */
 const MobileCompanyNav = ({
@@ -20,7 +21,8 @@ const MobileCompanyNav = ({
   activeCase,
   selectCase,
   backToCompanyCard,
-  setShowContactModal
+  setShowContactModal,
+  isFirstLoad
 }) => {
   const companyInfo = companyData[company];
   const companyProjects = projectsByCompany[company] || [];
@@ -61,9 +63,12 @@ const MobileCompanyNav = ({
     setShowContactModal(true);
   }, [setShowContactModal, company]);
 
+  // Определяем класс для анимации в зависимости от флага первой загрузки
+  const transitionClass = isFirstLoad ? '' : 'transform-card-transition';
+
   return (
     <div 
-      className="card-glassmorphism rounded-t-3xl shadow-sm overflow-hidden transform-card-transition"
+      className={`card-glassmorphism rounded-t-3xl shadow-sm overflow-hidden ${transitionClass}`}
       style={{ 
         minHeight: '100px',
         position: 'relative',
@@ -161,7 +166,12 @@ MobileCompanyNav.propTypes = {
   activeCase: PropTypes.string,
   selectCase: PropTypes.func.isRequired,
   backToCompanyCard: PropTypes.func.isRequired,
-  setShowContactModal: PropTypes.func.isRequired
+  setShowContactModal: PropTypes.func.isRequired,
+  isFirstLoad: PropTypes.bool
+};
+
+MobileCompanyNav.defaultProps = {
+  isFirstLoad: false
 };
 
 export default React.memo(MobileCompanyNav);

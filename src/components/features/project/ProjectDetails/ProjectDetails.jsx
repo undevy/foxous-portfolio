@@ -17,6 +17,7 @@ import { trackEvent, startTimingEvent, endTimingEvent, EVENT_CATEGORIES, EVENT_A
  * @param {number|string} props.maxHeight - Максимальная высота компонента
  * @param {boolean} props.hideCloseButton - Скрыть кнопку закрытия
  * @param {boolean} props.squareTopCorners - Прямые верхние углы для мобильной версии
+ * @param {boolean} props.isFirstLoad - Флаг первой загрузки
  * @returns {JSX.Element} Компонент деталей проекта
  */
 const ProjectDetails = ({ 
@@ -24,8 +25,9 @@ const ProjectDetails = ({
   handleCloseDetail, 
   isMobile, 
   maxHeight,
-  hideCloseButton, // Параметр для скрытия кнопки закрытия
-  squareTopCorners // Параметр для прямых верхних углов
+  hideCloseButton,
+  squareTopCorners,
+  isFirstLoad
 }) => {
   const [imageError, setImageError] = useState(false);
   const [imageLoading, setImageLoading] = useState(true);
@@ -117,10 +119,13 @@ const ProjectDetails = ({
     }
   };
 
+  // Определяем класс для анимации в зависимости от флага первой загрузки
+  const transitionClass = isFirstLoad ? '' : 'transform-card-transition';
+
   // После вызова всех хуков можем использовать условный рендеринг
   if (!project) {
     return (
-      <div className="bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 relative">
+      <div className={`bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 relative ${transitionClass}`}>
         {!hideCloseButton && (
           <button
             onClick={handleCloseDetail}
@@ -154,7 +159,7 @@ const ProjectDetails = ({
 
   return (
     <div
-      className="card-glassmorphism rounded-3xl shadow-sm relative overflow-hidden"
+      className={`card-glassmorphism rounded-3xl shadow-sm relative overflow-hidden ${transitionClass}`}
       style={{
         height: '100%',
         maxHeight: calculatedMaxHeight,
@@ -285,13 +290,15 @@ ProjectDetails.propTypes = {
   isMobile: PropTypes.bool.isRequired,
   maxHeight: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   hideCloseButton: PropTypes.bool,
-  squareTopCorners: PropTypes.bool
+  squareTopCorners: PropTypes.bool,
+  isFirstLoad: PropTypes.bool
 };
 
 // Значения по умолчанию для новых параметров
 ProjectDetails.defaultProps = {
   hideCloseButton: false,
-  squareTopCorners: false
+  squareTopCorners: false,
+  isFirstLoad: false
 };
 
 // Оборачиваем в React.memo с кастомным сравнением пропсов
@@ -301,6 +308,7 @@ export default React.memo(ProjectDetails, (prevProps, nextProps) => {
     prevProps.isMobile === nextProps.isMobile &&
     prevProps.maxHeight === nextProps.maxHeight &&
     prevProps.hideCloseButton === nextProps.hideCloseButton &&
-    prevProps.squareTopCorners === nextProps.squareTopCorners
+    prevProps.squareTopCorners === nextProps.squareTopCorners &&
+    prevProps.isFirstLoad === nextProps.isFirstLoad
   );
 });

@@ -2,10 +2,11 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
 import PortfolioLayout from './components/layout/PortfolioLayout';
-import Loader from './components/ui/Loader';
+import EnhancedLoader from './components/ui/EnhancedLoader';
 import { ThemeProvider } from './contexts/ThemeContext';
 import ThemeMeta from './components/utils/ThemeMeta';
 import { ImageViewerProvider } from './contexts/ImageViewerContext';
+import { FirstLoadProvider } from './contexts/FirstLoadContext';
 import { initAnalytics, trackUserMetadata, trackWebVitals } from './services/analytics';
 
 // Список всех изображений для предзагрузки
@@ -45,6 +46,8 @@ const imagesToPreload = [
 function App() {
   // Состояние загрузки приложения
   const [isLoading, setIsLoading] = useState(true);
+  // Состояние предзагрузки изображений
+  const [imagesPreloaded, setImagesPreloaded] = useState(false);
 
   // Инициализация аналитики при загрузке приложения
   useEffect(() => {
@@ -79,54 +82,66 @@ function App() {
   }, []);
 
   // Предзагружаем изображения при монтировании компонента
-  useEffect(() => {
-    const preloadImage = (src) => {
-      return new Promise((resolve, reject) => {
-        const img = new Image();
-        img.onload = resolve;
-        img.onerror = reject;
-        img.src = src;
-      });
-    };
+useEffect(() => {
+  const preloadImage = (src) => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = resolve;
+      img.onerror = reject;
+      img.src = src;
+    });
+  };
+
+  const preloadAll = async () => {
+    try {
+      await Promise.all(imagesToPreload.map(src => preloadImage(src)));
+      console.log('Все изображения предзагружены');
+      setImagesPreloaded(true);
+    } catch (err) {
+      console.error('Ошибка предзагрузки изображений:', err);
+      // В случае ошибки все равно считаем изображения предзагруженными
+      setImagesPreloaded(true);
+    }
+  };
+
+  preloadAll();
   
-    const preloadAll = async () => {
-      try {
-        await Promise.all(imagesToPreload.map(src => preloadImage(src)));
-        
-        // Минимальное время отображения лоадера
-        setTimeout(() => {
-          setIsLoading(false);
-        }, 2000);
-      } catch (err) {
-        console.error('Error preloading images:', err);
-        setTimeout(() => {
-          setIsLoading(false);
-        }, 2000);
+  // Резервный таймер на случай, если предзагрузка занимает слишком много времени
+  const fallbackTimer = setTimeout(() => {
+    setImagesPreloaded(prevState => {
+      if (!prevState) {
+        console.warn('Предзагрузка изображений заняла слишком много времени, включаем резервный вариант');
+        return true;
       }
-    };
+      return prevState;
+    });
+  }, 5000);
+
+  return () => clearTimeout(fallbackTimer);
+}, []); // Теперь можно оставить пустой массив зависимостей
   
-    preloadAll();
-    
-    // Резервный таймер
-    const fallbackTimer = setTimeout(() => {
-      setIsLoading(false);
-    }, 5000);
-  
-    return () => clearTimeout(fallbackTimer);
-  }, []);
+  // Функция завершения загрузки
+  const handleLoadComplete = () => {
+    setIsLoading(false);
+  };
   
   return (
     <ThemeProvider>
       <ImageViewerProvider>
+        <FirstLoadProvider>
         {/* Компонент для управления мета-тегами в соответствии с темой */}
         <ThemeMeta />
         <div className="App">
           {isLoading ? (
-            <Loader />
+            <EnhancedLoader 
+              onLoadComplete={handleLoadComplete} 
+              imagesPreloaded={imagesPreloaded}
+            />
           ) : (
             <PortfolioLayout />
           )}
         </div>
+        </FirstLoadProvider>
       </ImageViewerProvider>
     </ThemeProvider>
   );

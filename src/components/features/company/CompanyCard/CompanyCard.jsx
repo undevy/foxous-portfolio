@@ -19,6 +19,7 @@ import { trackEvent, EVENT_CATEGORIES, EVENT_ACTIONS } from '../../../../service
  * @param {Function} props.setShowContactModal - Функция показа модального окна контактов
  * @param {number|string} props.maxHeight - Максимальная высота карточки
  * @param {Function} props.onHeightChange - Функция обратного вызова при изменении высоты
+ * @param {boolean} props.isFirstLoad - Флаг первой загрузки
  * @returns {JSX.Element} Компонент карточки компании
  */
 const CompanyCard = ({
@@ -28,7 +29,8 @@ const CompanyCard = ({
   handleCloseSidebar,
   setShowContactModal,
   maxHeight,
-  onHeightChange
+  onHeightChange,
+  isFirstLoad
 }) => {
   const [imageLoading, setImageLoading] = useState(true);
   const companyInfo = companyData[company];
@@ -78,15 +80,19 @@ const CompanyCard = ({
     return () => observer.disconnect();
   }, [onHeightChange]);
 
+  // Определяем класс для анимации в зависимости от флага первой загрузки
+  const transitionClass = isFirstLoad ? '' : 'transform-card-transition';
+
   return (
     <div
       ref={cardRef}
-      className="card-glassmorphism rounded-3xl shadow-sm relative overflow-hidden"
+      className={`card-glassmorphism rounded-3xl shadow-sm relative overflow-hidden ${transitionClass}`}
       style={{
         height: '100%',
         maxHeight: maxHeight || 'none'
       }}
     >
+      {/* Содержимое карточки остается без изменений */}
       {/* Фиксированный заголовок карточки */}
       <div className="sticky top-0 z-10 card-glassmorphism-bottom-border p-6 pb-4">
         <button
@@ -264,11 +270,13 @@ CompanyCard.propTypes = {
   handleCloseSidebar: PropTypes.func.isRequired,
   setShowContactModal: PropTypes.func.isRequired,
   maxHeight: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-  onHeightChange: PropTypes.func
+  onHeightChange: PropTypes.func,
+  isFirstLoad: PropTypes.bool
 };
 
 CompanyCard.defaultProps = {
-  onHeightChange: () => {}
+  onHeightChange: () => {},
+  isFirstLoad: false
 };
 
 export default React.memo(CompanyCard);

@@ -1,3 +1,4 @@
+// src/components/layout/DesktopLayout/DesktopLayout.jsx
 import React, { useRef, useEffect, useState, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import Footer from '../Footer';
@@ -18,6 +19,7 @@ import ProjectDetails from '../../features/project/ProjectDetails';
  * @param {Object} props.foxIconRef - Ref для иконки лисы
  * @param {boolean} props.isMobile - Флаг мобильного устройства
  * @param {boolean} props.isMenuOpen - Открыто ли меню
+ * @param {boolean} props.isFirstLoad - Флаг первой загрузки
  * @returns {JSX.Element} Компонент desktop-макета
  */
 const DesktopLayout = ({
@@ -31,7 +33,8 @@ const DesktopLayout = ({
   setShowContactModal,
   foxIconRef,
   isMobile,
-  isMenuOpen
+  isMenuOpen,
+  isFirstLoad
 }) => {
   const footerRef = useRef(null);
   const [contentHeight, setContentHeight] = useState('auto');
@@ -87,6 +90,7 @@ const DesktopLayout = ({
                   isMobile={false}
                   maxHeight={contentHeight}
                   onHeightChange={setCardHeight}
+                  isFirstLoad={isFirstLoad} // Передаем флаг первой загрузки
                 />
               </div>
             </div>
@@ -104,6 +108,7 @@ const DesktopLayout = ({
                   isMobile={false}
                   maxHeight={contentHeight}
                   onHeightChange={setCardHeight}
+                  isFirstLoad={isFirstLoad} // Передаем флаг первой загрузки
                 />
               </div>
               <div className="flex-grow" style={{ maxHeight: contentHeight }}>
@@ -112,6 +117,7 @@ const DesktopLayout = ({
                   handleCloseDetail={closeProjectDetails}
                   isMobile={false}
                   maxHeight={cardHeight}
+                  isFirstLoad={isFirstLoad} // Передаем флаг первой загрузки
                 />
               </div>
             </div>
@@ -140,7 +146,12 @@ DesktopLayout.propTypes = {
   setShowContactModal: PropTypes.func.isRequired,
   foxIconRef: PropTypes.object,
   isMobile: PropTypes.bool.isRequired,
-  isMenuOpen: PropTypes.bool.isRequired
+  isMenuOpen: PropTypes.bool.isRequired,
+  isFirstLoad: PropTypes.bool
+};
+
+DesktopLayout.defaultProps = {
+  isFirstLoad: false
 };
 
 export default React.memo(DesktopLayout);

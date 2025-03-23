@@ -16,7 +16,7 @@
 @import './styles/components/cards.css';
 @import './styles/components/menus.css';
 @import './styles/components/tooltips.css';
-@import './styles/components/loader.css';
+@import './styles/components/enhanced-loader.css'; /* Новый файл стилей */
 @import './styles/components/footer.css';
 
 /* Effect styles */

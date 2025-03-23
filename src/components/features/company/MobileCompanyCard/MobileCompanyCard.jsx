@@ -17,6 +17,7 @@ import { trackEvent, EVENT_CATEGORIES, EVENT_ACTIONS } from '../../../../service
  * @param {Function} props.closeSidebar - Функция закрытия сайдбара
  * @param {Function} props.setShowContactModal - Функция показа модального окна контактов
  * @param {string|number} props.maxHeight - Максимальная высота компонента
+ * @param {boolean} props.isFirstLoad - Флаг первой загрузки
  * @returns {JSX.Element} Компонент карточки компании для мобильных устройств
  */
 const MobileCompanyCard = ({
@@ -24,7 +25,8 @@ const MobileCompanyCard = ({
   selectCase,
   closeSidebar,
   setShowContactModal,
-  maxHeight
+  maxHeight,
+  isFirstLoad
 }) => {
   const companyInfo = companyData[company];
   const companyProjects = projectsByCompany[company] || [];
@@ -100,9 +102,12 @@ const MobileCompanyCard = ({
     setShowContactModal(true);
   }, [setShowContactModal, company]);
 
+  // Определяем класс для анимации в зависимости от флага первой загрузки
+  const transitionClass = isFirstLoad ? '' : 'transform-card-transition';
+
   return (
     <div
-      className="card-glassmorphism rounded-3xl shadow-sm relative overflow-hidden transform-card-transition"
+      className={`card-glassmorphism rounded-3xl shadow-sm relative overflow-hidden ${transitionClass}`}
       style={{
         height: '100%',
         maxHeight: maxHeight || 'calc(100vh - 120px)',
@@ -344,7 +349,12 @@ MobileCompanyCard.propTypes = {
   selectCase: PropTypes.func.isRequired,
   closeSidebar: PropTypes.func.isRequired,
   setShowContactModal: PropTypes.func.isRequired,
-  maxHeight: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+  maxHeight: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  isFirstLoad: PropTypes.bool
+};
+
+MobileCompanyCard.defaultProps = {
+  isFirstLoad: false
 };
 
 export default React.memo(MobileCompanyCard);

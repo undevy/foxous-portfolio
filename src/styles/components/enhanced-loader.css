@@ -1,0 +1,468 @@
+/* src/styles/components/enhanced-loader.css */
+
+/***************************************
+ * ENHANCED LOADER STYLES
+ ***************************************/
+
+/* Основной контейнер загрузчика */
+.enhanced-loader {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--color-background);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    overflow: hidden;
+    /* Fix для iOS safe areas */
+    padding-top: env(safe-area-inset-top, 0);
+    padding-right: env(safe-area-inset-right, 0);
+    padding-bottom: env(safe-area-inset-bottom, 0);
+    padding-left: env(safe-area-inset-left, 0);
+  }
+  
+  /* Стили для body при активном загрузчике */
+  body.loading-active {
+    overflow: hidden;
+  }
+  
+  /* Контейнер содержимого загрузчика */
+  .loader-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /***************************************
+   * POWER BUTTON STYLES
+   ***************************************/
+  
+  /* Контейнер кнопки включения */
+  .power-button-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  
+  /* Кнопка включения */
+  .power-button {
+    width: 64px;
+    height: 64px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    outline: none;
+    transition: transform 0.2s ease;
+  }
+  
+  /* Анимация пульсации */
+  .power-button::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background-color: rgba(29, 195, 70, 0.1);
+    transform: translate(-50%, -50%);
+    z-index: -1;
+    animation: pulse 2s infinite;
+  }
+  
+  /* Иконка включения */
+  .power-icon {
+    width: 64px;
+    height: 64px;
+    transition: all 0.3s ease;
+  }
+  
+  /* Эффект при наведении */
+  .power-button:hover .power-icon {
+    transform: scale(1.05);
+    filter: drop-shadow(0 0 5px rgba(29, 195, 70, 0.5));
+  }
+  
+  /* Эффект при нажатии */
+  .power-button:active .power-icon {
+    transform: scale(0.95);
+  }
+  
+  /* Текст кнопки */
+  .power-text {
+    font-size: 14px;
+    color: var(--color-text);
+    opacity: 0.8;
+    text-align: center;
+    animation: fadeInOut 2s infinite alternate;
+  }
+  
+  /***************************************
+   * POWER FLASH ANIMATION
+   ***************************************/
+  
+  /* Анимация вспышки при включении */
+  .power-flash {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(29, 195, 70, 0);
+    pointer-events: none;
+    z-index: 1;
+    transition: opacity 0.3s ease-out;
+    opacity: 0;
+  }
+  
+  /* Состояние вспышки при включении */
+  .state-powering .power-flash {
+    animation: powerFlash 1.5s forwards;
+  }
+  
+  /***************************************
+   * BOOT ANIMATION STYLES
+   ***************************************/
+  
+  /* Контейнер анимации загрузки */
+  .boot-animation-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  
+  /* Спиннер загрузки */
+  .boot-spinner {
+    position: relative;
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Круг спиннера */
+  .boot-spinner-circle {
+    animation: spinnerDraw 1.5s ease-in-out infinite alternate;
+    transform-origin: center;
+  }
+  
+  /* Лого внутри спиннера */
+  .boot-logo {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    opacity: 0;
+    animation: logoAppear 0.5s 0.2s forwards;
+  }
+  
+  /* Текст загрузки */
+  .boot-text {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--color-text);
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    animation: fadeInOut 1.5s infinite alternate;
+    border: none;
+    outline: none;
+  }
+  
+  /***************************************
+   * FOOTER APPEARANCE STYLES
+   ***************************************/
+  
+  /* Контейнер анимации появления футера */
+  .footer-appearance-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  
+  /* Индикатор загрузки */
+  .boot-indicator {
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Стили для прогресс-бара */
+  .footer-loading-bar {
+    width: 200px;
+    height: 6px;
+    background-color: rgba(var(--color-primary-rgb), 0.2);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: -1rem;
+  }
+  
+  /* Прогресс */
+  .footer-loading-progress {
+    height: 100%;
+    background-color: var(--color-primary);
+    width: 0;
+    border-radius: 3px;
+    animation: progressBar 1.5s ease forwards;
+  }
+  
+  /* Превью футера */
+  .footer-preview {
+    display: flex;
+    gap: 8px;
+    background-color: rgba(var(--color-primary-rgb), 0.1);
+    padding: 10px 20px;
+    border-radius: 20px;
+    margin-top: 0.5rem;
+    position: relative;
+  }
+  
+  /* Плейсхолдеры иконок */
+  .footer-icon-placeholder {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background-color: rgba(var(--color-primary-rgb), 0.3);
+    opacity: 0;
+  }
+  
+  /* Анимация появления иконок */
+  .icons-visible .footer-icon-placeholder {
+    animation: iconAppear 0.5s forwards;
+  }
+  
+  /***************************************
+   * PROJECT LOADER STYLES
+   ***************************************/
+  
+  /* Контейнер анимации загрузки проекта */
+  .project-loader-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  
+  /* Окно проекта */
+  .project-window {
+    width: 300px;
+    height: 180px;
+    background-color: var(--color-card);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    transform: scale(0.8);
+    opacity: 0;
+    animation: windowAppear 1s 0.3s forwards;
+  }
+  
+  /* Заголовок окна */
+  .project-window-header {
+    height: 32px;
+    background-color: rgba(var(--color-primary-rgb), 0.1);
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+  }
+  
+  /* Элементы управления окном */
+  .project-window-controls {
+    display: flex;
+    gap: 6px;
+  }
+  
+  /* Контрол окна */
+  .window-control {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+  }
+  
+  /* Цвета контролов */
+  .window-control.close {
+    background-color: #ff5f57;
+  }
+  
+  .window-control.minimize {
+    background-color: #febc2e;
+  }
+  
+  .window-control.maximize {
+    background-color: #28c940;
+  }
+  
+  /* Заголовок окна */
+  .project-window-title {
+    flex-grow: 1;
+    text-align: center;
+    font-size: 14px;
+    color: var(--color-text);
+    font-weight: 500;
+  }
+  
+  /* Содержимое окна */
+  .project-window-content {
+    height: calc(100% - 32px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+  
+  /* Индикатор загрузки проекта */
+  .project-loading-indicator {
+    width: 100%;
+    height: 6px;
+    background-color: rgba(var(--color-primary-rgb), 0.1);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  
+  /* Прогресс загрузки проекта */
+  .project-loading-bar {
+    height: 100%;
+    width: 30%;
+    background-color: var(--color-primary);
+    border-radius: 3px;
+    animation: progressIndeterminate 1.5s infinite linear;
+  }
+  
+  /***************************************
+   * ANIMATION KEYFRAMES
+   ***************************************/
+  
+  /* Пульсация кнопки */
+  @keyframes pulse {
+    0% {
+      transform: translate(-50%, -50%) scale(0.95);
+      box-shadow: 0 0 0 0 rgba(29, 195, 70, 0.7);
+    }
+    
+    70% {
+      transform: translate(-50%, -50%) scale(1.05);
+      box-shadow: 0 0 0 15px rgba(29, 195, 70, 0);
+    }
+    
+    100% {
+      transform: translate(-50%, -50%) scale(0.95);
+      box-shadow: 0 0 0 0 rgba(29, 195, 70, 0);
+    }
+  }
+  
+  /* Мигание текста */
+  @keyframes fadeInOut {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+  
+  /* Вспышка при включении */
+  @keyframes powerFlash {
+    0% {
+      background-color: rgba(29, 195, 70, 0);
+      opacity: 0;
+    }
+    10% {
+      background-color: rgba(29, 195, 70, 0.3);
+      opacity: 1;
+    }
+    100% {
+      background-color: rgba(29, 195, 70, 0);
+      opacity: 0;
+    }
+  }
+  
+  /* Анимация спиннера */
+  @keyframes spinnerDraw {
+    0% {
+      stroke-dashoffset: 176;
+      transform: rotate(0deg);
+    }
+    50% {
+      stroke-dashoffset: 44;
+      transform: rotate(180deg);
+    }
+    100% {
+      stroke-dashoffset: 176;
+      transform: rotate(360deg);
+    }
+  }
+  
+  /* Появление лого */
+  @keyframes logoAppear {
+    from {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  
+  /* Прогресс-бар */
+  @keyframes progressBar {
+    from {
+      width: 0;
+    }
+    to {
+      width: 100%;
+    }
+  }
+  
+  /* Появление иконок */
+  @keyframes iconAppear {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Появление окна */
+  @keyframes windowAppear {
+    from {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  
+  /* Бесконечный прогресс-бар */
+  @keyframes progressIndeterminate {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(400%);
+    }
+  }
+  
+  /* Добавляем переменную для RGB значения основного цвета */
+  :root {
+    --color-primary-rgb: 59, 130, 246; /* RGB эквивалент #3b82f6 */
+  }
+  
+  .dark {
+    --color-primary-rgb: 74, 129, 242; /* RGB эквивалент #4a81f2 */
+  }
