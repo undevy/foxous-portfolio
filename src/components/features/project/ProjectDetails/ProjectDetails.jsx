@@ -5,11 +5,13 @@ import { caseStudies } from '../../../../data/projects';
 import { getProjectImage } from '../../../../utils/projectUtils';
 import { useImageViewer } from '../../../../contexts/ImageViewerContext';
 import { getProjectPngImage } from '../../../../utils/projectUtils';
+import { useDevice } from '../../../../contexts/DeviceContext';
 import useTouchClick from '../../../../hooks/useTouchClick';
 import { trackEvent, startTimingEvent, endTimingEvent, EVENT_CATEGORIES, EVENT_ACTIONS } from '../../../../services/analytics';
 
 /**
  * Компонент отображения деталей проекта
+ * Оптимизирован для тач-устройств и добавлен трекинг взаимодействий
  * @param {Object} props - Свойства компонента
  * @param {string} props.activeCase - ID активного кейса
  * @param {Function} props.handleCloseDetail - Функция закрытия деталей
@@ -31,6 +33,10 @@ const ProjectDetails = ({
 }) => {
   const [imageError, setImageError] = useState(false);
   const [imageLoading, setImageLoading] = useState(true);
+  
+  // Определяем тип устройства
+  const { isTouchDevice, isTablet, isIOS } = useDevice();
+  
   // Поиск проекта по id или ключу
   const project = useMemo(() => {
     return Object.values(caseStudies).find(
@@ -41,14 +47,40 @@ const ProjectDetails = ({
   }, [activeCase]);
 
   const { openViewer } = useImageViewer();
-   // Обработчик клика по изображению проекта
-   const handleImageClick = useCallback((e) => {
-    if (!project) return;
-    openViewer(getProjectPngImage(project.id), project.title);
-  }, [project, openViewer]);
   
-  // Используем наш новый хук
+  // Обработчик клика по изображению проекта
+  const handleImageClick = useCallback((e) => {
+    if (!project) return;
+    
+    // Отслеживаем клик по изображению
+    trackEvent(
+      EVENT_CATEGORIES.UI_INTERACTION,
+      'project_image_click',
+      `${project.companyId}_${project.id}_${isTouchDevice ? 'touch' : 'mouse'}`
+    );
+    
+    openViewer(getProjectPngImage(project.id), project.title);
+  }, [project, openViewer, isTouchDevice]);
+  
+  // Хук для обработки кликов и касаний
   const touchProps = useTouchClick(handleImageClick);
+
+  // Обработчик закрытия деталей проекта
+  const handleClose = useCallback(() => {
+    // Отслеживаем закрытие деталей проекта
+    if (project) {
+      trackEvent(
+        EVENT_CATEGORIES.UI_INTERACTION,
+        'close_project_details',
+        `${project.companyId}_${project.id}_${isTouchDevice ? 'touch' : 'mouse'}`
+      );
+    }
+    
+    handleCloseDetail();
+  }, [handleCloseDetail, project, isTouchDevice]);
+  
+  // Хук для обработки кликов и касаний для кнопки закрытия
+  const closeTouchProps = useTouchClick(handleClose);
 
   // Используем useMemo для вычисления стилей - всегда, независимо от наличия проекта
   const mobileStyles = useMemo(() => {
@@ -87,7 +119,7 @@ const ProjectDetails = ({
       trackEvent(
         EVENT_CATEGORIES.CONTENT_VIEW,
         'project_details_view',
-        `${project.companyId}_${project.id}`
+        `${project.companyId}_${project.id}_${isTouchDevice ? 'touch' : 'mouse'}`
       );
       
       return () => {
@@ -99,25 +131,27 @@ const ProjectDetails = ({
         );
       };
     }
-  }, [project]);
+  }, [project, isTouchDevice]);
   
   // Отслеживание прокрутки содержимого
-  const handleContentScroll = (e) => {
+  const handleContentScroll = useCallback((e) => {
+    if (!project) return;
+    
     const scrollTop = e.target.scrollTop;
     const scrollHeight = e.target.scrollHeight;
     const clientHeight = e.target.clientHeight;
     const scrollPercentage = Math.round((scrollTop / (scrollHeight - clientHeight)) * 100);
     
-    // Отслеживаем только значительные изменения прокрутки (10%, 25%, 50%, 75%, 90%, 100%)
-    if (scrollPercentage === 25 || scrollPercentage === 50 || scrollPercentage === 75 || 
-        scrollPercentage === 90 || scrollPercentage === 100) {
+    // Отслеживаем только значимые изменения прокрутки (25%, 50%, 75%, 100%)
+    if (scrollPercentage === 25 || scrollPercentage === 50 || 
+        scrollPercentage === 75 || scrollPercentage === 100) {
       trackEvent(
         EVENT_CATEGORIES.UI_INTERACTION,
         EVENT_ACTIONS.SCROLL,
-        `project_details_${project ? project.id : 'unknown'}_${scrollPercentage}%`
+        `project_details_${project.id}_${scrollPercentage}%_${isTouchDevice ? 'touch' : 'mouse'}`
       );
     }
-  };
+  }, [project, isTouchDevice]);
 
   // Определяем класс для анимации в зависимости от флага первой загрузки
   const transitionClass = isFirstLoad ? '' : 'transform-card-transition';
@@ -125,16 +159,31 @@ const ProjectDetails = ({
   // После вызова всех хуков можем использовать условный рендеринг
   if (!project) {
     return (
-      <div className={`bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 relative ${transitionClass}`}>
+      <div 
+        className={`card-glassmorphism rounded-3xl p-6 shadow-sm relative ${transitionClass}`}
+        style={mobileStyles}
+      >
         {!hideCloseButton && (
           <button
-            onClick={handleCloseDetail}
-            className="absolute top-3 right-3 h-6 w-6 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center"
+            {...closeTouchProps}
+            className={`absolute top-3 right-3 h-6 w-6 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center ${
+              isTouchDevice ? 'touch-button' : ''
+            }`}
+            style={{
+              ...(isTouchDevice && {
+                height: '44px',
+                width: '44px',
+                top: '8px',
+                right: '8px',
+                touchAction: 'manipulation',
+                WebkitTapHighlightColor: 'transparent'
+              })
+            }}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              width="12"
-              height="12"
+              width={isTouchDevice ? "20" : "12"}
+              height={isTouchDevice ? "20" : "12"}
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -191,21 +240,25 @@ const ProjectDetails = ({
           
           {!hideCloseButton && (
             <button
-            onClick={() => {
-              // Отслеживаем закрытие деталей проекта
-              trackEvent(
-                EVENT_CATEGORIES.UI_INTERACTION,
-                'close_project_details',
-                `${project.companyId}_${project.id}`
-              );
-              handleCloseDetail();
-            }}
-              className="absolute top-3 right-3 h-6 w-6 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center z-40"
+              {...closeTouchProps}
+              className={`absolute top-3 right-3 h-6 w-6 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center z-40 ${
+                isTouchDevice ? 'touch-button' : ''
+              }`}
+              style={{
+                ...(isTouchDevice && {
+                  height: '44px',
+                  width: '44px',
+                  top: '8px',
+                  right: '8px',
+                  touchAction: 'manipulation',
+                  WebkitTapHighlightColor: 'transparent'
+                })
+              }}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                width="12"
-                height="12"
+                width={isTouchDevice ? "20" : "12"}
+                height={isTouchDevice ? "20" : "12"}
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -223,53 +276,98 @@ const ProjectDetails = ({
       </div>
 
       {/* Скроллируемое содержимое */}
-      <div className="p-6 pt-2 overflow-y-auto custom-scrollbar"
-        style={{ maxHeight: contentHeight }}
+      <div 
+        className="p-6 pt-2 overflow-y-auto custom-scrollbar"
+        style={{ 
+          maxHeight: contentHeight,
+          WebkitOverflowScrolling: isIOS ? 'touch' : 'auto'  // Улучшает плавность прокрутки на iOS
+        }}
         onScroll={handleContentScroll}
-        >
+      >
         <div className="max-w-3xl">
-
-            <div className="mb-6" style={{ paddingTop: '8px' }}>
+          <div className="mb-6" style={{ paddingTop: '8px' }}>
             <h2 className="text-xl font-bold mb-3 text-left text-gray-900 dark:text-white">Challenge</h2>
             <p className="text-sm text-gray-600 dark:text-gray-300 text-left">{project.challenge}</p>
           </div>
+          
           {project && !imageError && (
             <div 
-              className="image-hover-effect mb-4 cursor-pointer" 
+              className={`image-hover-effect mb-4 cursor-pointer ${
+                isTouchDevice ? 'touch-image-container' : ''
+              }`}
               {...touchProps}
             >
               <img
                 src={getProjectImage(project.id)}
                 alt={project.title}
-                className={`w-full h-auto transition-all duration-500 ${
-                  imageLoading ? 'opacity-0 scale-95' : 'opacity-100 scale-100'
-                }`}
-                onError={() => setImageError(true)}
-                onLoad={() => setImageLoading(false)}
+                className={`w-full h-auto transition-all ${
+                  isTablet || isIOS 
+                    ? 'duration-300 ease-out' // Более быстрые и простые анимации для iPad
+                    : 'duration-500 ease-in-out'
+                } ${imageLoading ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}
+                onError={() => {
+                  setImageError(true);
+                  trackEvent(
+                    EVENT_CATEGORIES.CONTENT_VIEW,
+                    'project_image_error',
+                    `${project.id}_${isTouchDevice ? 'touch' : 'mouse'}`
+                  );
+                }}
+                onLoad={() => {
+                  setImageLoading(false);
+                  trackEvent(
+                    EVENT_CATEGORIES.CONTENT_VIEW,
+                    'project_image_loaded',
+                    `${project.id}_${isTouchDevice ? 'touch' : 'mouse'}`
+                  );
+                }}
+                style={{
+                  WebkitUserSelect: 'none',
+                  MozUserSelect: 'none',
+                  userSelect: 'none'
+                }}
               />
             </div>
           )}
+          
           <div className="mb-6">
             <h2 className="text-xl font-bold mb-3 text-left text-gray-900 dark:text-white">Solution</h2>
             <p className="text-sm text-gray-600 dark:text-gray-300 text-left">{project.solution}</p>
           </div>
 
           <div>
-          <h2 className="text-xl font-bold mb-3 text-left text-gray-900 dark:text-white">Impact</h2>
+            <h2 
+              className="text-xl font-bold mb-3 text-left text-gray-900 dark:text-white"
+              onMouseEnter={() => {
+                if (!isTouchDevice) {
+                  trackEvent(
+                    EVENT_CATEGORIES.UI_INTERACTION,
+                    'impact_section_hover',
+                    `${project.id}_${isTouchDevice ? 'touch' : 'mouse'}`
+                  );
+                }
+              }}
+            >
+              Impact
+            </h2>
+            
             {Array.isArray(project.impact) ? (
               <ul className="list-disc list-inside text-sm text-gray-600 dark:text-gray-300 text-left">
                 {project.impact.map((item, index) => (
-                  <li key={index} className="mb-1"
-                  onMouseEnter={() => {
-                    // Отслеживаем наведение на пункт списка impact (только в десктопной версии)
-                    if (!isMobile) {
-                      trackEvent(
-                        EVENT_CATEGORIES.UI_INTERACTION,
-                        'impact_item_hover',
-                        `${project.id}_impact_${index}`
-                      );
-                    }
-                  }}>
+                  <li 
+                    key={index} 
+                    className="mb-1"
+                    onMouseEnter={() => {
+                      // Отслеживаем наведение на пункт списка impact (только в десктопной версии)
+                      if (!isTouchDevice) {
+                        trackEvent(
+                          EVENT_CATEGORIES.UI_INTERACTION,
+                          'impact_item_hover',
+                          `${project.id}_impact_${index}_${isTouchDevice ? 'touch' : 'mouse'}`
+                        );
+                      }
+                    }}
+                  >
                     {item}
                   </li>
                 ))}

@@ -1,11 +1,14 @@
 // src/components/features/company/TransformingCompanyHeader/TransformingCompanyHeader.jsx
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import MobileCompanyCard from '../MobileCompanyCard';
 import MobileCompanyNav from '../MobileCompanyNav';
+import { useDevice } from '../../../../contexts/DeviceContext';
+import { trackEvent, EVENT_CATEGORIES } from '../../../../services/analytics';
 
 /**
  * Компонент, который трансформируется из карточки компании в навигационный элемент
+ * Оптимизирован для тач-устройств и добавлен трекинг взаимодействий
  * @param {Object} props - Свойства компонента
  * @param {string} props.company - ID компании
  * @param {string} props.activeCase - ID активного кейса
@@ -28,9 +31,41 @@ const TransformingCompanyHeader = ({
   backToCompanyCard,
   setShowContactModal,
   isTransformed,
+  isMobile,
   maxHeight,
+  onHeightChange,
   isFirstLoad
 }) => {
+  // Определяем тип устройства
+  const { isTouchDevice, isTablet, isIOS } = useDevice();
+  
+  // Логирование в режиме разработки
+  if (process.env.NODE_ENV === 'development') {
+    console.log('TransformingCompanyHeader rendered with device info:', { 
+      isTouchDevice, isTablet, isIOS, 
+      component: 'TransformingCompanyHeader',
+      state: isTransformed ? 'transformed' : 'normal',
+      activeCase
+    });
+  }
+  
+  // Отслеживаем трансформацию компонента
+  useEffect(() => {
+    if (isTransformed) {
+      trackEvent(
+        EVENT_CATEGORIES.UI_INTERACTION,
+        'company_header_transform',
+        `to_nav_${company}_${activeCase}_${isTouchDevice ? 'touch' : 'mouse'}`
+      );
+    } else {
+      trackEvent(
+        EVENT_CATEGORIES.UI_INTERACTION,
+        'company_header_transform',
+        `to_card_${company}_${isTouchDevice ? 'touch' : 'mouse'}`
+      );
+    }
+  }, [isTransformed, company, activeCase, isTouchDevice]);
+
   // Трансформированный режим (компактная панель с табами)
   if (isTransformed) {
     return (
@@ -73,6 +108,7 @@ TransformingCompanyHeader.propTypes = {
 };
 
 TransformingCompanyHeader.defaultProps = {
+  onHeightChange: () => {},
   isFirstLoad: false
 };
 

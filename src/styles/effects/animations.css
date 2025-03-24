@@ -14,7 +14,7 @@
    ***************************************/
   
   .status-pulse {
-    animation: status-pulse 2s infinite;
+    animation: status-pulse 4s infinite;
   }
   
   @keyframes status-pulse {
@@ -102,7 +102,67 @@
   inset: 0;
   background-color: black;
   opacity: 0;
-  animation: power-off 1.5s ease-in forwards;
+  animation: power-off 2.5s ease-in forwards;
+}
+
+/* Стили для последовательности выключения */
+body.power-off-sequence {
+  overflow: hidden; /* Предотвращаем прокрутку */
+  transition: background-color 0.6s ease-in;
+}
+
+/* Стиль для скрытия окон - ПК версия (по умолчанию) */
+body.hide-windows .card-glassmorphism,
+body.hide-windows .mobile-company-card,
+body.hide-windows .project-details,
+body.hide-windows .main-menu {
+  opacity: 0 !important;
+  transform: translateY(20px) !important; /* Движение ВНИЗ на десктопе */
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out !important;
+  pointer-events: none;
+}
+
+/* Стиль для скрытия футера - ПК версия (по умолчанию) */
+body.hide-footer .glassmorphism,
+body.hide-footer .footer-container,
+body.hide-footer .fixed-top,
+body.hide-footer .fixed-bottom {
+  opacity: 0 !important;
+  transform: translateY(50px) !important; /* Движение ВНИЗ на десктопе */
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out !important;
+  pointer-events: none;
+}
+
+/* МОБИЛЬНАЯ ВЕРСИЯ - инвертированное направление */
+@media (max-width: 767px) {
+  /* Стиль для скрытия окон - мобильная версия */
+  body.hide-windows .card-glassmorphism,
+  body.hide-windows .mobile-company-card,
+  body.hide-windows .project-details,
+  body.hide-windows .main-menu {
+    transform: translateY(-20px) !important; /* Движение ВВЕРХ на мобильных */
+  }
+  
+  /* Стиль для скрытия футера - мобильная версия */
+  body.hide-footer .glassmorphism,
+  body.hide-footer .footer-container,
+  body.hide-footer .fixed-top,
+  body.hide-footer .fixed-bottom {
+    transform: translateY(-50px) !important; /* Движение ВВЕРХ на мобильных */
+  }
+}
+
+/* Плавное затемнение при выключении */
+body.power-off-sequence {
+  background-color: rgba(0, 0, 0, 0.15);
+}
+
+body.hide-windows {
+  background-color: rgba(0, 0, 0, 0.35);
+}
+
+body.hide-footer {
+  background-color: rgba(0, 0, 0, 0.75);
 }
 
 /* Keyframes для анимации выключения */
@@ -157,5 +217,96 @@
   /* Стиль нажатия для визуальной обратной связи */
   .image-hover-effect:active::before {
     background-color: rgba(0, 0, 0, 0.1);
+  }
+}
+
+/***************************************
+ * ОБНОВЛЕННЫЕ СТИЛИ ДЛЯ ТАЧ-УСТРОЙСТВ
+ ***************************************/
+
+/* Базовые стили для всех интерактивных элементов на тач-устройствах */
+.touch-device button,
+.touch-device [role="button"],
+.touch-device a,
+.touch-device input[type="button"],
+.touch-device input[type="submit"] {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation; /* Оптимизирует обработку тач-событий */
+  cursor: pointer;
+  /* Создаем увеличенную область касания */
+  position: relative;
+  z-index: 1;
+}
+
+/* Улучшенная область касания для навигационных элементов */
+.touch-device .nav-icon,
+.touch-device .project-tag-button {
+  min-height: 44px; /* Минимальная высота для удобного касания */
+}
+
+/* Улучшенные стили для image-hover-effect на тач-устройствах */
+.touch-device .image-hover-effect {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  /* Создаем явную интерактивную область на тач-устройствах */
+  position: relative;
+}
+
+.touch-device .image-hover-effect::before {
+  content: '';
+  position: absolute;
+  top: -10px; /* Расширяем область касания */
+  left: -10px;
+  right: -10px;
+  bottom: -10px;
+  z-index: 1;
+  pointer-events: auto;
+}
+
+/* Обратная связь при нажатии на тач-устройствах */
+.touch-device .image-hover-effect:active::before {
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 0.75rem; /* rounded-xl */
+}
+
+.touch-device .image-hover-effect:active img {
+  transform: scale(1.02); /* Меньший масштаб для более плавного эффекта */
+  transition: transform 0.2s ease; /* Более быстрый отклик на тач-устройствах */
+}
+
+/* Специальные стили для iPad и планшетов */
+.tablet-device .image-hover-effect:active img {
+  transform: scale(1.01); /* Еще меньший масштаб для планшетов */
+  transition: transform 0.15s ease; /* Еще более быстрый отклик */
+}
+
+/* Устранение проблем с двойными тапами на iOS */
+.ios-device .image-hover-effect,
+.ios-device .menu-item,
+.ios-device .clickable-element {
+  cursor: pointer;
+  -webkit-touch-callout: none; /* Отключаем стандартное меню в iOS */
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Оптимизация анимаций для iPad */
+@media (hover: none) and (pointer: coarse) {
+  /* Заменяем анимации на более легкие */
+  .image-hover-effect img {
+    transition: transform 0.15s ease-out, opacity 0.15s ease-out;
+  }
+
+  /* Отключаем некоторые эффекты для повышения производительности */
+  .glassmorphism {
+    /* Используем сплошной фон вместо размытия */
+    background-color: var(--color-glass-bg-solid, rgba(255, 255, 255, 0.95));
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  
+  /* Упрощаем переходы между состояниями */
+  .transform-card-transition {
+    transition: all 0.2s ease-in-out;
   }
 }

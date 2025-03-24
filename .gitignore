@@ -24,7 +24,7 @@ yarn-error.log*
 *.backup
 
 #backups
-/Docs Backups 20.03.25
+/Docs Backups
 
 # debug
 src/services/analytics/debug.js

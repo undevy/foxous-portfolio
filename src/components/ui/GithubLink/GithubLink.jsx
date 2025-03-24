@@ -1,20 +1,51 @@
-import React, { useState } from 'react';
+// src/components/ui/GithubLink/GithubLink.jsx
+import React, { useState, useCallback } from 'react';
+import { useDevice } from '../../../contexts/DeviceContext';
+import useTouchClick from '../../../hooks/useTouchClick';
+import { trackEvent, EVENT_CATEGORIES, EVENT_ACTIONS } from '../../../services/analytics';
 
 /**
  * Компонент ссылки на GitHub репозиторий
+ * Оптимизирован для тач-устройств и добавлен трекинг взаимодействий
  * @returns {JSX.Element} Компонент ссылки на GitHub
  */
 const GithubLink = () => {
   const [isHovered, setIsHovered] = useState(false);
+  
+  // Определение типа устройства (используем только isTouchDevice)
+  const { isTouchDevice } = useDevice();
+  
+  // Обработчик клика по ссылке с трекингом
+  const handleGithubClick = useCallback(() => {
+    // Отслеживаем клик с учетом типа устройства
+    trackEvent(
+      EVENT_CATEGORIES.UI_INTERACTION,
+      EVENT_ACTIONS.LINK_CLICK,
+      `github_repository_${isTouchDevice ? 'touch' : 'mouse'}`
+    );
+  }, [isTouchDevice]);
+  
+  // Использование оптимизированного хука для тач-устройств
+  const touchProps = useTouchClick(handleGithubClick);
   
   return (
     <a 
       href="https://github.com/undevy/foxous-portfolio" 
       target="_blank" 
       rel="noopener noreferrer"
-      className="flex items-center justify-between p-2"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      className={`flex items-center justify-between p-2 ${
+        isTouchDevice ? 'touch-interactive-item' : 'menu-item menu-item-hover'
+      }`}
+      onMouseEnter={() => !isTouchDevice && setIsHovered(true)}
+      onMouseLeave={() => !isTouchDevice && setIsHovered(false)}
+      {...touchProps}
+      style={{
+        ...(isTouchDevice && {
+          minHeight: '44px',
+          touchAction: 'manipulation',
+          WebkitTapHighlightColor: 'transparent'
+        })
+      }}
     >
       <div className="flex items-center gap-3">
         <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
@@ -30,7 +61,7 @@ const GithubLink = () => {
         </div>
       </div>
       
-      {isHovered && (
+      {(isHovered || isTouchDevice) && (
         <div className="text-gray-400 dark:text-gray-500">
           <svg 
             xmlns="http://www.w3.org/2000/svg" 
@@ -52,4 +83,4 @@ const GithubLink = () => {
   );
 };
 
-export default GithubLink;
+export default React.memo(GithubLink);

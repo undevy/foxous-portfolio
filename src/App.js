@@ -8,6 +8,7 @@ import ThemeMeta from './components/utils/ThemeMeta';
 import { ImageViewerProvider } from './contexts/ImageViewerContext';
 import { FirstLoadProvider } from './contexts/FirstLoadContext';
 import { initAnalytics, trackUserMetadata, trackWebVitals } from './services/analytics';
+import { DeviceProvider } from './contexts/DeviceContext';
 
 // Список всех изображений для предзагрузки
 const imagesToPreload = [
@@ -17,6 +18,8 @@ const imagesToPreload = [
   '/assets/images/Wb.webp',
   '/assets/svgs/Fox.svg',
   '/assets/svgs/Fox-Dark.svg',
+  '/assets/svgs/Off.svg',
+  '/assets/svgs/Off-Dark.svg',
   '/assets/svgs/Gmx.svg',
   '/assets/svgs/Nexus.svg',
   '/assets/svgs/P2P.svg',
@@ -127,6 +130,7 @@ useEffect(() => {
   
   return (
     <ThemeProvider>
+      <DeviceProvider>
       <ImageViewerProvider>
         <FirstLoadProvider>
         {/* Компонент для управления мета-тегами в соответствии с темой */}
@@ -143,6 +147,7 @@ useEffect(() => {
         </div>
         </FirstLoadProvider>
       </ImageViewerProvider>
+      </DeviceProvider>
     </ThemeProvider>
   );
 }

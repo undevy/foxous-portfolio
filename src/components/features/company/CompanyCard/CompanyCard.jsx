@@ -7,6 +7,7 @@ import { getCompanyImage } from '../../../../utils/companyUtils';
 import { useImageViewer } from '../../../../contexts/ImageViewerContext';
 import { getCompanyPngImage } from '../../../../utils/companyUtils';
 import useTouchClick from '../../../../hooks/useTouchClick';
+import { useDevice } from '../../../../contexts/DeviceContext';
 import { trackEvent, EVENT_CATEGORIES, EVENT_ACTIONS } from '../../../../services/analytics';
 
 /**
@@ -32,18 +33,50 @@ const CompanyCard = ({
   onHeightChange,
   isFirstLoad
 }) => {
+  // State
   const [imageLoading, setImageLoading] = useState(true);
-  const companyInfo = companyData[company];
-  const companyProjects = projectsByCompany[company] || [];
+  
+  // Refs
   const cardRef = useRef(null);
+  
+  // Hooks
   const { openViewer } = useImageViewer();
   
-  const handleImageClick = useCallback((e) => {
-    openViewer(getCompanyPngImage(company), companyInfo.name);
-  }, [company, companyInfo, openViewer]);
+  // Используем DeviceContext для определения типа устройства
+  const { isTouchDevice, isTablet, isIOS } = useDevice();
+  
+  // Данные
+  const companyInfo = companyData[company];
+  const companyProjects = projectsByCompany[company] || [];
 
-  // Используем наш новый хук для обработки кликов и касаний
-  const touchProps = useTouchClick(handleImageClick);
+  // Обработчик клика по изображению
+  const handleImageClick = useCallback((e) => {
+    // Отслеживаем клик по изображению с информацией об устройстве
+    trackEvent(
+      EVENT_CATEGORIES.UI_INTERACTION,
+      EVENT_ACTIONS.IMAGE_CLICK,
+      `company_card_${company}_${isTouchDevice ? 'touch' : 'mouse'}`
+    );
+    
+    // Открываем просмотрщик изображений с PNG-версией
+    openViewer(getCompanyPngImage(company), companyInfo.name);
+    
+    // Логируем для отладки устройств
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Image click device info:', { 
+        isTouchDevice, 
+        isTablet, 
+        isIOS, 
+        userAgent: navigator.userAgent 
+      });
+    }
+  }, [company, companyInfo, openViewer, isTouchDevice, isTablet, isIOS]);
+
+  // Используем улучшенный хук для обработки как клика, так и касания
+  const touchProps = useTouchClick(handleImageClick, {
+    preventDefault: true,
+    stopPropagation: true
+  });
 
   // Вычисляем высоту контента для прокрутки
   const contentHeight = maxHeight
@@ -60,39 +93,45 @@ const CompanyCard = ({
     );
   }, [setShowContactModal, company]);
 
-  // Обработчик кликов по внешним ссылкам, отслеживаем действие
+  // Обработчик кликов по внешним ссылкам
   const handleExternalLinkClick = useCallback((linkType, url) => {
     trackEvent(
       EVENT_CATEGORIES.UI_INTERACTION,
       EVENT_ACTIONS.LINK_CLICK,
-      `${linkType}_${company}`
+      `${linkType}_${company}_${isTouchDevice ? 'touch' : 'mouse'}`
     );
-  }, [company]);
+  }, [company, isTouchDevice]);
 
   // Эффект для отслеживания изменений высоты карточки
   useEffect(() => {
     if (!cardRef.current || !onHeightChange) return;
+    
     const observer = new ResizeObserver((entries) => {
       const height = entries[0].contentRect.height;
       onHeightChange(height);
     });
+    
     observer.observe(cardRef.current);
     return () => observer.disconnect();
   }, [onHeightChange]);
 
   // Определяем класс для анимации в зависимости от флага первой загрузки
   const transitionClass = isFirstLoad ? '' : 'transform-card-transition';
+  
+  // Определяем дополнительные классы для тач-устройств
+  const touchClass = isTouchDevice ? 'touch-enhanced' : '';
+  const tabletClass = isTablet ? 'tablet-optimized' : '';
+  const iosClass = isIOS ? 'ios-specific' : '';
 
   return (
     <div
       ref={cardRef}
-      className={`card-glassmorphism rounded-3xl shadow-sm relative overflow-hidden ${transitionClass}`}
+      className={`card-glassmorphism rounded-3xl shadow-sm relative overflow-hidden ${transitionClass} ${touchClass} ${tabletClass} ${iosClass}`}
       style={{
         height: '100%',
         maxHeight: maxHeight || 'none'
       }}
     >
-      {/* Содержимое карточки остается без изменений */}
       {/* Фиксированный заголовок карточки */}
       <div className="sticky top-0 z-10 card-glassmorphism-bottom-border p-6 pb-4">
         <button
@@ -112,15 +151,21 @@ const CompanyCard = ({
           </svg>
         </button>
 
+        {/* Контейнер изображения с улучшенной обработкой касаний */}
         <div
-          className="image-hover-effect mb-4 cursor-pointer"
+          className={`image-hover-effect mb-4 cursor-pointer ${isTouchDevice ? 'touch-active' : ''}`}
           {...touchProps}
+          aria-label={`Просмотреть изображение ${companyInfo.name}`}
         >
           <img
             src={getCompanyImage(company)}
             alt={companyInfo.name}
-            className={`w-full h-auto transition-all duration-500 ${imageLoading ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}
-            onLoad={() => { // Используем setImageLoading в onLoad
+            className={`w-full h-auto transition-all ${
+              isTablet || isIOS 
+                ? 'duration-300 ease-out' // Более быстрый transition для iPad
+                : 'duration-500 ease-in-out'
+            } ${imageLoading ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}
+            onLoad={() => {
               trackEvent(
                 EVENT_CATEGORIES.CONTENT_VIEW,
                 'image_loaded',
@@ -143,7 +188,12 @@ const CompanyCard = ({
       {/* Прокручиваемая область с контентом */}
       <div
         className="p-6 pt-6 overflow-y-auto custom-scrollbar"
-        style={{ maxHeight: contentHeight, minHeight: '150px' }}
+        style={{ 
+          maxHeight: contentHeight, 
+          minHeight: '150px',
+          // Улучшаем плавность прокрутки на iOS
+          WebkitOverflowScrolling: isIOS ? 'touch' : 'auto'
+        }}
       >
         {/* Описание компании */}
         <p className="text-sm text-gray-600 dark:text-gray-300 mb-4 text-left">
@@ -152,7 +202,7 @@ const CompanyCard = ({
 
         <div className="mb-6">
           <h3 className="text-sm font-medium text-black dark:text-white mb-3 text-left">Get a Sneak Peek</h3>
-          <div className="flex flex-wrap gap-3">
+          <div className={`flex flex-wrap gap-3 ${isTablet || isIOS ? 'touch-projects' : ''}`}>
             {companyProjects.map((project) => (
               // Не отображать активный проект в десктопной версии
               activeCase !== project.id && (
@@ -162,11 +212,13 @@ const CompanyCard = ({
                     trackEvent(
                       EVENT_CATEGORIES.NAVIGATION,
                       EVENT_ACTIONS.PROJECT_SELECT,
-                      `${company}_${project.id}_from_card`
+                      `${company}_${project.id}_from_card_${isTouchDevice ? 'touch' : 'mouse'}`
                     );
                     setActiveCase(project.id);
                   }}
-                  className="border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 text-black dark:text-white project-tag-button"
+                  className={`border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 text-black dark:text-white project-tag-button ${
+                    isTouchDevice ? 'touch-button' : ''
+                  }`}
                   style={{
                     display: 'flex',
                     padding: '8px 20px',
@@ -177,7 +229,12 @@ const CompanyCard = ({
                     border: '1px solid var(--color-button-border)',
                     fontSize: '16px',
                     fontWeight: '500',
-                    width: 'auto'
+                    width: 'auto',
+                    // Увеличиваем область касания на тач-устройствах
+                    ...(isTouchDevice && {
+                      minHeight: '44px',
+                      touchAction: 'manipulation'
+                    })
                   }}
                 >
                   {project.shortName}
@@ -189,11 +246,13 @@ const CompanyCard = ({
                 trackEvent(
                   EVENT_CATEGORIES.UI_INTERACTION,
                   EVENT_ACTIONS.BUTTON_CLICK,
-                  `other_projects_${company}`
+                  `other_projects_${company}_${isTouchDevice ? 'touch' : 'mouse'}`
                 );
                 openContactModal();
               }}
-              className="border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 text-black dark:text-white"
+              className={`border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 text-black dark:text-white ${
+                isTouchDevice ? 'touch-button' : ''
+              }`}
               style={{
                 display: 'flex',
                 padding: '8px 20px',
@@ -204,7 +263,12 @@ const CompanyCard = ({
                 border: '1px solid var(--color-button-border)',
                 fontSize: '16px',
                 fontWeight: '500',
-                width: 'auto'
+                width: 'auto',
+                // Увеличиваем область касания на тач-устройствах
+                ...(isTouchDevice && {
+                  minHeight: '44px',
+                  touchAction: 'manipulation'
+                })
               }}
             >
               🔍 Other
@@ -217,7 +281,16 @@ const CompanyCard = ({
             // Специальная логика для Nexus Network
             <button
               onClick={openContactModal}
-              className="text-sm text-primary hover:text-primary-dark flex items-center"
+              className={`text-sm text-primary hover:text-primary-dark flex items-center ${
+                isTouchDevice ? 'touch-link' : ''
+              }`}
+              style={{
+                ...(isTouchDevice && {
+                  minHeight: '36px',
+                  touchAction: 'manipulation',
+                  WebkitTapHighlightColor: 'transparent'
+                })
+              }}
             >
               <span>Contact about {companyInfo.name}</span>
               <svg className="ml-1" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg">
@@ -231,8 +304,17 @@ const CompanyCard = ({
               href={companyInfo.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm text-primary hover:text-primary-dark flex items-center"
+              className={`text-sm text-primary hover:text-primary-dark flex items-center ${
+                isTouchDevice ? 'touch-link' : ''
+              }`}
               onClick={() => handleExternalLinkClick('website', companyInfo.url)}
+              style={{
+                ...(isTouchDevice && {
+                  minHeight: '36px',
+                  touchAction: 'manipulation',
+                  WebkitTapHighlightColor: 'transparent'
+                })
+              }}
             >
               <span>Visit {companyInfo.name}</span>
               <svg className="ml-1" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -247,8 +329,17 @@ const CompanyCard = ({
               href={companyInfo.keyAppUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm text-primary hover:text-primary-dark flex items-center"
+              className={`text-sm text-primary hover:text-primary-dark flex items-center ${
+                isTouchDevice ? 'touch-link' : ''
+              }`}
               onClick={() => handleExternalLinkClick('app_download', companyInfo.keyAppUrl)}
+              style={{
+                ...(isTouchDevice && {
+                  minHeight: '36px',
+                  touchAction: 'manipulation',
+                  WebkitTapHighlightColor: 'transparent'
+                })
+              }}
             >
               <span>Download Key App</span>
               <svg className="ml-1" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

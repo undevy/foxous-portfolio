@@ -4,12 +4,25 @@
  * GLASSMORPHISM EFFECTS
  ***************************************/
 
- .glassmorphism {
+ 
+/* Обычный стиль с размытием */
+.glassmorphism {
   background: var(--color-glass-bg);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid var(--color-glass-border);
   transition: var(--transition-theme);
+}
+
+/* Упрощенный стиль без размытия для iPad и других планшетов */
+.tablet-device .glassmorphism, 
+.ios-device .glassmorphism {
+  background: var(--color-glass-bg-solid, rgba(255, 255, 255, 0.95));
+  border: 1px solid var(--color-glass-border);
+  transition: var(--transition-theme);
+  /* Отключаем размытие для улучшения производительности */
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 /* Новый класс для карточек с переключением стилей по теме */

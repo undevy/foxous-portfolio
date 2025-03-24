@@ -60,7 +60,7 @@ const EnhancedLoader = ({ onLoadComplete, imagesPreloaded }) => {
             setLoadingState('complete');
             // Завершаем загрузку
             onLoadComplete();
-          }, 1000);
+          }, 2000);
         }, 2500);
       }, 2500);
     }, 1500);

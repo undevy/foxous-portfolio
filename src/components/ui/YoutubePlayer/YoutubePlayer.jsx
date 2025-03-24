@@ -1,15 +1,66 @@
-import React, { useState, useEffect, useRef } from 'react';
+// src/components/ui/YoutubePlayer/YoutubePlayer.jsx
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useDevice } from '../../../contexts/DeviceContext';
+import useTouchClick from '../../../hooks/useTouchClick';
+import { trackEvent, startTimingEvent, endTimingEvent, EVENT_CATEGORIES, EVENT_ACTIONS } from '../../../services/analytics';
 
 /**
  * Компонент встроенного YouTube-плеера с функцией аккордеона
+ * Оптимизирован для тач-устройств и добавлен трекинг взаимодействий
  * @returns {JSX.Element} Компонент YouTube-плеера
  */
 const YoutubePlayer = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [videoLoaded, setVideoLoaded] = useState(false);
+  const [videoStarted, setVideoStarted] = useState(false);
   const videoId = 'C5NPMy7r_-M';
   const iframeRef = useRef(null);
+  
+  // Определяем тип устройства
+  const { isTouchDevice, isTablet, isIOS } = useDevice();
+
+  // Обработчик переключения состояния плеера
+  const togglePlayer = useCallback(() => {
+    const newState = !isExpanded;
+    setIsExpanded(newState);
+    
+    // Отслеживаем действие с информацией об устройстве
+    trackEvent(
+      EVENT_CATEGORIES.UI_INTERACTION,
+      EVENT_ACTIONS.EXPAND_COLLAPSE,
+      `youtube_player_${newState ? 'expanded' : 'collapsed'}_${isTouchDevice ? 'touch' : 'mouse'}`
+    );
+    
+    if (newState && !videoStarted) {
+      setVideoStarted(true);
+      // Начало просмотра
+      trackEvent(
+        EVENT_CATEGORIES.CONTENT_VIEW,
+        'video_play_start',
+        `youtube_layer2_meetup_${isTouchDevice ? 'touch' : 'mouse'}`
+      );
+      
+      // Начинаем отслеживать время просмотра
+      startTimingEvent('youtube_video_view');
+    }
+  }, [isExpanded, videoStarted, isTouchDevice]);
+  
+  // Хук для обработки кликов и касаний
+  const touchProps = useTouchClick(togglePlayer);
+  
+  // Отслеживание времени просмотра
+  useEffect(() => {
+    return () => {
+      if (videoStarted) {
+        endTimingEvent(
+          EVENT_CATEGORIES.ENGAGEMENT,
+          'video_view_duration',
+          'youtube_layer2_meetup'
+        );
+      }
+    };
+  }, [videoStarted]);
 
   // Предзагружаем видео
   useEffect(() => {
@@ -24,21 +75,35 @@ const YoutubePlayer = () => {
     const hiddenIframe = document.createElement('iframe');
     hiddenIframe.style.display = 'none';
     hiddenIframe.src = `https://www.youtube.com/embed/${videoId}?rel=0`;
-    hiddenIframe.onload = () => setVideoLoaded(true);
+    hiddenIframe.onload = () => {
+      setVideoLoaded(true);
+      trackEvent(
+        EVENT_CATEGORIES.CONTENT_VIEW,
+        'video_preload_complete',
+        `youtube_player_${isTouchDevice ? 'touch' : 'mouse'}`
+      );
+    };
     document.body.appendChild(hiddenIframe);
     
     return () => {
       document.head.removeChild(preloadFrame);
       document.body.removeChild(hiddenIframe);
     };
-  }, [videoId]);
+  }, [videoId, isTouchDevice]);
 
   return (
     <div 
-      className="p-2"
-      onClick={() => setIsExpanded(!isExpanded)}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      className={`p-2 ${isTouchDevice ? 'touch-container' : ''}`}
+      onMouseEnter={() => !isTouchDevice && setIsHovered(true)}
+      onMouseLeave={() => !isTouchDevice && setIsHovered(false)}
+      {...touchProps}
+      style={{
+        ...(isTouchDevice && {
+          minHeight: '44px',
+          touchAction: 'manipulation',
+          WebkitTapHighlightColor: 'transparent'
+        })
+      }}
     >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -55,12 +120,12 @@ const YoutubePlayer = () => {
           </div>
         </div>
         
-        {isHovered && (
+        {(isHovered || isTouchDevice) && (
           <div className="text-gray-400 dark:text-gray-500 icon-transition">
             <svg 
               xmlns="http://www.w3.org/2000/svg" 
-              width="16" 
-              height="16" 
+              width={isTouchDevice ? "24" : "16"} 
+              height={isTouchDevice ? "24" : "16"} 
               viewBox="0 0 24 24" 
               fill="none" 
               stroke="currentColor" 
@@ -79,9 +144,10 @@ const YoutubePlayer = () => {
         )}
       </div>
       
-      {/* Плавная анимация открытия/закрытия */}
       <div 
-        className={`transition-all duration-500 ease-in-out overflow-hidden ${
+        className={`transition-all ${
+          isTablet || isIOS ? 'duration-300 ease-out' : 'duration-500 ease-in-out'
+        } overflow-hidden ${
           isExpanded ? 'max-h-[300px] opacity-100 mt-3' : 'max-h-0 opacity-0'
         }`}
       >
@@ -95,6 +161,13 @@ const YoutubePlayer = () => {
               frameBorder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
+              onLoad={() => {
+                trackEvent(
+                  EVENT_CATEGORIES.CONTENT_VIEW,
+                  'video_iframe_loaded',
+                  `youtube_player_${isTouchDevice ? 'touch' : 'mouse'}`
+                );
+              }}
             ></iframe>
           )}
         </div>
@@ -103,4 +176,4 @@ const YoutubePlayer = () => {
   );
 };
 
-export default YoutubePlayer;
+export default React.memo(YoutubePlayer);

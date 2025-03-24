@@ -1,3 +1,5 @@
+// src/components/features/menu/MainMenu/MainMenu.jsx
+
 import React, { useRef, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import ThemeToggle from '../../../ui/ThemeToggle';
@@ -84,21 +86,21 @@ const MainMenu = ({
     // 2. Скрытие окон контента (0.5s после вспышки)
     document.body.classList.add('power-off-sequence');
     
-    // Цепочка последовательных действий
+    // Цепочка последовательных действий (сохраняем исходную структуру)
     setTimeout(() => {
-      // Скрытие окон
+      // Скрытие окон - добавляем класс hide-windows к body
       document.body.classList.add('hide-windows');
       
       setTimeout(() => {
-        // Скрытие футера
+        // Скрытие футера - добавляем класс hide-footer к body
         document.body.classList.add('hide-footer');
         
         // После некоторой паузы перезагружаем страницу
         setTimeout(() => {
           window.location.reload();
-        }, 2000); // Задержка перед перезагрузкой
-      }, 500); // Задержка между скрытием окон и футера
-    }, 300); // Задержка перед началом скрытия окон (после вспышки)
+        }, 2500); // Увеличенная задержка перед перезагрузкой для лучшего эффекта
+      }, 800); // Увеличенная задержка между скрытием окон и футера
+    }, 500); // Увеличенная задержка после вспышки
   };
 
   if (!shouldRender) return null;
@@ -148,7 +150,7 @@ const MainMenu = ({
     {
       id: 'status',
       component: <StatusIndicator />,
-      divider: true, // Разделитель ПОСЛЕ StatusIndicator
+      divider: true, 
       clickable: false
     },
     {
@@ -172,7 +174,7 @@ const MainMenu = ({
     {
       id: 'power-off',
       component: <PowerOff onPowerOff={handlePowerOff} />,
-      divider: false, // Убираем отсюда разделитель, он будет ПЕРЕД этим элементом
+      divider: false, 
       clickable: true
     }
   ];
